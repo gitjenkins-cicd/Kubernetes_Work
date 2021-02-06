@@ -1,0 +1,17 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: ServiceAccount
+  metadata:
+    creationTimestamp: "2020-04-11T04:54:47Z"
+    name: shakeer
+    namespace: elk
+    resourceVersion: "351"
+    selfLink: /api/v1/namespaces/default/serviceaccounts/default
+    uid: ba247668-5aec-4ad6-932b-86353be6aec6
+  secrets:
+  - name: default-token-rf9ww
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""

@@ -1,0 +1,41 @@
+2021-01-30 17:58:03,752 DEBUG    root            Loaded Command Group: ['gcloud', 'compute']
+2021-01-30 17:58:03,757 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'networks']
+2021-01-30 17:58:03,770 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'networks', 'delete']
+2021-01-30 17:58:03,775 DEBUG    root            Running [gcloud.compute.networks.delete] with arguments: [NAME:1: "['vpc-2']"]
+2021-01-30 17:58:07,410 DEBUG    urllib3.connectionpool Starting new HTTPS connection (1): compute.googleapis.com:443
+2021-01-30 17:58:11,308 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/v1 HTTP/1.1" 200 None
+2021-01-30 17:58:11,319 DEBUG    root            Operations to inspect: [<Operation
+ id: 1533204036818022493
+ insertTime: '2021-01-30T17:58:10.934-08:00'
+ kind: 'compute#operation'
+ name: 'operation-1612058290365-5ba2891c124d0-6e924b64-d51a0bdc'
+ operationType: 'delete'
+ progress: 0
+ selfLink: 'https://www.googleapis.com/compute/v1/projects/shakeergcp/global/operations/operation-1612058290365-5ba2891c124d0-6e924b64-d51a0bdc'
+ startTime: '2021-01-30T17:58:10.940-08:00'
+ status: StatusValueValuesEnum(RUNNING, 2)
+ targetId: 3591955030577233704
+ targetLink: 'https://www.googleapis.com/compute/v1/projects/shakeergcp/global/networks/vpc-2'
+ user: 'shakeer.uid@gmail.com'
+ warnings: []>]
+2021-01-30 17:58:28,126 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/v1 HTTP/1.1" 200 None
+2021-01-30 17:58:28,144 DEBUG    root            Operations to inspect: [<Operation
+ endTime: '2021-01-30T17:58:27.711-08:00'
+ id: 1533204036818022493
+ insertTime: '2021-01-30T17:58:10.934-08:00'
+ kind: 'compute#operation'
+ name: 'operation-1612058290365-5ba2891c124d0-6e924b64-d51a0bdc'
+ operationType: 'delete'
+ progress: 100
+ selfLink: 'https://www.googleapis.com/compute/v1/projects/shakeergcp/global/operations/operation-1612058290365-5ba2891c124d0-6e924b64-d51a0bdc'
+ startTime: '2021-01-30T17:58:10.940-08:00'
+ status: StatusValueValuesEnum(DONE, 0)
+ targetId: 3591955030577233704
+ targetLink: 'https://www.googleapis.com/compute/v1/projects/shakeergcp/global/networks/vpc-2'
+ user: 'shakeer.uid@gmail.com'
+ warnings: []>]
+2021-01-30 17:58:28,145 INFO     ___FILE_ONLY___ Deleted [https://www.googleapis.com/compute/v1/projects/shakeergcp/global/networks/vpc-2].
+
+2021-01-30 17:58:28,146 INFO     root            Display format: "none"
+2021-01-30 17:58:28,152 INFO     root            cache collection=compute.networks api_version=v1 params=['project', 'network']
+2021-01-30 17:58:28,193 DEBUG    root            SDK update checks are disabled.

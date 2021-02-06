@@ -1,0 +1,10 @@
+2021-01-19 17:34:46,048 DEBUG    root            Loaded Command Group: ['gcloud', 'config']
+2021-01-19 17:34:46,051 DEBUG    root            Loaded Command Group: ['gcloud', 'config', 'configurations']
+2021-01-19 17:34:46,056 DEBUG    root            Loaded Command Group: ['gcloud', 'config', 'config_helper']
+2021-01-19 17:34:46,065 DEBUG    root            Loaded Command Group: ['gcloud', 'config', 'set']
+2021-01-19 17:34:46,069 DEBUG    root            Loaded Command Group: ['gcloud', 'config', 'get_value']
+2021-01-19 17:34:46,072 DEBUG    root            Loaded Command Group: ['gcloud', 'config', 'unset']
+2021-01-19 17:34:46,075 DEBUG    root            Loaded Command Group: ['gcloud', 'config', 'list']
+2021-01-19 17:34:46,079 DEBUG    root            Loaded Command Group: ['gcloud', 'alpha', 'config']
+2021-01-19 17:34:46,082 DEBUG    root            Loaded Command Group: ['gcloud', 'beta', 'config']
+2021-01-19 17:34:46,086 ERROR    root            (gcloud.config) Invalid choice: 'info'.

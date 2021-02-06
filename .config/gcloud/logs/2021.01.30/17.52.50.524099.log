@@ -1,0 +1,29 @@
+2021-01-30 17:52:50,551 DEBUG    root            Loaded Command Group: ['gcloud', 'compute']
+2021-01-30 17:52:50,556 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'networks']
+2021-01-30 17:52:50,558 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'networks', 'subnets']
+2021-01-30 17:52:50,573 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'networks', 'subnets', 'delete']
+2021-01-30 17:52:50,579 DEBUG    root            Running [gcloud.compute.networks.subnets.delete] with arguments: [NAME:1: "['vpc-2-europe-west-2-1']"]
+2021-01-30 17:52:50,891 DEBUG    urllib3.connectionpool Starting new HTTPS connection (1): compute.googleapis.com:443
+2021-01-30 17:52:55,749 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/v1 HTTP/1.1" 200 None
+2021-01-30 17:53:30,744 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/v1 HTTP/1.1" 200 None
+2021-01-30 17:53:30,746 DEBUG    root            (gcloud.compute.networks.subnets.delete) Could not fetch resource:
+ - The resource 'projects/shakeergcp/regions/asia-northeast3/subnetworks/vpc-2-europe-west-2-1' was not found
+Traceback (most recent call last):
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/calliope/cli.py", line 982, in Execute
+    resources = calliope_command.Run(cli=self, args=args)
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/calliope/backend.py", line 809, in Run
+    resources = command_instance.Run(args)
+  File "/usr/lib64/google-cloud-sdk/lib/surface/compute/networks/subnets/delete.py", line 61, in Run
+    return client.MakeRequests(requests)
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/api_lib/compute/client_adapter.py", line 105, in MakeRequests
+    errors, error_message='Could not fetch resource:')
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/api_lib/compute/utils.py", line 124, in RaiseToolException
+    RaiseException(problems, calliope_exceptions.ToolException, error_message)
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/api_lib/compute/utils.py", line 136, in RaiseException
+    errors))
+googlecloudsdk.calliope.exceptions.ToolException: Could not fetch resource:
+ - The resource 'projects/shakeergcp/regions/asia-northeast3/subnetworks/vpc-2-europe-west-2-1' was not found
+
+2021-01-30 17:53:30,748 ERROR    root            (gcloud.compute.networks.subnets.delete) Could not fetch resource:
+ - The resource 'projects/shakeergcp/regions/asia-northeast3/subnetworks/vpc-2-europe-west-2-1' was not found
+

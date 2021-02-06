@@ -1,0 +1,33 @@
+2021-01-30 17:58:35,457 DEBUG    root            Loaded Command Group: ['gcloud', 'compute']
+2021-01-30 17:58:35,462 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'networks']
+2021-01-30 17:58:35,475 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'networks', 'list']
+2021-01-30 17:58:35,482 DEBUG    root            Running [gcloud.compute.networks.list] with arguments: []
+2021-01-30 17:58:35,764 INFO     root            Display format: "    table(
+      name,
+      x_gcloud_subnet_mode:label=SUBNET_MODE,
+      x_gcloud_bgp_routing_mode:label=BGP_ROUTING_MODE,
+      IPv4Range:label=IPV4_RANGE,
+      gatewayIPv4
+    )"
+2021-01-30 17:58:35,773 DEBUG    urllib3.connectionpool Starting new HTTPS connection (1): compute.googleapis.com:443
+2021-01-30 17:58:37,534 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/v1 HTTP/1.1" 200 None
+2021-01-30 17:58:37,725 INFO     root            cache collection=compute.networks api_version=v1 params=['project', 'network']
+2021-01-30 17:58:37,765 INFO     ___FILE_ONLY___ NAME
+2021-01-30 17:58:37,765 INFO     ___FILE_ONLY___      
+2021-01-30 17:58:37,765 INFO     ___FILE_ONLY___ SUBNET_MODE
+2021-01-30 17:58:37,765 INFO     ___FILE_ONLY___   
+2021-01-30 17:58:37,766 INFO     ___FILE_ONLY___ BGP_ROUTING_MODE
+2021-01-30 17:58:37,766 INFO     ___FILE_ONLY___   
+2021-01-30 17:58:37,766 INFO     ___FILE_ONLY___ IPV4_RANGE
+2021-01-30 17:58:37,766 INFO     ___FILE_ONLY___   
+2021-01-30 17:58:37,766 INFO     ___FILE_ONLY___ GATEWAY_IPV4
+2021-01-30 17:58:37,766 INFO     ___FILE_ONLY___ 
+
+2021-01-30 17:58:37,766 INFO     ___FILE_ONLY___ default
+2021-01-30 17:58:37,766 INFO     ___FILE_ONLY___   
+2021-01-30 17:58:37,767 INFO     ___FILE_ONLY___ AUTO
+2021-01-30 17:58:37,767 INFO     ___FILE_ONLY___          
+2021-01-30 17:58:37,767 INFO     ___FILE_ONLY___ REGIONAL
+2021-01-30 17:58:37,767 INFO     ___FILE_ONLY___ 
+
+2021-01-30 17:58:37,768 DEBUG    root            SDK update checks are disabled.

@@ -1,0 +1,75 @@
+2021-01-30 17:03:00,273 DEBUG    root            Loaded Command Group: ['gcloud', 'compute']
+2021-01-30 17:03:00,281 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'networks']
+2021-01-30 17:03:00,331 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'networks', 'create']
+2021-01-30 17:03:00,342 DEBUG    root            Running [gcloud.compute.networks.create] with arguments: [--description: "VPC 2", --subnet-mode: "custom", NAME: "vpc-2"]
+2021-01-30 17:03:00,970 DEBUG    urllib3.connectionpool Starting new HTTPS connection (1): compute.googleapis.com:443
+2021-01-30 17:03:04,117 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/v1 HTTP/1.1" 200 None
+2021-01-30 17:03:04,120 DEBUG    root            Operations to inspect: [<Operation
+ id: 7204875824845799208
+ insertTime: '2021-01-30T17:03:03.715-08:00'
+ kind: 'compute#operation'
+ name: 'operation-1612054982969-5ba27cc9e4789-3349499f-6c844732'
+ operationType: 'insert'
+ progress: 0
+ selfLink: 'https://www.googleapis.com/compute/v1/projects/shakeergcp/global/operations/operation-1612054982969-5ba27cc9e4789-3349499f-6c844732'
+ startTime: '2021-01-30T17:03:03.724-08:00'
+ status: StatusValueValuesEnum(RUNNING, 2)
+ targetId: 3591955030577233704
+ targetLink: 'https://www.googleapis.com/compute/v1/projects/shakeergcp/global/networks/vpc-2'
+ user: 'shakeer.uid@gmail.com'
+ warnings: []>]
+2021-01-30 17:03:16,923 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/v1 HTTP/1.1" 200 None
+2021-01-30 17:03:16,931 DEBUG    root            Operations to inspect: [<Operation
+ endTime: '2021-01-30T17:03:16.321-08:00'
+ id: 7204875824845799208
+ insertTime: '2021-01-30T17:03:03.715-08:00'
+ kind: 'compute#operation'
+ name: 'operation-1612054982969-5ba27cc9e4789-3349499f-6c844732'
+ operationType: 'insert'
+ progress: 100
+ selfLink: 'https://www.googleapis.com/compute/v1/projects/shakeergcp/global/operations/operation-1612054982969-5ba27cc9e4789-3349499f-6c844732'
+ startTime: '2021-01-30T17:03:03.724-08:00'
+ status: StatusValueValuesEnum(DONE, 0)
+ targetId: 3591955030577233704
+ targetLink: 'https://www.googleapis.com/compute/v1/projects/shakeergcp/global/networks/vpc-2'
+ user: 'shakeer.uid@gmail.com'
+ warnings: []>]
+2021-01-30 17:03:16,932 INFO     ___FILE_ONLY___ Created [https://www.googleapis.com/compute/v1/projects/shakeergcp/global/networks/vpc-2].
+
+2021-01-30 17:03:17,964 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/v1 HTTP/1.1" 200 None
+2021-01-30 17:03:18,151 INFO     root            Display format: "    table(
+      name,
+      x_gcloud_subnet_mode:label=SUBNET_MODE,
+      x_gcloud_bgp_routing_mode:label=BGP_ROUTING_MODE,
+      IPv4Range:label=IPV4_RANGE,
+      gatewayIPv4
+    )"
+2021-01-30 17:03:18,159 INFO     root            cache collection=compute.networks api_version=v1 params=['project', 'network']
+2021-01-30 17:03:18,198 INFO     ___FILE_ONLY___ NAME
+2021-01-30 17:03:18,198 INFO     ___FILE_ONLY___    
+2021-01-30 17:03:18,198 INFO     ___FILE_ONLY___ SUBNET_MODE
+2021-01-30 17:03:18,199 INFO     ___FILE_ONLY___   
+2021-01-30 17:03:18,199 INFO     ___FILE_ONLY___ BGP_ROUTING_MODE
+2021-01-30 17:03:18,199 INFO     ___FILE_ONLY___   
+2021-01-30 17:03:18,199 INFO     ___FILE_ONLY___ IPV4_RANGE
+2021-01-30 17:03:18,199 INFO     ___FILE_ONLY___   
+2021-01-30 17:03:18,199 INFO     ___FILE_ONLY___ GATEWAY_IPV4
+2021-01-30 17:03:18,199 INFO     ___FILE_ONLY___ 
+
+2021-01-30 17:03:18,199 INFO     ___FILE_ONLY___ vpc-2
+2021-01-30 17:03:18,200 INFO     ___FILE_ONLY___   
+2021-01-30 17:03:18,200 INFO     ___FILE_ONLY___ CUSTOM
+2021-01-30 17:03:18,200 INFO     ___FILE_ONLY___        
+2021-01-30 17:03:18,200 INFO     ___FILE_ONLY___ REGIONAL
+2021-01-30 17:03:18,201 INFO     ___FILE_ONLY___ 
+
+2021-01-30 17:03:18,201 INFO     ___FILE_ONLY___ 
+Instances on this network will not be reachable until firewall rules
+are created. As an example, you can allow all internal traffic between
+instances as well as SSH, RDP, and ICMP by running:
+
+$ gcloud compute firewall-rules create <FIREWALL_NAME> --network vpc-2 --allow tcp,udp,icmp --source-ranges <IP_RANGE>
+$ gcloud compute firewall-rules create <FIREWALL_NAME> --network vpc-2 --allow tcp:22,tcp:3389,icmp
+
+
+2021-01-30 17:03:18,202 DEBUG    root            SDK update checks are disabled.

@@ -1,0 +1,26 @@
+2021-01-31 17:07:19,329 DEBUG    root            Loaded Command Group: ['gcloud', 'container']
+2021-01-31 17:07:19,359 DEBUG    root            Loaded Command Group: ['gcloud', 'container', 'clusters']
+2021-01-31 17:07:19,382 DEBUG    root            Loaded Command Group: ['gcloud', 'container', 'clusters', 'list']
+2021-01-31 17:07:19,609 DEBUG    google.auth.transport.requests Making request: POST https://oauth2.googleapis.com/token
+2021-01-31 17:07:19,619 DEBUG    urllib3.connectionpool Starting new HTTPS connection (1): oauth2.googleapis.com:443
+2021-01-31 17:07:21,061 DEBUG    urllib3.connectionpool https://oauth2.googleapis.com:443 "POST /token HTTP/1.1" 200 None
+2021-01-31 17:07:21,205 DEBUG    root            Running [gcloud.container.clusters.list] with arguments: []
+2021-01-31 17:07:22,906 INFO     root            Display format: "
+    table(
+        name,
+        zone:label=LOCATION,
+        master_version():label=MASTER_VERSION,
+        endpoint:label=MASTER_IP,
+        nodePools[0].config.machineType,
+        currentNodeVersion:label=NODE_VERSION,
+        firstof(currentNodeCount,initialNodeCount):label=NUM_NODES,
+        status
+    )
+"
+2021-01-31 17:07:22,910 DEBUG    root            SDK update checks are disabled.
+2021-01-31 17:07:22,940 INFO     ___FILE_ONLY___ 
+
+To take a quick anonymous survey, run:
+  $ gcloud survey
+
+

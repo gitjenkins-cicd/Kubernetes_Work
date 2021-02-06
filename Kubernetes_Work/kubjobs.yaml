@@ -1,0 +1,18 @@
+apiVersion: batch
+kind: Job
+metadata:
+   name: py
+spec:
+   schedule: h/3 * * * * ?
+   template:
+      metadata
+           name:py
+   spec:
+         containers:
+         - name: py
+         image: python
+         args:
+           /bin/sh
+            -c
+           ps –eaf
+

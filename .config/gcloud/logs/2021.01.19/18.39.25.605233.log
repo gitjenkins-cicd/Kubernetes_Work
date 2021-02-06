@@ -1,0 +1,59 @@
+2021-01-19 18:39:25,680 DEBUG    root            Loaded Command Group: ['gcloud', 'alpha', 'interactive']
+2021-01-19 18:39:25,686 DEBUG    root            Running [gcloud.alpha.interactive] with arguments: []
+2021-01-19 18:40:20,587 INFO     ___FILE_ONLY___ 
+2021-01-19 18:40:20,603 INFO     root            cache collection=compute.instances api_version=v1 params=['project', 'zone', 'instance']
+2021-01-19 18:40:20,604 INFO     root            cache template=['*', '*', '*']
+2021-01-19 18:40:20,605 INFO     root            cache parameter=project column=0 value=shakeergcp aggregate=True
+2021-01-19 18:40:20,611 INFO     root            cache table=compute.instances.shakeergcp aggregations=[project=shakeergcp]
+2021-01-19 18:40:20,612 INFO     root            cache update command: compute instances list --uri --quiet --format=disable
+2021-01-19 18:40:20,613 DEBUG    root            Loaded Command Group: ['gcloud']
+2021-01-19 18:40:20,622 DEBUG    root            Loaded Command Group: ['gcloud', 'alpha']
+2021-01-19 18:40:20,625 DEBUG    root            Loaded Command Group: ['gcloud', 'beta']
+2021-01-19 18:40:20,656 DEBUG    root            Loaded Command Group: ['gcloud', 'compute']
+2021-01-19 18:40:20,661 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'instances']
+2021-01-19 18:40:20,676 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'instances', 'list']
+2021-01-19 18:40:20,683 DEBUG    root            Running [gcloud.compute.instances.list] with arguments: [--format: "disable", --quiet: "True", --uri: "True"]
+2021-01-19 18:40:21,149 DEBUG    urllib3.connectionpool Starting new HTTPS connection (1): compute.googleapis.com:443
+2021-01-19 18:40:22,479 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/v1 HTTP/1.1" 200 None
+2021-01-19 18:40:22,484 DEBUG    root            (gcloud.compute.instances.list) HTTPError 403: Access Not Configured. Compute Engine API has not been used in project 36045258912 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=36045258912 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+Traceback (most recent call last):
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/core/cache/resource_cache.py", line 323, in SelectTable
+    return table.Select(row_template)
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/core/cache/sqlite_cache.py", line 169, in Select
+    self._cache.name, self.name))
+googlecloudsdk.core.cache.exceptions.CacheTableExpired: [/home/shakeer/.config/gcloud/cache/shakeer.uid@gmail.com/resource.cache] cache table [compute.instances.shakeergcp] has expired.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/calliope/cli.py", line 982, in Execute
+    resources = calliope_command.Run(cli=self, args=args)
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/calliope/backend.py", line 809, in Run
+    resources = command_instance.Run(args)
+  File "/usr/lib64/google-cloud-sdk/lib/surface/compute/instances/list.py", line 48, in Run
+    return lister.Invoke(request_data, list_implementation)
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/api_lib/compute/lister.py", line 311, in Invoke
+    return implementation(frontend)
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/api_lib/compute/lister.py", line 1146, in __call__
+    for z in Invoke(zones_list_data, zones_list_implementation)
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/api_lib/compute/lister.py", line 1145, in <listcomp>
+    self.resources.Parse(z['selfLink'])
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/api_lib/compute/lister.py", line 1070, in __call__
+    errors=errors):
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/api_lib/compute/request_helper.py", line 210, in ListJson
+    for item in _ListCore(requests, http, batch_url, errors, _HandleJsonList):
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/api_lib/compute/request_helper.py", line 140, in _ListCore
+    requests=requests, http=http, batch_url=batch_url)
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/api_lib/compute/batch_helper.py", line 106, in MakeRequests
+    batch_request_callback=batch_checker.BatchCheck)
+  File "/usr/lib64/google-cloud-sdk/lib/third_party/apitools/base/py/batch.py", line 226, in Execute
+    batch_http_request.Execute(http)
+  File "/usr/lib64/google-cloud-sdk/lib/third_party/apitools/base/py/batch.py", line 506, in Execute
+    self.__callback(response, exception)
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/api_lib/compute/batch_helper.py", line 73, in BatchCheck
+    is_batch_request=True)
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/api_lib/util/apis.py", line 247, in PromptToEnableApi
+    raise exception
+googlecloudsdk.api_lib.util.exceptions.HttpException: HTTPError 403: Access Not Configured. Compute Engine API has not been used in project 36045258912 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=36045258912 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+2021-01-19 18:40:22,490 ERROR    root            (gcloud.compute.instances.list) HTTPError 403: Access Not Configured. Compute Engine API has not been used in project 36045258912 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=36045258912 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+2021-01-19 18:40:22,490 INFO     root            1

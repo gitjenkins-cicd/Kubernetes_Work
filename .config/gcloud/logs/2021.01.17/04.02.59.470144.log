@@ -1,0 +1,11 @@
+2021-01-17 04:02:59,475 DEBUG    root            Loaded Command Group: ['gcloud', 'config']
+2021-01-17 04:02:59,486 DEBUG    root            Loaded Command Group: ['gcloud', 'config', 'list']
+2021-01-17 04:02:59,499 DEBUG    root            Running [gcloud.config.list] with arguments: []
+2021-01-17 04:02:59,516 INFO     root            Display format: "config"
+2021-01-17 04:02:59,968 INFO     ___FILE_ONLY___ [core]
+disable_usage_reporting = True
+
+2021-01-17 04:02:59,969 INFO     ___FILE_ONLY___ 
+Your active configuration is: [default]
+
+2021-01-17 04:02:59,970 DEBUG    root            SDK update checks are disabled.

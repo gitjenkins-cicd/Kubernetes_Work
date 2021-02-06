@@ -1,0 +1,31 @@
+2021-01-25 18:04:00,727 DEBUG    root            Loaded Command Group: ['gcloud', 'projects']
+2021-01-25 18:04:00,733 DEBUG    root            Loaded Command Group: ['gcloud', 'projects', 'list']
+2021-01-25 18:04:00,737 DEBUG    root            Running [gcloud.projects.list] with arguments: []
+2021-01-25 18:04:00,737 INFO     root            client_filter="None" server_filter="None"
+2021-01-25 18:04:00,754 DEBUG    google.auth.transport.requests Making request: POST https://oauth2.googleapis.com/token
+2021-01-25 18:04:00,758 DEBUG    urllib3.connectionpool Starting new HTTPS connection (1): oauth2.googleapis.com:443
+2021-01-25 18:04:02,666 DEBUG    urllib3.connectionpool https://oauth2.googleapis.com:443 "POST /token HTTP/1.1" 200 None
+2021-01-25 18:04:02,703 INFO     root            Display format: "
+    table(
+      projectId:sort=1,
+      name,
+      projectNumber
+    )
+"
+2021-01-25 18:04:02,709 DEBUG    urllib3.connectionpool Starting new HTTPS connection (1): cloudresourcemanager.googleapis.com:443
+2021-01-25 18:04:05,359 DEBUG    urllib3.connectionpool https://cloudresourcemanager.googleapis.com:443 "GET /v1/projects?alt=json&filter=lifecycleState%3AACTIVE&pageSize=500 HTTP/1.1" 200 None
+2021-01-25 18:04:05,547 INFO     ___FILE_ONLY___ PROJECT_ID
+2021-01-25 18:04:05,548 INFO     ___FILE_ONLY___   
+2021-01-25 18:04:05,548 INFO     ___FILE_ONLY___ NAME
+2021-01-25 18:04:05,548 INFO     ___FILE_ONLY___         
+2021-01-25 18:04:05,548 INFO     ___FILE_ONLY___ PROJECT_NUMBER
+2021-01-25 18:04:05,548 INFO     ___FILE_ONLY___ 
+
+2021-01-25 18:04:05,548 INFO     ___FILE_ONLY___ shakeergcp
+2021-01-25 18:04:05,548 INFO     ___FILE_ONLY___   
+2021-01-25 18:04:05,548 INFO     ___FILE_ONLY___ ShakeerGCP
+2021-01-25 18:04:05,549 INFO     ___FILE_ONLY___   
+2021-01-25 18:04:05,549 INFO     ___FILE_ONLY___ 36045258912
+2021-01-25 18:04:05,549 INFO     ___FILE_ONLY___ 
+
+2021-01-25 18:04:05,550 DEBUG    root            SDK update checks are disabled.

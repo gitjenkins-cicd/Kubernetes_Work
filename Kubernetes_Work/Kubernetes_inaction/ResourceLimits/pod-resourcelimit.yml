@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kubiaresource-v1
+spec:
+  containers:
+  - image: busybox
+    command:
+      ["dd","if=/dev/zero","of=/dev/null"]
+    name: main
+    resources:
+      limits:
+        cpu: 0.2
+        memory: 10Mi
+        
+
+
+
+
+
+

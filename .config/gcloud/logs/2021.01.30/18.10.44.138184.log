@@ -1,0 +1,10 @@
+2021-01-30 18:10:44,139 DEBUG    root            Loaded Command Group: ['gcloud', 'sql']
+2021-01-30 18:10:44,141 DEBUG    root            Loaded Command Group: ['gcloud', 'sql', 'instances']
+2021-01-30 18:10:44,171 DEBUG    root            Loaded Command Group: ['gcloud', 'sql', 'instances', 'list']
+2021-01-30 18:10:44,176 DEBUG    root            Running [gcloud.sql.instances.list] with arguments: []
+2021-01-30 18:10:44,200 INFO     root            Display format: ":(settings.userLabels:alias=labels:label=LABELS) table(name,databaseVersion,firstof(gceZone,region):label=LOCATION,settings.tier,ip_addresses.filter("type:PRIMARY").*extract(ip_address).flatten().yesno(no="-"):label=PRIMARY_ADDRESS,ip_addresses.filter("type:PRIVATE").*extract(ip_address).flatten().yesno(no="-"):label=PRIVATE_ADDRESS,state:label=STATUS)"
+2021-01-30 18:10:44,206 DEBUG    urllib3.connectionpool Starting new HTTPS connection (1): sqladmin.googleapis.com:443
+2021-01-30 18:10:46,994 DEBUG    urllib3.connectionpool https://sqladmin.googleapis.com:443 "GET /sql/v1beta4/projects/shakeergcp/instances?alt=json&maxResults=100 HTTP/1.1" 200 None
+2021-01-30 18:10:46,997 INFO     ___FILE_ONLY___ Listed 0 items.
+
+2021-01-30 18:10:46,997 DEBUG    root            SDK update checks are disabled.

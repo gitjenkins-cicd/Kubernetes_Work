@@ -1,0 +1,46 @@
+2021-01-30 17:25:07,028 DEBUG    root            Loaded Command Group: ['gcloud', 'compute']
+2021-01-30 17:25:07,032 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'instances']
+2021-01-30 17:25:07,045 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'instances', 'list']
+2021-01-30 17:25:07,050 DEBUG    root            Running [gcloud.compute.instances.list] with arguments: []
+2021-01-30 17:25:07,341 DEBUG    urllib3.connectionpool Starting new HTTPS connection (1): compute.googleapis.com:443
+2021-01-30 17:25:08,426 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/v1 HTTP/1.1" 200 None
+2021-01-30 17:25:08,603 INFO     root            Display format: "    table(
+      name,
+      zone.basename(),
+      machineType.machine_type().basename(),
+      scheduling.preemptible.yesno(yes=true, no=''),
+      networkInterfaces[].networkIP.notnull().list():label=INTERNAL_IP,
+      networkInterfaces[].accessConfigs[0].natIP.notnull().list()      :label=EXTERNAL_IP,
+      status
+    )"
+2021-01-30 17:25:26,090 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/v1 HTTP/1.1" 200 None
+2021-01-30 17:25:26,259 INFO     root            cache collection=compute.instances api_version=v1 params=['project', 'zone', 'instance']
+2021-01-30 17:25:26,297 INFO     ___FILE_ONLY___ NAME
+2021-01-30 17:25:26,298 INFO     ___FILE_ONLY___               
+2021-01-30 17:25:26,298 INFO     ___FILE_ONLY___ ZONE
+2021-01-30 17:25:26,298 INFO     ___FILE_ONLY___             
+2021-01-30 17:25:26,298 INFO     ___FILE_ONLY___ MACHINE_TYPE
+2021-01-30 17:25:26,298 INFO     ___FILE_ONLY___   
+2021-01-30 17:25:26,298 INFO     ___FILE_ONLY___ PREEMPTIBLE
+2021-01-30 17:25:26,298 INFO     ___FILE_ONLY___   
+2021-01-30 17:25:26,298 INFO     ___FILE_ONLY___ INTERNAL_IP
+2021-01-30 17:25:26,299 INFO     ___FILE_ONLY___   
+2021-01-30 17:25:26,299 INFO     ___FILE_ONLY___ EXTERNAL_IP
+2021-01-30 17:25:26,299 INFO     ___FILE_ONLY___    
+2021-01-30 17:25:26,299 INFO     ___FILE_ONLY___ STATUS
+2021-01-30 17:25:26,299 INFO     ___FILE_ONLY___ 
+
+2021-01-30 17:25:26,299 INFO     ___FILE_ONLY___ shakeerinstance1
+2021-01-30 17:25:26,300 INFO     ___FILE_ONLY___   
+2021-01-30 17:25:26,300 INFO     ___FILE_ONLY___ europe-west2-c
+2021-01-30 17:25:26,300 INFO     ___FILE_ONLY___   
+2021-01-30 17:25:26,300 INFO     ___FILE_ONLY___ e2-micro
+2021-01-30 17:25:26,300 INFO     ___FILE_ONLY___                    
+2021-01-30 17:25:26,300 INFO     ___FILE_ONLY___ 10.10.1.2
+2021-01-30 17:25:26,301 INFO     ___FILE_ONLY___     
+2021-01-30 17:25:26,301 INFO     ___FILE_ONLY___ 35.246.24.85
+2021-01-30 17:25:26,301 INFO     ___FILE_ONLY___   
+2021-01-30 17:25:26,301 INFO     ___FILE_ONLY___ RUNNING
+2021-01-30 17:25:26,301 INFO     ___FILE_ONLY___ 
+
+2021-01-30 17:25:26,302 DEBUG    root            SDK update checks are disabled.

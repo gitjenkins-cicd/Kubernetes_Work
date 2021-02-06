@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ahmed
+  namespace: elk
+secrets:
+  - name: telegraf-secrets
+

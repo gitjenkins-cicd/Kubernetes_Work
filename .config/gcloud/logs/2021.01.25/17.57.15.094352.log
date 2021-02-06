@@ -1,0 +1,18 @@
+2021-01-25 17:57:15,096 DEBUG    root            Loaded Command Group: ['gcloud', 'config']
+2021-01-25 17:57:15,098 DEBUG    root            Loaded Command Group: ['gcloud', 'config', 'configurations']
+2021-01-25 17:57:15,099 DEBUG    root            Loaded Command Group: ['gcloud', 'config', 'configurations', 'create']
+2021-01-25 17:57:15,101 DEBUG    root            Running [gcloud.config.configurations.create] with arguments: [CONFIGURATION_NAME: "Shakeer-dev"]
+2021-01-25 17:57:15,102 DEBUG    root            (gcloud.config.configurations.create) Invalid name [Shakeer-dev] for a configuration.  Except for special cases (NONE), configuration names start with a lower case letter and contain only lower case letters a-z, digits 0-9, and hyphens '-'.
+Traceback (most recent call last):
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/calliope/cli.py", line 982, in Execute
+    resources = calliope_command.Run(cli=self, args=args)
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/calliope/backend.py", line 809, in Run
+    resources = command_instance.Run(args)
+  File "/usr/lib64/google-cloud-sdk/lib/surface/config/configurations/create.py", line 61, in Run
+    named_configs.ConfigurationStore.CreateConfig(args.configuration_name)
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/core/configurations/named_configs.py", line 230, in CreateConfig
+    _EnsureValidConfigName(config_name, allow_reserved=False)
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/core/configurations/named_configs.py", line 560, in _EnsureValidConfigName
+    raise InvalidConfigName(config_name)
+googlecloudsdk.core.configurations.named_configs.InvalidConfigName: Invalid name [Shakeer-dev] for a configuration.  Except for special cases (NONE), configuration names start with a lower case letter and contain only lower case letters a-z, digits 0-9, and hyphens '-'.
+2021-01-25 17:57:15,103 ERROR    root            (gcloud.config.configurations.create) Invalid name [Shakeer-dev] for a configuration.  Except for special cases (NONE), configuration names start with a lower case letter and contain only lower case letters a-z, digits 0-9, and hyphens '-'.

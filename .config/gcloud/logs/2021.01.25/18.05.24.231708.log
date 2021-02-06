@@ -1,0 +1,42 @@
+2021-01-25 18:05:24,235 DEBUG    root            Loaded Command Group: ['gcloud', 'projects']
+2021-01-25 18:05:24,265 DEBUG    root            Loaded Command Group: ['gcloud', 'projects', 'get_iam_policy']
+2021-01-25 18:05:24,270 DEBUG    root            Running [gcloud.projects.get-iam-policy] with arguments: [PROJECT_ID_OR_NUMBER: "shakeergcp"]
+2021-01-25 18:05:24,305 DEBUG    urllib3.connectionpool Starting new HTTPS connection (1): cloudresourcemanager.googleapis.com:443
+2021-01-25 18:05:26,412 DEBUG    urllib3.connectionpool https://cloudresourcemanager.googleapis.com:443 "POST /v1/projects/shakeergcp:getIamPolicy?alt=json HTTP/1.1" 200 None
+2021-01-25 18:05:26,415 INFO     root            Display format: "default"
+2021-01-25 18:05:26,627 INFO     ___FILE_ONLY___ bindings
+2021-01-25 18:05:26,627 INFO     ___FILE_ONLY___ :
+2021-01-25 18:05:26,627 INFO     ___FILE_ONLY___ 
+
+2021-01-25 18:05:26,627 INFO     ___FILE_ONLY___ -
+2021-01-25 18:05:26,627 INFO     ___FILE_ONLY___  
+2021-01-25 18:05:26,628 INFO     ___FILE_ONLY___ members
+2021-01-25 18:05:26,628 INFO     ___FILE_ONLY___ :
+2021-01-25 18:05:26,628 INFO     ___FILE_ONLY___ 
+
+2021-01-25 18:05:26,628 INFO     ___FILE_ONLY___   
+2021-01-25 18:05:26,628 INFO     ___FILE_ONLY___ -
+2021-01-25 18:05:26,628 INFO     ___FILE_ONLY___  
+2021-01-25 18:05:26,628 INFO     ___FILE_ONLY___ user:shakeer.uid@gmail.com
+2021-01-25 18:05:26,629 INFO     ___FILE_ONLY___ 
+
+2021-01-25 18:05:26,629 INFO     ___FILE_ONLY___   
+2021-01-25 18:05:26,629 INFO     ___FILE_ONLY___ role
+2021-01-25 18:05:26,629 INFO     ___FILE_ONLY___ :
+2021-01-25 18:05:26,629 INFO     ___FILE_ONLY___  
+2021-01-25 18:05:26,629 INFO     ___FILE_ONLY___ roles/owner
+2021-01-25 18:05:26,629 INFO     ___FILE_ONLY___ 
+
+2021-01-25 18:05:26,630 INFO     ___FILE_ONLY___ etag
+2021-01-25 18:05:26,630 INFO     ___FILE_ONLY___ :
+2021-01-25 18:05:26,630 INFO     ___FILE_ONLY___  
+2021-01-25 18:05:26,630 INFO     ___FILE_ONLY___ BwW5GEv1wJs=
+2021-01-25 18:05:26,630 INFO     ___FILE_ONLY___ 
+
+2021-01-25 18:05:26,631 INFO     ___FILE_ONLY___ version
+2021-01-25 18:05:26,631 INFO     ___FILE_ONLY___ :
+2021-01-25 18:05:26,631 INFO     ___FILE_ONLY___  
+2021-01-25 18:05:26,631 INFO     ___FILE_ONLY___ 1
+2021-01-25 18:05:26,631 INFO     ___FILE_ONLY___ 
+
+2021-01-25 18:05:26,632 DEBUG    root            SDK update checks are disabled.

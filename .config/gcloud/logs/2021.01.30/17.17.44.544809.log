@@ -1,0 +1,55 @@
+2021-01-30 17:17:44,572 DEBUG    root            Loaded Command Group: ['gcloud', 'compute']
+2021-01-30 17:17:44,600 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'ssh']
+2021-01-30 17:17:44,606 DEBUG    root            Running [gcloud.compute.ssh] with arguments: [--project: "shakeergcp", --zone: "europe-west2-c", [USER@]INSTANCE: "shakeerinstance1"]
+2021-01-30 17:17:44,884 WARNING  root            The private SSH key file for gcloud does not exist.
+2021-01-30 17:17:44,885 WARNING  root            The public SSH key file for gcloud does not exist.
+2021-01-30 17:17:44,885 WARNING  root            You do not have an SSH key for gcloud.
+2021-01-30 17:17:44,885 WARNING  root            SSH keygen will be executed to generate a key.
+2021-01-30 17:17:44,885 DEBUG    root            Running command [/usr/bin/ssh-keygen -t rsa -f /home/shakeer/.ssh/google_compute_engine].
+2021-01-30 17:17:44,886 DEBUG    root            Executing command: ['/usr/bin/ssh-keygen', '-t', 'rsa', '-f', '/home/shakeer/.ssh/google_compute_engine']
+2021-01-30 17:17:53,858 DEBUG    urllib3.connectionpool Starting new HTTPS connection (1): compute.googleapis.com:443
+2021-01-30 17:17:54,890 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/v1 HTTP/1.1" 200 None
+2021-01-30 17:17:55,701 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/v1 HTTP/1.1" 200 None
+2021-01-30 17:17:55,726 DEBUG    root            SSH Known Hosts File [/home/shakeer/.ssh/google_compute_known_hosts] could not be opened: Unable to read file [/home/shakeer/.ssh/google_compute_known_hosts]: [Errno 2] No such file or directory: '/home/shakeer/.ssh/google_compute_known_hosts'
+2021-01-30 17:17:55,726 DEBUG    root            Current SSH keys in project: ['shakeer_uid:ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDDsNU2iWjWEK+jI7Rhl/KfjzNtrSGf41ADmzAtDBwdWdt4F4g/XHjNRqBtTTNs1Fu0F+5p3PSk188RglWnCT5YBvKp44NyKwbM/V2Jd7V6O0/rGGh4httPEmQ5ngadKi/Gy163eZEoeAnHx/aytb3YUNSwwq9pWizycbkmXnYML9bS/+CYw4u292MgWmjQ+/egKEI7s4Ph5g5mQ+aKfQOgfwaryJNmkFrBPwDB5VX1+2R1SNzKu2mRIMALISAFct7l32mIHpnvE1B5avnHJB9+nYX2mdw8CFnz+XRpkHGuKi0Q3t8X2x0O4mFpQH+wTYq4EG42kMmM04bkgY2NcvBh google-ssh {"userName":"shakeer.uid@gmail.com","expireOn":"2021-01-26T13:55:30+0000"}', 'shakeer_uid:ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBMai8n43zlIxye1Pcnno0i64nt/kjNqeGoW1l2vXl995ZoRzpn3A04OWXC0IBQiV6+jJjcNPZzc5ia3Mw9Gf2iQ= google-ssh {"userName":"shakeer.uid@gmail.com","expireOn":"2021-01-26T13:55:28+0000"}']
+2021-01-30 17:17:55,732 INFO     ___FILE_ONLY___ Updating project ssh metadata...
+2021-01-30 17:17:57,352 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/v1 HTTP/1.1" 200 None
+2021-01-30 17:17:57,355 DEBUG    root            Operations to inspect: [<Operation
+ id: 4975086498781838251
+ insertTime: '2021-01-30T17:17:56.735-08:00'
+ kind: 'compute#operation'
+ name: 'operation-1612055876049-5ba2801d99952-e6e26c17-e0550e26'
+ operationType: 'compute.projects.setCommonInstanceMetadata'
+ progress: 0
+ selfLink: 'https://www.googleapis.com/compute/v1/projects/shakeergcp/global/operations/operation-1612055876049-5ba2801d99952-e6e26c17-e0550e26'
+ startTime: '2021-01-30T17:17:56.739-08:00'
+ status: StatusValueValuesEnum(RUNNING, 2)
+ targetId: 36045258912
+ targetLink: 'https://www.googleapis.com/compute/v1/projects/shakeergcp'
+ user: 'shakeer.uid@gmail.com'
+ warnings: []>]
+2021-01-30 17:18:07,889 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/v1 HTTP/1.1" 200 None
+2021-01-30 17:18:07,894 DEBUG    root            Operations to inspect: [<Operation
+ endTime: '2021-01-30T17:18:07.459-08:00'
+ id: 4975086498781838251
+ insertTime: '2021-01-30T17:17:56.735-08:00'
+ kind: 'compute#operation'
+ name: 'operation-1612055876049-5ba2801d99952-e6e26c17-e0550e26'
+ operationType: 'compute.projects.setCommonInstanceMetadata'
+ progress: 100
+ selfLink: 'https://www.googleapis.com/compute/v1/projects/shakeergcp/global/operations/operation-1612055876049-5ba2801d99952-e6e26c17-e0550e26'
+ startTime: '2021-01-30T17:17:56.739-08:00'
+ status: StatusValueValuesEnum(DONE, 0)
+ targetId: 36045258912
+ targetLink: 'https://www.googleapis.com/compute/v1/projects/shakeergcp'
+ user: 'shakeer.uid@gmail.com'
+ warnings: []>]
+2021-01-30 17:18:07,895 INFO     ___FILE_ONLY___ Updated [https://www.googleapis.com/compute/v1/projects/shakeergcp].
+
+2021-01-30 17:18:08,638 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/v1 HTTP/1.1" 200 None
+2021-01-30 17:18:08,818 INFO     ___FILE_ONLY___ Waiting for SSH key to propagate.
+
+2021-01-30 17:18:08,822 DEBUG    root            Running command [/usr/bin/ssh -T -i /home/shakeer/.ssh/google_compute_engine -o CheckHostIP=no -o HostKeyAlias=compute.6582287372891437726 -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/home/shakeer/.ssh/google_compute_known_hosts shakeer@35.246.24.85 -- true].
+2021-01-30 17:18:08,822 DEBUG    root            Executing command: ['/usr/bin/ssh', '-T', '-i', '/home/shakeer/.ssh/google_compute_engine', '-o', 'CheckHostIP=no', '-o', 'HostKeyAlias=compute.6582287372891437726', '-o', 'IdentitiesOnly=yes', '-o', 'StrictHostKeyChecking=no', '-o', 'UserKnownHostsFile=/home/shakeer/.ssh/google_compute_known_hosts', 'shakeer@35.246.24.85', '--', 'true']
+2021-01-30 17:18:13,150 DEBUG    root            Running command [/usr/bin/ssh -t -i /home/shakeer/.ssh/google_compute_engine -o CheckHostIP=no -o HostKeyAlias=compute.6582287372891437726 -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/home/shakeer/.ssh/google_compute_known_hosts shakeer@35.246.24.85].
+2021-01-30 17:18:13,152 DEBUG    root            Executing command: ['/usr/bin/ssh', '-t', '-i', '/home/shakeer/.ssh/google_compute_engine', '-o', 'CheckHostIP=no', '-o', 'HostKeyAlias=compute.6582287372891437726', '-o', 'IdentitiesOnly=yes', '-o', 'StrictHostKeyChecking=no', '-o', 'UserKnownHostsFile=/home/shakeer/.ssh/google_compute_known_hosts', 'shakeer@35.246.24.85']

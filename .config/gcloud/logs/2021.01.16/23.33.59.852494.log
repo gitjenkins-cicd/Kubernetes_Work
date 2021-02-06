@@ -1,0 +1,13 @@
+2021-01-16 23:33:59,853 DEBUG    root            Loaded Command Group: ['gcloud', 'iam']
+2021-01-16 23:33:59,858 DEBUG    root            Loaded Command Group: ['gcloud', 'iam', 'list_grantable_roles']
+2021-01-16 23:33:59,863 DEBUG    root            Running [gcloud.iam.list-grantable-roles] with arguments: [RESOURCE: "cloudresourcemanager.googleapis.com/projects/opportune-epoch-301314"]
+2021-01-16 23:33:59,864 DEBUG    root            (gcloud.iam.list-grantable-roles) The given resource is not a valid full resource name or URL.
+Traceback (most recent call last):
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/calliope/cli.py", line 982, in Execute
+    resources = calliope_command.Run(cli=self, args=args)
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/calliope/backend.py", line 809, in Run
+    resources = command_instance.Run(args)
+  File "/usr/lib64/google-cloud-sdk/lib/surface/iam/list_grantable_roles.py", line 78, in Run
+    'The given resource is not a valid full resource name or URL.')
+googlecloudsdk.api_lib.iam.exceptions.InvalidResourceException: The given resource is not a valid full resource name or URL.
+2021-01-16 23:33:59,865 ERROR    root            (gcloud.iam.list-grantable-roles) The given resource is not a valid full resource name or URL.

@@ -1,0 +1,11 @@
+2021-01-19 17:37:03,255 DEBUG    root            Loaded Command Group: ['gcloud', 'compute']
+2021-01-19 17:37:03,259 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'instances']
+2021-01-19 17:37:03,274 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'instances', 'list']
+2021-01-19 17:37:03,279 DEBUG    root            Running [gcloud.compute.instances.list] with arguments: []
+2021-01-19 17:37:03,557 DEBUG    urllib3.connectionpool Starting new HTTPS connection (1): compute.googleapis.com:443
+2021-01-19 17:37:04,903 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/v1 HTTP/1.1" 200 None
+2021-01-19 17:37:35,610 INFO     ___FILE_ONLY___ 
+
+Command killed by keyboard interrupt
+
+

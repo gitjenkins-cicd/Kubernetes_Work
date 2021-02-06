@@ -1,0 +1,46 @@
+2021-01-30 16:55:06,664 DEBUG    root            Loaded Command Group: ['gcloud', 'compute']
+2021-01-30 16:55:06,669 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'networks']
+2021-01-30 16:55:06,683 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'networks', 'describe']
+2021-01-30 16:55:06,686 DEBUG    root            Running [gcloud.compute.networks.describe] with arguments: [--help: "None", NAME: "default"]
+2021-01-30 16:55:06,688 DEBUG    root            Loaded Command Group: ['gcloud', 'alpha', 'compute']
+2021-01-30 16:55:06,693 DEBUG    root            Loaded Command Group: ['gcloud', 'alpha', 'compute', 'networks']
+2021-01-30 16:55:06,695 DEBUG    root            Loaded Command Group: ['gcloud', 'alpha', 'compute', 'networks', 'describe']
+2021-01-30 16:55:06,697 DEBUG    root            Loaded Command Group: ['gcloud', 'beta', 'compute']
+2021-01-30 16:55:06,702 DEBUG    root            Loaded Command Group: ['gcloud', 'beta', 'compute', 'networks']
+2021-01-30 16:55:06,706 DEBUG    root            Loaded Command Group: ['gcloud', 'beta', 'compute', 'networks', 'describe']
+2021-01-30 16:55:06,718 DEBUG    root            Loaded Command Group: ['gcloud', 'help']
+2021-01-30 16:55:06,729 INFO     ___FILE_ONLY___ [m[1mNAME[m
+    gcloud compute networks describe - describe a Compute Engine network
+
+[m[1mSYNOPSIS[m
+    [1mgcloud compute networks describe[m [4mNAME[m [[4mGCLOUD_WIDE_FLAG ...[m]
+
+[m[1mDESCRIPTION[m
+    [1mgcloud compute networks describe[m displays all data associated with Compute
+    Engine network in a project.
+
+[m[1mPOSITIONAL ARGUMENTS[m
+     [4mNAME[m
+        Name of the network to describe.
+
+[m[1mGCLOUD WIDE FLAGS[m
+    These flags are available to all commands: --account, --billing-project,
+    --configuration, --flags-file, --flatten, --format, --help,
+    --impersonate-service-account, --log-http, --project, --quiet,
+    --trace-token, --user-output-enabled, --verbosity.
+
+    Run [1m$ gcloud help[m for details.
+
+[m[1mEXAMPLES[m
+    To describe a network with the name 'network-name', run:
+
+        $ gcloud compute networks describe network-name
+
+[m[1mNOTES[m
+    These variants are also available:
+
+        $ gcloud alpha compute networks describe
+
+        $ gcloud beta compute networks describe
+
+[m

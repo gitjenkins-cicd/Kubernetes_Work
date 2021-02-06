@@ -1,0 +1,5 @@
+2021-01-19 17:22:03,394 DEBUG    root            Loaded Command Group: ['gcloud', 'cloud_shell']
+2021-01-19 17:22:03,402 ERROR    root            (gcloud.cloud-shell) Command name argument expected.
+2021-01-19 17:22:03,422 DEBUG    root            Loaded Command Group: ['gcloud', 'cloud-shell', 'ssh']
+2021-01-19 17:22:03,426 DEBUG    root            Loaded Command Group: ['gcloud', 'cloud-shell', 'scp']
+2021-01-19 17:22:03,430 DEBUG    root            Loaded Command Group: ['gcloud', 'cloud-shell', 'get_mount_command']

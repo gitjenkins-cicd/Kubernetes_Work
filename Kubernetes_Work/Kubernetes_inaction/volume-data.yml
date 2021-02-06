@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: randomnumber
+spec:
+  containers:
+  - image: alpine
+    name: alpine
+    command: ["/bin/sh","-c"]
+    #args: ["shuf -i 0-1000 -n 1 >> /opt/numberout.csv;"]
+    args:
+          - while true; do
+              date >> /opt/numberout.csv;
+              top >> /opt/numberout.csv;
+              sleep 1;
+            done
+    volumeMounts:
+    - mountPath: /opt
+      name: data-volume
+  volumes:
+  - name: data-volume
+    hostPath:
+      path: /data
+      type: Directory
+
+

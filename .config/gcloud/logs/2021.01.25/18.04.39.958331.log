@@ -1,0 +1,39 @@
+2021-01-25 18:04:39,962 DEBUG    root            Loaded Command Group: ['gcloud', 'projects']
+2021-01-25 18:04:39,965 DEBUG    root            Loaded Command Group: ['gcloud', 'projects', 'describe']
+2021-01-25 18:04:39,968 DEBUG    root            Running [gcloud.projects.describe] with arguments: [PROJECT_ID_OR_NUMBER: "shakeergcp"]
+2021-01-25 18:04:40,003 DEBUG    urllib3.connectionpool Starting new HTTPS connection (1): cloudresourcemanager.googleapis.com:443
+2021-01-25 18:04:41,990 DEBUG    urllib3.connectionpool https://cloudresourcemanager.googleapis.com:443 "GET /v1/projects/shakeergcp?alt=json HTTP/1.1" 200 None
+2021-01-25 18:04:41,995 INFO     root            Display format: "default"
+2021-01-25 18:04:42,171 INFO     ___FILE_ONLY___ createTime
+2021-01-25 18:04:42,171 INFO     ___FILE_ONLY___ :
+2021-01-25 18:04:42,172 INFO     ___FILE_ONLY___  '
+2021-01-25 18:04:42,172 INFO     ___FILE_ONLY___ 2021-01-17T13:08:06.859Z
+2021-01-25 18:04:42,172 INFO     ___FILE_ONLY___ '
+2021-01-25 18:04:42,172 INFO     ___FILE_ONLY___ 
+
+2021-01-25 18:04:42,172 INFO     ___FILE_ONLY___ lifecycleState
+2021-01-25 18:04:42,172 INFO     ___FILE_ONLY___ :
+2021-01-25 18:04:42,172 INFO     ___FILE_ONLY___  
+2021-01-25 18:04:42,173 INFO     ___FILE_ONLY___ ACTIVE
+2021-01-25 18:04:42,173 INFO     ___FILE_ONLY___ 
+
+2021-01-25 18:04:42,173 INFO     ___FILE_ONLY___ name
+2021-01-25 18:04:42,174 INFO     ___FILE_ONLY___ :
+2021-01-25 18:04:42,174 INFO     ___FILE_ONLY___  
+2021-01-25 18:04:42,174 INFO     ___FILE_ONLY___ ShakeerGCP
+2021-01-25 18:04:42,174 INFO     ___FILE_ONLY___ 
+
+2021-01-25 18:04:42,174 INFO     ___FILE_ONLY___ projectId
+2021-01-25 18:04:42,174 INFO     ___FILE_ONLY___ :
+2021-01-25 18:04:42,174 INFO     ___FILE_ONLY___  
+2021-01-25 18:04:42,175 INFO     ___FILE_ONLY___ shakeergcp
+2021-01-25 18:04:42,175 INFO     ___FILE_ONLY___ 
+
+2021-01-25 18:04:42,175 INFO     ___FILE_ONLY___ projectNumber
+2021-01-25 18:04:42,175 INFO     ___FILE_ONLY___ :
+2021-01-25 18:04:42,176 INFO     ___FILE_ONLY___  '
+2021-01-25 18:04:42,176 INFO     ___FILE_ONLY___ 36045258912
+2021-01-25 18:04:42,176 INFO     ___FILE_ONLY___ '
+2021-01-25 18:04:42,176 INFO     ___FILE_ONLY___ 
+
+2021-01-25 18:04:42,177 DEBUG    root            SDK update checks are disabled.

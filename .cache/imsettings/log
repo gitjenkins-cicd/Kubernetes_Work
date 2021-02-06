@@ -1,0 +1,28 @@
+[ 1612577714.915693]: IMSettings-Daemon[2020]: INFO: Starting imsettings-daemon...
+[ 1612577714.916105]: IMSettings-Daemon[2020]: INFO:   [HOME=/home/shakeer/.config/imsettings]
+[ 1612577714.916195]: IMSettings-Daemon[2020]: INFO:   [XINPUTRCDIR=/etc/X11/xinit/]
+[ 1612577714.916267]: IMSettings-Daemon[2020]: INFO:   [XINPUTDIR=/etc/X11/xinit/xinput.d/]
+
+[ 1612577714.916334]: IMSettings-Daemon[2020]: INFO:   [MODULEDIR=/usr/lib64/imsettings]
+
+[ 1612577714.916407]: IMSettings-Daemon[2020]: INFO:   [MODULES=gsettings]
+
+imsettings information
+==========================
+XINPUTRC: N/A
+Is DBus enabled: yes
+Is imsettings enabled: yes
+Is GTK+ supported: yes
+Is Qt supported: no
+DESKTOP: gnome-classic
+GUESS_DESKTOP: $GDMSESSION
+DISABLE_IMSETTINGS: 
+IMSETTINGS_DISABLE_DESKTOP_CHECK: 
+DBUS_SESSION_BUS_ADDRESS: unix:abstract=/tmp/dbus-V0knZpjBQJ,guid=cff222e1312579bef6d89ac4601dfbb2
+GTK_IM_MODULE: 
+QT_IM_MODULE: 
+XMODIFIERS: 
+IMSETTINGS_MODULE: none
+IMSETTINGS_INTEGRATE_DESKTOP: yes
+
+org.gnome.SettingsDaemon.Keyboard.desktop exists. imsettings is going to be disabled.

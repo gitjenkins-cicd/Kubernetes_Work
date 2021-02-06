@@ -1,0 +1,240 @@
+2021-01-30 16:54:35,647 DEBUG    root            Loaded Command Group: ['gcloud', 'compute']
+2021-01-30 16:54:35,650 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'networks']
+2021-01-30 16:54:35,653 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'networks', 'subnets']
+2021-01-30 16:54:35,673 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'networks', 'subnets', 'list']
+2021-01-30 16:54:35,683 DEBUG    root            Running [gcloud.compute.networks.subnets.list] with arguments: []
+2021-01-30 16:54:35,686 INFO     root            Display format: "    table(
+      name,
+      region.basename(),
+      network.basename(),
+      ipCidrRange:label=RANGE
+    )"
+2021-01-30 16:54:36,009 DEBUG    urllib3.connectionpool Starting new HTTPS connection (1): compute.googleapis.com:443
+2021-01-30 16:54:37,018 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/v1 HTTP/1.1" 200 None
+2021-01-30 16:54:37,281 INFO     root            cache collection=compute.subnetworks api_version=beta params=['project', 'region', 'subnetwork']
+2021-01-30 16:54:37,331 INFO     ___FILE_ONLY___ NAME
+2021-01-30 16:54:37,332 INFO     ___FILE_ONLY___      
+2021-01-30 16:54:37,332 INFO     ___FILE_ONLY___ REGION
+2021-01-30 16:54:37,332 INFO     ___FILE_ONLY___                    
+2021-01-30 16:54:37,332 INFO     ___FILE_ONLY___ NETWORK
+2021-01-30 16:54:37,333 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,333 INFO     ___FILE_ONLY___ RANGE
+2021-01-30 16:54:37,333 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:54:37,333 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,334 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,334 INFO     ___FILE_ONLY___ us-central1
+2021-01-30 16:54:37,334 INFO     ___FILE_ONLY___               
+2021-01-30 16:54:37,334 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,334 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,335 INFO     ___FILE_ONLY___ 10.128.0.0/20
+2021-01-30 16:54:37,335 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:54:37,335 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,335 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,335 INFO     ___FILE_ONLY___ europe-west1
+2021-01-30 16:54:37,336 INFO     ___FILE_ONLY___              
+2021-01-30 16:54:37,336 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,336 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,336 INFO     ___FILE_ONLY___ 10.132.0.0/20
+2021-01-30 16:54:37,336 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:54:37,336 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,337 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,337 INFO     ___FILE_ONLY___ us-west1
+2021-01-30 16:54:37,337 INFO     ___FILE_ONLY___                  
+2021-01-30 16:54:37,337 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,338 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,338 INFO     ___FILE_ONLY___ 10.138.0.0/20
+2021-01-30 16:54:37,338 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:54:37,338 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,338 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,338 INFO     ___FILE_ONLY___ asia-east1
+2021-01-30 16:54:37,339 INFO     ___FILE_ONLY___                
+2021-01-30 16:54:37,339 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,339 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,339 INFO     ___FILE_ONLY___ 10.140.0.0/20
+2021-01-30 16:54:37,340 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:54:37,340 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,340 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,340 INFO     ___FILE_ONLY___ us-east1
+2021-01-30 16:54:37,341 INFO     ___FILE_ONLY___                  
+2021-01-30 16:54:37,341 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,341 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,341 INFO     ___FILE_ONLY___ 10.142.0.0/20
+2021-01-30 16:54:37,341 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:54:37,341 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,342 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,342 INFO     ___FILE_ONLY___ asia-northeast1
+2021-01-30 16:54:37,342 INFO     ___FILE_ONLY___           
+2021-01-30 16:54:37,342 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,342 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,343 INFO     ___FILE_ONLY___ 10.146.0.0/20
+2021-01-30 16:54:37,343 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:54:37,343 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,343 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,343 INFO     ___FILE_ONLY___ asia-southeast1
+2021-01-30 16:54:37,344 INFO     ___FILE_ONLY___           
+2021-01-30 16:54:37,344 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,344 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,344 INFO     ___FILE_ONLY___ 10.148.0.0/20
+2021-01-30 16:54:37,344 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:54:37,344 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,345 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,345 INFO     ___FILE_ONLY___ us-east4
+2021-01-30 16:54:37,345 INFO     ___FILE_ONLY___                  
+2021-01-30 16:54:37,345 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,345 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,346 INFO     ___FILE_ONLY___ 10.150.0.0/20
+2021-01-30 16:54:37,346 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:54:37,346 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,346 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,346 INFO     ___FILE_ONLY___ australia-southeast1
+2021-01-30 16:54:37,346 INFO     ___FILE_ONLY___      
+2021-01-30 16:54:37,347 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,347 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,347 INFO     ___FILE_ONLY___ 10.152.0.0/20
+2021-01-30 16:54:37,347 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:54:37,347 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,347 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,348 INFO     ___FILE_ONLY___ europe-west2
+2021-01-30 16:54:37,348 INFO     ___FILE_ONLY___              
+2021-01-30 16:54:37,348 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,348 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,348 INFO     ___FILE_ONLY___ 10.154.0.0/20
+2021-01-30 16:54:37,349 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:54:37,349 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,349 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,349 INFO     ___FILE_ONLY___ europe-west3
+2021-01-30 16:54:37,350 INFO     ___FILE_ONLY___              
+2021-01-30 16:54:37,350 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,350 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,350 INFO     ___FILE_ONLY___ 10.156.0.0/20
+2021-01-30 16:54:37,350 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:54:37,350 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,351 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,351 INFO     ___FILE_ONLY___ southamerica-east1
+2021-01-30 16:54:37,351 INFO     ___FILE_ONLY___        
+2021-01-30 16:54:37,351 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,351 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,352 INFO     ___FILE_ONLY___ 10.158.0.0/20
+2021-01-30 16:54:37,352 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:54:37,352 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,352 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,352 INFO     ___FILE_ONLY___ asia-south1
+2021-01-30 16:54:37,352 INFO     ___FILE_ONLY___               
+2021-01-30 16:54:37,352 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,353 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,353 INFO     ___FILE_ONLY___ 10.160.0.0/20
+2021-01-30 16:54:37,353 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:54:37,353 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,353 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,353 INFO     ___FILE_ONLY___ northamerica-northeast1
+2021-01-30 16:54:37,353 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,353 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,353 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,353 INFO     ___FILE_ONLY___ 10.162.0.0/20
+2021-01-30 16:54:37,354 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:54:37,354 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,354 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,354 INFO     ___FILE_ONLY___ europe-west4
+2021-01-30 16:54:37,355 INFO     ___FILE_ONLY___              
+2021-01-30 16:54:37,355 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,355 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,356 INFO     ___FILE_ONLY___ 10.164.0.0/20
+2021-01-30 16:54:37,356 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:54:37,356 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,356 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,356 INFO     ___FILE_ONLY___ europe-north1
+2021-01-30 16:54:37,357 INFO     ___FILE_ONLY___             
+2021-01-30 16:54:37,357 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,357 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,357 INFO     ___FILE_ONLY___ 10.166.0.0/20
+2021-01-30 16:54:37,358 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:54:37,358 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,358 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,358 INFO     ___FILE_ONLY___ us-west2
+2021-01-30 16:54:37,358 INFO     ___FILE_ONLY___                  
+2021-01-30 16:54:37,359 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,359 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,359 INFO     ___FILE_ONLY___ 10.168.0.0/20
+2021-01-30 16:54:37,359 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:54:37,359 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,360 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,360 INFO     ___FILE_ONLY___ asia-east2
+2021-01-30 16:54:37,360 INFO     ___FILE_ONLY___                
+2021-01-30 16:54:37,360 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,360 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,361 INFO     ___FILE_ONLY___ 10.170.0.0/20
+2021-01-30 16:54:37,361 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:54:37,361 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,361 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,361 INFO     ___FILE_ONLY___ europe-west6
+2021-01-30 16:54:37,362 INFO     ___FILE_ONLY___              
+2021-01-30 16:54:37,362 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,363 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,363 INFO     ___FILE_ONLY___ 10.172.0.0/20
+2021-01-30 16:54:37,363 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:54:37,363 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,364 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,364 INFO     ___FILE_ONLY___ asia-northeast2
+2021-01-30 16:54:37,364 INFO     ___FILE_ONLY___           
+2021-01-30 16:54:37,364 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,364 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,365 INFO     ___FILE_ONLY___ 10.174.0.0/20
+2021-01-30 16:54:37,365 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:54:37,365 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,365 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,365 INFO     ___FILE_ONLY___ asia-northeast3
+2021-01-30 16:54:37,366 INFO     ___FILE_ONLY___           
+2021-01-30 16:54:37,366 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,366 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,366 INFO     ___FILE_ONLY___ 10.178.0.0/20
+2021-01-30 16:54:37,367 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:54:37,367 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,367 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,367 INFO     ___FILE_ONLY___ us-west3
+2021-01-30 16:54:37,368 INFO     ___FILE_ONLY___                  
+2021-01-30 16:54:37,368 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,368 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,368 INFO     ___FILE_ONLY___ 10.180.0.0/20
+2021-01-30 16:54:37,368 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:54:37,369 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,369 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,369 INFO     ___FILE_ONLY___ us-west4
+2021-01-30 16:54:37,369 INFO     ___FILE_ONLY___                  
+2021-01-30 16:54:37,369 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,370 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,370 INFO     ___FILE_ONLY___ 10.182.0.0/20
+2021-01-30 16:54:37,370 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:54:37,370 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,370 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,370 INFO     ___FILE_ONLY___ asia-southeast2
+2021-01-30 16:54:37,371 INFO     ___FILE_ONLY___           
+2021-01-30 16:54:37,371 INFO     ___FILE_ONLY___ default
+2021-01-30 16:54:37,371 INFO     ___FILE_ONLY___   
+2021-01-30 16:54:37,372 INFO     ___FILE_ONLY___ 10.184.0.0/20
+2021-01-30 16:54:37,372 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:54:37,373 DEBUG    root            SDK update checks are disabled.

@@ -1,0 +1,3 @@
+2021-01-16 23:29:49,260 DEBUG    root            Loaded Command Group: ['gcloud', 'iam']
+2021-01-16 23:29:49,265 DEBUG    root            Loaded Command Group: ['gcloud', 'iam', 'list_grantable_roles']
+2021-01-16 23:29:49,271 ERROR    root            (gcloud.iam.list-grantable-roles) argument RESOURCE: Must be specified.

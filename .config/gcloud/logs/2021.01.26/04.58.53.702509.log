@@ -1,0 +1,24 @@
+2021-01-26 04:58:53,709 DEBUG    root            Loaded Command Group: ['gcloud', 'config']
+2021-01-26 04:58:53,731 DEBUG    root            Loaded Command Group: ['gcloud', 'config', 'set']
+2021-01-26 04:58:53,743 DEBUG    root            Running [gcloud.config.set] with arguments: [SECTION/PROPERTY: "account=shakeer.wls@gmail.com", VALUE: "project=shakeergcp"]
+2021-01-26 04:58:53,747 DEBUG    root            (gcloud.config.set) Section [core] has no property [account=shakeer.wls@gmail.com].
+Traceback (most recent call last):
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/core/properties.py", line 688, in Property
+    return self.__properties[property_name]
+KeyError: 'account=shakeer.wls@gmail.com'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/calliope/cli.py", line 982, in Execute
+    resources = calliope_command.Run(cli=self, args=args)
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/calliope/backend.py", line 809, in Run
+    resources = command_instance.Run(args)
+  File "/usr/lib64/google-cloud-sdk/lib/surface/config/set.py", line 154, in Run
+    prop = properties.FromString(args.property)
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/core/properties.py", line 2664, in FromString
+    return VALUES.Section(section).Property(prop)
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/core/properties.py", line 691, in Property
+    s=self.__name, p=property_name))
+googlecloudsdk.core.properties.NoSuchPropertyError: Section [core] has no property [account=shakeer.wls@gmail.com].
+2021-01-26 04:58:53,759 ERROR    root            (gcloud.config.set) Section [core] has no property [account=shakeer.wls@gmail.com].

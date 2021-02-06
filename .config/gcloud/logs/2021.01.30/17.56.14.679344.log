@@ -1,0 +1,40 @@
+2021-01-30 17:56:14,708 DEBUG    root            Loaded Command Group: ['gcloud', 'compute']
+2021-01-30 17:56:14,713 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'networks']
+2021-01-30 17:56:14,727 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'networks', 'list']
+2021-01-30 17:56:14,733 DEBUG    root            Running [gcloud.compute.networks.list] with arguments: []
+2021-01-30 17:56:15,039 INFO     root            Display format: "    table(
+      name,
+      x_gcloud_subnet_mode:label=SUBNET_MODE,
+      x_gcloud_bgp_routing_mode:label=BGP_ROUTING_MODE,
+      IPv4Range:label=IPV4_RANGE,
+      gatewayIPv4
+    )"
+2021-01-30 17:56:15,048 DEBUG    urllib3.connectionpool Starting new HTTPS connection (1): compute.googleapis.com:443
+2021-01-30 17:56:16,467 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/v1 HTTP/1.1" 200 None
+2021-01-30 17:56:16,665 INFO     root            cache collection=compute.networks api_version=v1 params=['project', 'network']
+2021-01-30 17:56:16,707 INFO     ___FILE_ONLY___ NAME
+2021-01-30 17:56:16,707 INFO     ___FILE_ONLY___      
+2021-01-30 17:56:16,707 INFO     ___FILE_ONLY___ SUBNET_MODE
+2021-01-30 17:56:16,708 INFO     ___FILE_ONLY___   
+2021-01-30 17:56:16,708 INFO     ___FILE_ONLY___ BGP_ROUTING_MODE
+2021-01-30 17:56:16,708 INFO     ___FILE_ONLY___   
+2021-01-30 17:56:16,708 INFO     ___FILE_ONLY___ IPV4_RANGE
+2021-01-30 17:56:16,708 INFO     ___FILE_ONLY___   
+2021-01-30 17:56:16,708 INFO     ___FILE_ONLY___ GATEWAY_IPV4
+2021-01-30 17:56:16,708 INFO     ___FILE_ONLY___ 
+
+2021-01-30 17:56:16,708 INFO     ___FILE_ONLY___ default
+2021-01-30 17:56:16,709 INFO     ___FILE_ONLY___   
+2021-01-30 17:56:16,709 INFO     ___FILE_ONLY___ AUTO
+2021-01-30 17:56:16,709 INFO     ___FILE_ONLY___          
+2021-01-30 17:56:16,709 INFO     ___FILE_ONLY___ REGIONAL
+2021-01-30 17:56:16,710 INFO     ___FILE_ONLY___ 
+
+2021-01-30 17:56:16,710 INFO     ___FILE_ONLY___ vpc-2
+2021-01-30 17:56:16,710 INFO     ___FILE_ONLY___     
+2021-01-30 17:56:16,710 INFO     ___FILE_ONLY___ CUSTOM
+2021-01-30 17:56:16,710 INFO     ___FILE_ONLY___        
+2021-01-30 17:56:16,710 INFO     ___FILE_ONLY___ REGIONAL
+2021-01-30 17:56:16,710 INFO     ___FILE_ONLY___ 
+
+2021-01-30 17:56:16,711 DEBUG    root            SDK update checks are disabled.

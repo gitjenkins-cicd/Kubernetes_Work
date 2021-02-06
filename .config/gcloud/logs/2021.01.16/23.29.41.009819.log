@@ -1,0 +1,9 @@
+2021-01-16 23:29:41,015 DEBUG    root            Loaded Command Group: ['gcloud', 'iam']
+2021-01-16 23:29:41,022 ERROR    root            (gcloud.iam) Command name argument expected.
+2021-01-16 23:29:41,028 DEBUG    root            Loaded Command Group: ['gcloud', 'iam', 'list_testable_permissions']
+2021-01-16 23:29:41,030 DEBUG    root            Loaded Command Group: ['gcloud', 'iam', 'service_accounts']
+2021-01-16 23:29:41,033 DEBUG    root            No implementation for release track [GA] for element: [/usr/lib64/google-cloud-sdk/lib/surface/iam/policies]
+2021-01-16 23:29:41,034 DEBUG    root            Loaded Command Group: ['gcloud', 'iam', 'list_grantable_roles']
+2021-01-16 23:29:41,037 DEBUG    root            Loaded Command Group: ['gcloud', 'iam', 'roles']
+2021-01-16 23:29:41,041 DEBUG    root            Loaded Command Group: ['gcloud', 'iam', 'workload_identity_pools']
+2021-01-16 23:29:41,044 DEBUG    root            No implementation for release track [GA] for element: [/usr/lib64/google-cloud-sdk/lib/surface/iam/simulator]

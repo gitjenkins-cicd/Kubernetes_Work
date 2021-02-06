@@ -1,0 +1,17 @@
+2021-01-31 17:08:12,610 DEBUG    root            Loaded Command Group: ['gcloud', 'container']
+2021-01-31 17:08:12,624 DEBUG    root            Loaded Command Group: ['gcloud', 'container', 'clusters']
+2021-01-31 17:08:12,642 DEBUG    root            Loaded Command Group: ['gcloud', 'container', 'clusters', 'list']
+2021-01-31 17:08:12,778 DEBUG    root            Running [gcloud.container.clusters.list] with arguments: []
+2021-01-31 17:08:13,747 INFO     root            Display format: "
+    table(
+        name,
+        zone:label=LOCATION,
+        master_version():label=MASTER_VERSION,
+        endpoint:label=MASTER_IP,
+        nodePools[0].config.machineType,
+        currentNodeVersion:label=NODE_VERSION,
+        firstof(currentNodeCount,initialNodeCount):label=NUM_NODES,
+        status
+    )
+"
+2021-01-31 17:08:13,751 DEBUG    root            SDK update checks are disabled.

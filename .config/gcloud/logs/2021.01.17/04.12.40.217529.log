@@ -1,0 +1,39 @@
+2021-01-17 04:12:40,220 DEBUG    root            Loaded Command Group: ['gcloud', 'components']
+2021-01-17 04:12:40,231 DEBUG    root            Loaded Command Group: ['gcloud', 'components', 'install']
+2021-01-17 04:12:40,242 DEBUG    root            Running [gcloud.components.install] with arguments: [COMPONENT-IDS:1: "['app-engine-python']"]
+2021-01-17 04:12:40,333 DEBUG    root            (gcloud.components.install) 
+You cannot perform this action because the Cloud SDK component manager 
+is disabled for this installation. You can run the following command 
+to achieve the same result for this installation: 
+
+sudo yum install google-cloud-sdk-app-engine-python
+
+Traceback (most recent call last):
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/calliope/cli.py", line 982, in Execute
+    resources = calliope_command.Run(cli=self, args=args)
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/calliope/backend.py", line 809, in Run
+    resources = command_instance.Run(args)
+  File "/usr/lib64/google-cloud-sdk/lib/surface/components/install.py", line 84, in Run
+    args.component_ids, allow_no_backup=args.allow_no_backup)
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/core/updater/update_manager.py", line 861, in Install
+    restart_args=restart_args)
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/core/updater/update_manager.py", line 893, in Update
+    components=update_seed, command='update')
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/core/updater/update_manager.py", line 532, in _CheckIfDisabledAndThrowError
+    raise UpdaterDisabledError(mapping_message)
+googlecloudsdk.core.updater.update_manager.UpdaterDisabledError: 
+You cannot perform this action because the Cloud SDK component manager 
+is disabled for this installation. You can run the following command 
+to achieve the same result for this installation: 
+
+sudo yum install google-cloud-sdk-app-engine-python
+
+
+2021-01-17 04:12:40,340 ERROR    root            (gcloud.components.install) 
+You cannot perform this action because the Cloud SDK component manager 
+is disabled for this installation. You can run the following command 
+to achieve the same result for this installation: 
+
+sudo yum install google-cloud-sdk-app-engine-python
+
+

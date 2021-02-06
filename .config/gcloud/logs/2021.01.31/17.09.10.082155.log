@@ -1,0 +1,87 @@
+2021-01-31 17:09:10,091 DEBUG    root            Loaded Command Group: ['gcloud', 'docker']
+2021-01-31 17:09:10,098 DEBUG    root            Running [gcloud.docker] with arguments: [--help: "None"]
+2021-01-31 17:09:10,108 DEBUG    root            No implementation for release track [ALPHA] for element: [/usr/lib64/google-cloud-sdk/lib/surface/docker]
+2021-01-31 17:09:10,110 DEBUG    root            No implementation for release track [BETA] for element: [/usr/lib64/google-cloud-sdk/lib/surface/docker]
+2021-01-31 17:09:10,129 DEBUG    root            Loaded Command Group: ['gcloud', 'help']
+2021-01-31 17:09:10,141 DEBUG    root            Loaded Command Group: ['gcloud', 'auth']
+2021-01-31 17:09:10,155 DEBUG    root            Loaded Command Group: ['gcloud', 'auth', 'configure_docker']
+2021-01-31 17:09:10,210 INFO     ___FILE_ONLY___ [m[1mNAME[m
+    gcloud docker - enable Docker CLI access to Google Container Registry
+
+[m[1mSYNOPSIS[m
+    [1mgcloud docker[m [[1m--authorize-only[m, [1m-a[m] [[1m--docker-host[m=[4mDOCKER_HOST[m]
+        [[1m--server[m=[4mSERVER[m,[[4mSERVER[m,...], [1m-s[m [4mSERVER[m,[[4mSERVER[m,...];
+          default="gcr.io,us.gcr.io,
+          eu.gcr.io,asia.gcr.io,staging-k8s.gcr.io,marketplace.gcr.io"]
+        [[4mGCLOUD_WIDE_FLAG ...[m] [-- [4mDOCKER_ARGS[m ...]
+
+[m[1mDESCRIPTION[m
+    [1m(DEPRECATED)[m Enable Docker CLI access to Google Container Registry.
+
+    [1mgcloud docker[m will not be supported for Docker client versions above 18.03.
+
+    As an alternative, use [1mgcloud auth configure-docker[m to configure [1mdocker[m to
+    use [1mgcloud[m as a credential helper, then use [1mdocker[m as you would for non-GCR
+    registries, e.g. [1mdocker pull gcr.io/project-id/my-image[m. Add
+    [1m--verbosity=error[m to silence this warning: [1mgcloud docker --verbosity=error
+    -- pull gcr.io/project-id/my-image[m.
+
+    See:
+    https://cloud.google.com/container-registry/docs/support/deprecation-notices#gcloud-docker
+
+    gcloud docker wraps Docker commands so that [1mgcloud[m can inject the
+    appropriate fresh authentication token into requests that interact with the
+    Docker registry.
+
+    All Docker-specific flags are passed through to the underlying [1mdocker[m
+    command. A full reference of Docker's command line options available after
+    [1m--[m can be found here:
+    https://docs.docker.com/engine/reference/commandline/cli/. You may also run
+    [1mgcloud docker -- --help[m to view the Docker CLI's help directly.
+
+    Detailed documentation on Container Registry can be found here:
+    https://cloud.google.com/container-registry/docs/
+
+[m[1mPOSITIONAL ARGUMENTS[m
+     [-- [4mDOCKER_ARGS[m ...]
+        Arguments to pass to Docker.
+
+        The '--' argument must be specified between gcloud specific args on the
+        left and DOCKER_ARGS on the right.
+
+[m[1mFLAGS[m
+     [1m--authorize-only[m, [1m-a[m
+        Configure Docker authorization only; do not launch the Docker
+        command-line.
+
+     [1m--docker-host[m=[4mDOCKER_HOST[m
+        URL to connect to Docker Daemon. Format: tcp://host:port or
+        unix:///path/to/socket.
+
+     [1m--server[m=[4mSERVER[m,[[4mSERVER[m,...], [1m-s[m [4mSERVER[m,[[4mSERVER[m,...]; default="gcr.io,us.gcr.io,eu.gcr.io,asia.gcr.io,staging-k8s.gcr.io,marketplace.gcr.io"
+        Address of the Google Cloud Registry.
+
+[m[1mGCLOUD WIDE FLAGS[m
+    These flags are available to all commands: --account, --billing-project,
+    --configuration, --flags-file, --flatten, --format, --help,
+    --impersonate-service-account, --log-http, --project, --quiet,
+    --trace-token, --user-output-enabled, --verbosity.
+
+    Run [1m$ gcloud help[m for details.
+
+[m[1mEXAMPLES[m
+    To pull the image 'gcr.io/google-containers/pause:1.0' from the docker
+    registry, run:
+
+        gcloud docker -- pull gcr.io/google-containers/pause:1.0
+
+    Push the image 'gcr.io/example-org/example-image:latest' to our private
+    docker registry.
+
+        gcloud docker -- push gcr.io/example-org/example-image:latest
+
+    Configure authentication, then simply use docker:
+
+        gcloud docker --authorize-only
+        docker push gcr.io/example-org/example-image:latest
+[m

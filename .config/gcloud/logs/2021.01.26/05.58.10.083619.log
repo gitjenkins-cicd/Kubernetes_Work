@@ -1,0 +1,16 @@
+2021-01-26 05:58:10,113 DEBUG    root            Loaded Command Group: ['gcloud', 'compute']
+2021-01-26 05:58:10,118 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'instances']
+2021-01-26 05:58:10,134 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'instances', 'stop']
+2021-01-26 05:58:10,139 DEBUG    root            Running [gcloud.compute.instances.stop] with arguments: [INSTANCE_NAMES:1: "['shakeer-1']"]
+2021-01-26 05:58:10,446 DEBUG    urllib3.connectionpool Starting new HTTPS connection (1): compute.googleapis.com:443
+2021-01-26 05:58:12,102 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/v1 HTTP/1.1" 200 None
+2021-01-26 05:58:12,316 INFO     ___FILE_ONLY___ No zone specified. Using zone [us-central1-a] for instance: [shakeer-1].
+
+2021-01-26 05:58:13,725 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/v1 HTTP/1.1" 200 None
+2021-01-26 05:58:13,745 INFO     ___FILE_ONLY___ Stopping instance(s) shakeer-1...
+2021-01-26 05:58:34,050 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/v1 HTTP/1.1" 200 None
+2021-01-26 05:58:36,009 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/v1 HTTP/1.1" 200 None
+2021-01-26 05:58:36,180 INFO     ___FILE_ONLY___ Updated [https://compute.googleapis.com/compute/v1/projects/shakeergcp/zones/us-central1-a/instances/shakeer-1].
+
+2021-01-26 05:58:36,182 INFO     root            Display format: "none"
+2021-01-26 05:58:36,184 DEBUG    root            SDK update checks are disabled.

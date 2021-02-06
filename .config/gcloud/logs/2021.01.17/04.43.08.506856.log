@@ -1,0 +1,9 @@
+2021-01-17 04:43:08,510 DEBUG    root            Loaded Command Group: ['gcloud', 'app']
+2021-01-17 04:43:08,661 DEBUG    root            Loaded Command Group: ['gcloud', 'app', 'browse']
+2021-01-17 04:43:08,671 DEBUG    root            Running [gcloud.app.browse] with arguments: []
+2021-01-17 04:43:09,936 INFO     ___FILE_ONLY___ Did not detect your browser. Go to this link to view your app:
+
+2021-01-17 04:43:09,941 INFO     root            Display format: "value(url)"
+2021-01-17 04:43:10,402 INFO     ___FILE_ONLY___ https://opportune-epoch-301314.uc.r.appspot.com
+
+2021-01-17 04:43:10,404 DEBUG    root            SDK update checks are disabled.

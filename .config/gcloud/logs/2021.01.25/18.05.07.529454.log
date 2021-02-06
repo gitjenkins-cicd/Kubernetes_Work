@@ -1,0 +1,17 @@
+2021-01-25 18:05:07,533 DEBUG    root            Loaded Command Group: ['gcloud', 'projects']
+2021-01-25 18:05:07,580 DEBUG    root            Loaded Command Group: ['gcloud', 'projects', 'get_ancestors']
+2021-01-25 18:05:07,585 DEBUG    root            Running [gcloud.projects.get-ancestors] with arguments: [PROJECT_ID: "shakeergcp"]
+2021-01-25 18:05:07,608 DEBUG    urllib3.connectionpool Starting new HTTPS connection (1): cloudresourcemanager.googleapis.com:443
+2021-01-25 18:05:09,421 DEBUG    urllib3.connectionpool https://cloudresourcemanager.googleapis.com:443 "POST /v1/projects/shakeergcp:getAncestry?alt=json HTTP/1.1" 200 None
+2021-01-25 18:05:09,424 INFO     root            Display format: "table(id, type)"
+2021-01-25 18:05:09,603 INFO     ___FILE_ONLY___ ID
+2021-01-25 18:05:09,603 INFO     ___FILE_ONLY___           
+2021-01-25 18:05:09,603 INFO     ___FILE_ONLY___ TYPE
+2021-01-25 18:05:09,604 INFO     ___FILE_ONLY___ 
+
+2021-01-25 18:05:09,604 INFO     ___FILE_ONLY___ shakeergcp
+2021-01-25 18:05:09,604 INFO     ___FILE_ONLY___   
+2021-01-25 18:05:09,604 INFO     ___FILE_ONLY___ project
+2021-01-25 18:05:09,604 INFO     ___FILE_ONLY___ 
+
+2021-01-25 18:05:09,605 DEBUG    root            SDK update checks are disabled.

@@ -1,0 +1,46 @@
+2021-01-26 05:59:08,657 DEBUG    root            Loaded Command Group: ['gcloud', 'compute']
+2021-01-26 05:59:08,661 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'instances']
+2021-01-26 05:59:08,677 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'instances', 'delete']
+2021-01-26 05:59:08,682 DEBUG    root            Running [gcloud.compute.instances.delete] with arguments: [INSTANCE_NAMES:1: "['shakeer-1']"]
+2021-01-26 05:59:08,988 DEBUG    urllib3.connectionpool Starting new HTTPS connection (1): compute.googleapis.com:443
+2021-01-26 05:59:10,597 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/v1 HTTP/1.1" 200 None
+2021-01-26 05:59:10,649 INFO     ___FILE_ONLY___ No zone specified. Using zone [us-central1-a] for instance: [shakeer-1].
+
+2021-01-26 05:59:23,278 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/v1 HTTP/1.1" 200 None
+2021-01-26 05:59:23,291 DEBUG    root            Operations to inspect: [<Operation
+ id: 6978869410165268181
+ insertTime: '2021-01-26T05:59:22.687-08:00'
+ kind: 'compute#operation'
+ name: 'operation-1611669561975-5b9ce0fbca381-f39e5ef2-6d49dcd2'
+ operationType: 'delete'
+ progress: 0
+ selfLink: 'https://www.googleapis.com/compute/v1/projects/shakeergcp/zones/us-central1-a/operations/operation-1611669561975-5b9ce0fbca381-f39e5ef2-6d49dcd2'
+ startTime: '2021-01-26T05:59:22.705-08:00'
+ status: StatusValueValuesEnum(RUNNING, 2)
+ targetId: 4766613149920896743
+ targetLink: 'https://www.googleapis.com/compute/v1/projects/shakeergcp/zones/us-central1-a/instances/shakeer-1'
+ user: 'shakeer.uid@gmail.com'
+ warnings: []
+ zone: 'https://www.googleapis.com/compute/v1/projects/shakeergcp/zones/us-central1-a'>]
+2021-01-26 05:59:29,026 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/v1 HTTP/1.1" 200 None
+2021-01-26 05:59:29,042 DEBUG    root            Operations to inspect: [<Operation
+ endTime: '2021-01-26T05:59:28.601-08:00'
+ id: 6978869410165268181
+ insertTime: '2021-01-26T05:59:22.687-08:00'
+ kind: 'compute#operation'
+ name: 'operation-1611669561975-5b9ce0fbca381-f39e5ef2-6d49dcd2'
+ operationType: 'delete'
+ progress: 100
+ selfLink: 'https://www.googleapis.com/compute/v1/projects/shakeergcp/zones/us-central1-a/operations/operation-1611669561975-5b9ce0fbca381-f39e5ef2-6d49dcd2'
+ startTime: '2021-01-26T05:59:22.705-08:00'
+ status: StatusValueValuesEnum(DONE, 0)
+ targetId: 4766613149920896743
+ targetLink: 'https://www.googleapis.com/compute/v1/projects/shakeergcp/zones/us-central1-a/instances/shakeer-1'
+ user: 'shakeer.uid@gmail.com'
+ warnings: []
+ zone: 'https://www.googleapis.com/compute/v1/projects/shakeergcp/zones/us-central1-a'>]
+2021-01-26 05:59:29,042 INFO     ___FILE_ONLY___ Deleted [https://www.googleapis.com/compute/v1/projects/shakeergcp/zones/us-central1-a/instances/shakeer-1].
+
+2021-01-26 05:59:29,043 INFO     root            Display format: "none"
+2021-01-26 05:59:29,048 INFO     root            cache collection=compute.instances api_version=v1 params=['project', 'zone', 'instance']
+2021-01-26 05:59:29,085 DEBUG    root            SDK update checks are disabled.

@@ -1,0 +1,207 @@
+2021-01-30 16:56:38,266 DEBUG    root            Loaded Command Group: ['gcloud', 'compute']
+2021-01-30 16:56:38,270 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'networks']
+2021-01-30 16:56:38,282 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'networks', 'describe']
+2021-01-30 16:56:38,286 DEBUG    root            Running [gcloud.compute.networks.describe] with arguments: [--project: "shakeergcp", NAME: "default"]
+2021-01-30 16:56:38,559 DEBUG    urllib3.connectionpool Starting new HTTPS connection (1): compute.googleapis.com:443
+2021-01-30 16:56:39,893 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/v1 HTTP/1.1" 200 None
+2021-01-30 16:56:40,067 INFO     root            Display format: "default"
+2021-01-30 16:56:40,071 INFO     ___FILE_ONLY___ autoCreateSubnetworks
+2021-01-30 16:56:40,071 INFO     ___FILE_ONLY___ :
+2021-01-30 16:56:40,071 INFO     ___FILE_ONLY___  
+2021-01-30 16:56:40,071 INFO     ___FILE_ONLY___ true
+2021-01-30 16:56:40,071 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:56:40,071 INFO     ___FILE_ONLY___ creationTimestamp
+2021-01-30 16:56:40,078 INFO     ___FILE_ONLY___ :
+2021-01-30 16:56:40,078 INFO     ___FILE_ONLY___  '
+2021-01-30 16:56:40,078 INFO     ___FILE_ONLY___ 2021-01-25T21:14:15.875-08:00
+2021-01-30 16:56:40,078 INFO     ___FILE_ONLY___ '
+2021-01-30 16:56:40,078 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:56:40,078 INFO     ___FILE_ONLY___ description
+2021-01-30 16:56:40,078 INFO     ___FILE_ONLY___ :
+2021-01-30 16:56:40,078 INFO     ___FILE_ONLY___  
+2021-01-30 16:56:40,078 INFO     ___FILE_ONLY___ Default
+2021-01-30 16:56:40,078 INFO     ___FILE_ONLY___  
+2021-01-30 16:56:40,078 INFO     ___FILE_ONLY___ network
+2021-01-30 16:56:40,078 INFO     ___FILE_ONLY___  
+2021-01-30 16:56:40,079 INFO     ___FILE_ONLY___ for
+2021-01-30 16:56:40,079 INFO     ___FILE_ONLY___  
+2021-01-30 16:56:40,079 INFO     ___FILE_ONLY___ the
+2021-01-30 16:56:40,079 INFO     ___FILE_ONLY___  
+2021-01-30 16:56:40,079 INFO     ___FILE_ONLY___ project
+2021-01-30 16:56:40,079 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:56:40,079 INFO     ___FILE_ONLY___ id
+2021-01-30 16:56:40,079 INFO     ___FILE_ONLY___ :
+2021-01-30 16:56:40,079 INFO     ___FILE_ONLY___  '
+2021-01-30 16:56:40,079 INFO     ___FILE_ONLY___ 175669126291921864
+2021-01-30 16:56:40,079 INFO     ___FILE_ONLY___ '
+2021-01-30 16:56:40,079 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:56:40,079 INFO     ___FILE_ONLY___ kind
+2021-01-30 16:56:40,079 INFO     ___FILE_ONLY___ :
+2021-01-30 16:56:40,080 INFO     ___FILE_ONLY___  
+2021-01-30 16:56:40,080 INFO     ___FILE_ONLY___ compute#network
+2021-01-30 16:56:40,080 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:56:40,080 INFO     ___FILE_ONLY___ name
+2021-01-30 16:56:40,080 INFO     ___FILE_ONLY___ :
+2021-01-30 16:56:40,080 INFO     ___FILE_ONLY___  
+2021-01-30 16:56:40,080 INFO     ___FILE_ONLY___ default
+2021-01-30 16:56:40,080 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:56:40,080 INFO     ___FILE_ONLY___ routingConfig
+2021-01-30 16:56:40,081 INFO     ___FILE_ONLY___ :
+2021-01-30 16:56:40,081 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:56:40,081 INFO     ___FILE_ONLY___   
+2021-01-30 16:56:40,081 INFO     ___FILE_ONLY___ routingMode
+2021-01-30 16:56:40,081 INFO     ___FILE_ONLY___ :
+2021-01-30 16:56:40,081 INFO     ___FILE_ONLY___  
+2021-01-30 16:56:40,081 INFO     ___FILE_ONLY___ REGIONAL
+2021-01-30 16:56:40,082 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:56:40,082 INFO     ___FILE_ONLY___ selfLink
+2021-01-30 16:56:40,082 INFO     ___FILE_ONLY___ :
+2021-01-30 16:56:40,082 INFO     ___FILE_ONLY___  
+2021-01-30 16:56:40,082 INFO     ___FILE_ONLY___ https://www.googleapis.com/compute/v1/projects/shakeergcp/global/networks/default
+2021-01-30 16:56:40,083 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:56:40,083 INFO     ___FILE_ONLY___ subnetworks
+2021-01-30 16:56:40,083 INFO     ___FILE_ONLY___ :
+2021-01-30 16:56:40,083 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:56:40,083 INFO     ___FILE_ONLY___ -
+2021-01-30 16:56:40,084 INFO     ___FILE_ONLY___  
+2021-01-30 16:56:40,084 INFO     ___FILE_ONLY___ https://www.googleapis.com/compute/v1/projects/shakeergcp/regions/us-east4/subnetworks/default
+2021-01-30 16:56:40,084 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:56:40,084 INFO     ___FILE_ONLY___ -
+2021-01-30 16:56:40,084 INFO     ___FILE_ONLY___  
+2021-01-30 16:56:40,084 INFO     ___FILE_ONLY___ https://www.googleapis.com/compute/v1/projects/shakeergcp/regions/us-east1/subnetworks/default
+2021-01-30 16:56:40,085 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:56:40,085 INFO     ___FILE_ONLY___ -
+2021-01-30 16:56:40,085 INFO     ___FILE_ONLY___  
+2021-01-30 16:56:40,085 INFO     ___FILE_ONLY___ https://www.googleapis.com/compute/v1/projects/shakeergcp/regions/us-west1/subnetworks/default
+2021-01-30 16:56:40,086 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:56:40,086 INFO     ___FILE_ONLY___ -
+2021-01-30 16:56:40,086 INFO     ___FILE_ONLY___  
+2021-01-30 16:56:40,086 INFO     ___FILE_ONLY___ https://www.googleapis.com/compute/v1/projects/shakeergcp/regions/europe-west6/subnetworks/default
+2021-01-30 16:56:40,086 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:56:40,086 INFO     ___FILE_ONLY___ -
+2021-01-30 16:56:40,087 INFO     ___FILE_ONLY___  
+2021-01-30 16:56:40,087 INFO     ___FILE_ONLY___ https://www.googleapis.com/compute/v1/projects/shakeergcp/regions/australia-southeast1/subnetworks/default
+2021-01-30 16:56:40,087 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:56:40,087 INFO     ___FILE_ONLY___ -
+2021-01-30 16:56:40,088 INFO     ___FILE_ONLY___  
+2021-01-30 16:56:40,088 INFO     ___FILE_ONLY___ https://www.googleapis.com/compute/v1/projects/shakeergcp/regions/europe-west1/subnetworks/default
+2021-01-30 16:56:40,088 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:56:40,088 INFO     ___FILE_ONLY___ -
+2021-01-30 16:56:40,088 INFO     ___FILE_ONLY___  
+2021-01-30 16:56:40,089 INFO     ___FILE_ONLY___ https://www.googleapis.com/compute/v1/projects/shakeergcp/regions/europe-north1/subnetworks/default
+2021-01-30 16:56:40,089 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:56:40,089 INFO     ___FILE_ONLY___ -
+2021-01-30 16:56:40,089 INFO     ___FILE_ONLY___  
+2021-01-30 16:56:40,090 INFO     ___FILE_ONLY___ https://www.googleapis.com/compute/v1/projects/shakeergcp/regions/asia-east2/subnetworks/default
+2021-01-30 16:56:40,090 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:56:40,090 INFO     ___FILE_ONLY___ -
+2021-01-30 16:56:40,090 INFO     ___FILE_ONLY___  
+2021-01-30 16:56:40,090 INFO     ___FILE_ONLY___ https://www.googleapis.com/compute/v1/projects/shakeergcp/regions/us-central1/subnetworks/default
+2021-01-30 16:56:40,091 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:56:40,091 INFO     ___FILE_ONLY___ -
+2021-01-30 16:56:40,091 INFO     ___FILE_ONLY___  
+2021-01-30 16:56:40,091 INFO     ___FILE_ONLY___ https://www.googleapis.com/compute/v1/projects/shakeergcp/regions/asia-northeast3/subnetworks/default
+2021-01-30 16:56:40,091 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:56:40,091 INFO     ___FILE_ONLY___ -
+2021-01-30 16:56:40,092 INFO     ___FILE_ONLY___  
+2021-01-30 16:56:40,092 INFO     ___FILE_ONLY___ https://www.googleapis.com/compute/v1/projects/shakeergcp/regions/asia-southeast2/subnetworks/default
+2021-01-30 16:56:40,092 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:56:40,092 INFO     ___FILE_ONLY___ -
+2021-01-30 16:56:40,093 INFO     ___FILE_ONLY___  
+2021-01-30 16:56:40,093 INFO     ___FILE_ONLY___ https://www.googleapis.com/compute/v1/projects/shakeergcp/regions/asia-northeast2/subnetworks/default
+2021-01-30 16:56:40,093 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:56:40,093 INFO     ___FILE_ONLY___ -
+2021-01-30 16:56:40,093 INFO     ___FILE_ONLY___  
+2021-01-30 16:56:40,094 INFO     ___FILE_ONLY___ https://www.googleapis.com/compute/v1/projects/shakeergcp/regions/us-west2/subnetworks/default
+2021-01-30 16:56:40,094 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:56:40,094 INFO     ___FILE_ONLY___ -
+2021-01-30 16:56:40,094 INFO     ___FILE_ONLY___  
+2021-01-30 16:56:40,094 INFO     ___FILE_ONLY___ https://www.googleapis.com/compute/v1/projects/shakeergcp/regions/europe-west4/subnetworks/default
+2021-01-30 16:56:40,095 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:56:40,095 INFO     ___FILE_ONLY___ -
+2021-01-30 16:56:40,095 INFO     ___FILE_ONLY___  
+2021-01-30 16:56:40,095 INFO     ___FILE_ONLY___ https://www.googleapis.com/compute/v1/projects/shakeergcp/regions/asia-east1/subnetworks/default
+2021-01-30 16:56:40,095 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:56:40,095 INFO     ___FILE_ONLY___ -
+2021-01-30 16:56:40,096 INFO     ___FILE_ONLY___  
+2021-01-30 16:56:40,096 INFO     ___FILE_ONLY___ https://www.googleapis.com/compute/v1/projects/shakeergcp/regions/asia-northeast1/subnetworks/default
+2021-01-30 16:56:40,096 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:56:40,096 INFO     ___FILE_ONLY___ -
+2021-01-30 16:56:40,097 INFO     ___FILE_ONLY___  
+2021-01-30 16:56:40,097 INFO     ___FILE_ONLY___ https://www.googleapis.com/compute/v1/projects/shakeergcp/regions/us-west3/subnetworks/default
+2021-01-30 16:56:40,098 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:56:40,098 INFO     ___FILE_ONLY___ -
+2021-01-30 16:56:40,098 INFO     ___FILE_ONLY___  
+2021-01-30 16:56:40,098 INFO     ___FILE_ONLY___ https://www.googleapis.com/compute/v1/projects/shakeergcp/regions/northamerica-northeast1/subnetworks/default
+2021-01-30 16:56:40,098 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:56:40,099 INFO     ___FILE_ONLY___ -
+2021-01-30 16:56:40,099 INFO     ___FILE_ONLY___  
+2021-01-30 16:56:40,099 INFO     ___FILE_ONLY___ https://www.googleapis.com/compute/v1/projects/shakeergcp/regions/asia-southeast1/subnetworks/default
+2021-01-30 16:56:40,099 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:56:40,100 INFO     ___FILE_ONLY___ -
+2021-01-30 16:56:40,100 INFO     ___FILE_ONLY___  
+2021-01-30 16:56:40,100 INFO     ___FILE_ONLY___ https://www.googleapis.com/compute/v1/projects/shakeergcp/regions/us-west4/subnetworks/default
+2021-01-30 16:56:40,101 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:56:40,101 INFO     ___FILE_ONLY___ -
+2021-01-30 16:56:40,101 INFO     ___FILE_ONLY___  
+2021-01-30 16:56:40,101 INFO     ___FILE_ONLY___ https://www.googleapis.com/compute/v1/projects/shakeergcp/regions/asia-south1/subnetworks/default
+2021-01-30 16:56:40,101 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:56:40,101 INFO     ___FILE_ONLY___ -
+2021-01-30 16:56:40,102 INFO     ___FILE_ONLY___  
+2021-01-30 16:56:40,102 INFO     ___FILE_ONLY___ https://www.googleapis.com/compute/v1/projects/shakeergcp/regions/europe-west3/subnetworks/default
+2021-01-30 16:56:40,102 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:56:40,102 INFO     ___FILE_ONLY___ -
+2021-01-30 16:56:40,103 INFO     ___FILE_ONLY___  
+2021-01-30 16:56:40,103 INFO     ___FILE_ONLY___ https://www.googleapis.com/compute/v1/projects/shakeergcp/regions/southamerica-east1/subnetworks/default
+2021-01-30 16:56:40,103 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:56:40,103 INFO     ___FILE_ONLY___ -
+2021-01-30 16:56:40,103 INFO     ___FILE_ONLY___  
+2021-01-30 16:56:40,104 INFO     ___FILE_ONLY___ https://www.googleapis.com/compute/v1/projects/shakeergcp/regions/europe-west2/subnetworks/default
+2021-01-30 16:56:40,104 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:56:40,104 INFO     ___FILE_ONLY___ x_gcloud_bgp_routing_mode
+2021-01-30 16:56:40,105 INFO     ___FILE_ONLY___ :
+2021-01-30 16:56:40,105 INFO     ___FILE_ONLY___  
+2021-01-30 16:56:40,105 INFO     ___FILE_ONLY___ REGIONAL
+2021-01-30 16:56:40,105 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:56:40,105 INFO     ___FILE_ONLY___ x_gcloud_subnet_mode
+2021-01-30 16:56:40,105 INFO     ___FILE_ONLY___ :
+2021-01-30 16:56:40,105 INFO     ___FILE_ONLY___  
+2021-01-30 16:56:40,106 INFO     ___FILE_ONLY___ AUTO
+2021-01-30 16:56:40,106 INFO     ___FILE_ONLY___ 
+
+2021-01-30 16:56:40,106 DEBUG    root            SDK update checks are disabled.

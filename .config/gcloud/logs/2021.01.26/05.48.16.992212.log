@@ -1,0 +1,42 @@
+2021-01-26 05:48:16,994 DEBUG    root            Loaded Command Group: ['gcloud', 'config']
+2021-01-26 05:48:16,997 DEBUG    root            Loaded Command Group: ['gcloud', 'config', 'configurations']
+2021-01-26 05:48:17,001 DEBUG    root            Loaded Command Group: ['gcloud', 'config', 'configurations', 'list']
+2021-01-26 05:48:17,005 DEBUG    root            Running [gcloud.config.configurations.list] with arguments: []
+2021-01-26 05:48:17,009 INFO     root            Display format: "table(
+        name,
+        is_active,
+        properties.core.account,
+        properties.core.project,
+        properties.compute.zone:label=COMPUTE_DEFAULT_ZONE,
+        properties.compute.region:label=COMPUTE_DEFAULT_REGION)
+    "
+2021-01-26 05:48:17,191 INFO     ___FILE_ONLY___ NAME
+2021-01-26 05:48:17,191 INFO     ___FILE_ONLY___          
+2021-01-26 05:48:17,191 INFO     ___FILE_ONLY___ IS_ACTIVE
+2021-01-26 05:48:17,191 INFO     ___FILE_ONLY___   
+2021-01-26 05:48:17,192 INFO     ___FILE_ONLY___ ACCOUNT
+2021-01-26 05:48:17,192 INFO     ___FILE_ONLY___                 
+2021-01-26 05:48:17,192 INFO     ___FILE_ONLY___ PROJECT
+2021-01-26 05:48:17,192 INFO     ___FILE_ONLY___      
+2021-01-26 05:48:17,192 INFO     ___FILE_ONLY___ COMPUTE_DEFAULT_ZONE
+2021-01-26 05:48:17,192 INFO     ___FILE_ONLY___   
+2021-01-26 05:48:17,192 INFO     ___FILE_ONLY___ COMPUTE_DEFAULT_REGION
+2021-01-26 05:48:17,192 INFO     ___FILE_ONLY___ 
+
+2021-01-26 05:48:17,193 INFO     ___FILE_ONLY___ default
+2021-01-26 05:48:17,193 INFO     ___FILE_ONLY___       
+2021-01-26 05:48:17,193 INFO     ___FILE_ONLY___ True
+2021-01-26 05:48:17,193 INFO     ___FILE_ONLY___        
+2021-01-26 05:48:17,193 INFO     ___FILE_ONLY___ shakeer.uid@gmail.com
+2021-01-26 05:48:17,193 INFO     ___FILE_ONLY___   
+2021-01-26 05:48:17,193 INFO     ___FILE_ONLY___ shakeergcp
+2021-01-26 05:48:17,194 INFO     ___FILE_ONLY___ 
+
+2021-01-26 05:48:17,194 INFO     ___FILE_ONLY___ shakeer-dev
+2021-01-26 05:48:17,194 INFO     ___FILE_ONLY___   
+2021-01-26 05:48:17,194 INFO     ___FILE_ONLY___ False
+2021-01-26 05:48:17,194 INFO     ___FILE_ONLY___                              
+2021-01-26 05:48:17,195 INFO     ___FILE_ONLY___ shakeergcp
+2021-01-26 05:48:17,195 INFO     ___FILE_ONLY___ 
+
+2021-01-26 05:48:17,195 DEBUG    root            SDK update checks are disabled.

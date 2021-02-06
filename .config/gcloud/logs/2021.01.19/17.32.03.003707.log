@@ -1,0 +1,35 @@
+2021-01-19 17:32:03,012 DEBUG    root            Loaded Command Group: ['gcloud', 'init']
+2021-01-19 17:32:03,016 DEBUG    root            Running [gcloud.init] with arguments: []
+2021-01-19 17:32:03,016 INFO     ___FILE_ONLY___ Welcome! This command will take you through the configuration of gcloud.
+
+
+2021-01-19 17:32:03,019 INFO     ___FILE_ONLY___ Settings from your current configuration [default] are:
+
+2021-01-19 17:32:03,029 INFO     ___FILE_ONLY___ compute:
+  region: us-central1
+  zone: us-central1-a
+core:
+  account: shakeer.uid@gmail.com
+  disable_usage_reporting: 'True'
+  project: opportune-epoch-301314
+
+2021-01-19 17:32:03,029 INFO     ___FILE_ONLY___ 
+
+2021-01-19 17:33:38,978 DEBUG    root            (gcloud.init) Invalid name [ShakeerGCP] for a configuration.  Except for special cases (NONE), configuration names start with a lower case letter and contain only lower case letters a-z, digits 0-9, and hyphens '-'.
+Traceback (most recent call last):
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/calliope/cli.py", line 982, in Execute
+    resources = calliope_command.Run(cli=self, args=args)
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/calliope/backend.py", line 809, in Run
+    resources = command_instance.Run(args)
+  File "/usr/lib64/google-cloud-sdk/lib/surface/init.py", line 120, in Run
+    configuration_name = self._PickConfiguration()
+  File "/usr/lib64/google-cloud-sdk/lib/surface/init.py", line 279, in _PickConfiguration
+    return self._CreateConfiguration()
+  File "/usr/lib64/google-cloud-sdk/lib/surface/init.py", line 427, in _CreateConfiguration
+    named_configs.ConfigurationStore.CreateConfig(configuration_name)
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/core/configurations/named_configs.py", line 230, in CreateConfig
+    _EnsureValidConfigName(config_name, allow_reserved=False)
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/core/configurations/named_configs.py", line 560, in _EnsureValidConfigName
+    raise InvalidConfigName(config_name)
+googlecloudsdk.core.configurations.named_configs.InvalidConfigName: Invalid name [ShakeerGCP] for a configuration.  Except for special cases (NONE), configuration names start with a lower case letter and contain only lower case letters a-z, digits 0-9, and hyphens '-'.
+2021-01-19 17:33:38,985 ERROR    root            (gcloud.init) Invalid name [ShakeerGCP] for a configuration.  Except for special cases (NONE), configuration names start with a lower case letter and contain only lower case letters a-z, digits 0-9, and hyphens '-'.

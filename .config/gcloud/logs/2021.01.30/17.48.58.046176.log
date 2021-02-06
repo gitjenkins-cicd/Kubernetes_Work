@@ -1,0 +1,21 @@
+2021-01-30 17:48:58,074 DEBUG    root            Loaded Command Group: ['gcloud', 'compute']
+2021-01-30 17:48:58,078 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'instances']
+2021-01-30 17:48:58,094 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'instances', 'delete']
+2021-01-30 17:48:58,099 DEBUG    root            Running [gcloud.compute.instances.delete] with arguments: [--zone: "europe-west2-c", INSTANCE_NAMES:1: "['shakeerinstance1']"]
+2021-01-30 17:48:58,113 DEBUG    google.auth.transport.requests Making request: POST https://oauth2.googleapis.com/token
+2021-01-30 17:48:58,116 DEBUG    urllib3.connectionpool Starting new HTTPS connection (1): oauth2.googleapis.com:443
+2021-01-30 17:48:59,035 DEBUG    urllib3.connectionpool https://oauth2.googleapis.com:443 "POST /token HTTP/1.1" 200 None
+2021-01-30 17:49:13,950 DEBUG    root            (gcloud.compute.instances.delete) Deletion aborted by user.
+Traceback (most recent call last):
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/calliope/cli.py", line 982, in Execute
+    resources = calliope_command.Run(cli=self, args=args)
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/calliope/backend.py", line 809, in Run
+    resources = command_instance.Run(args)
+  File "/usr/lib64/google-cloud-sdk/lib/surface/compute/instances/delete.py", line 164, in Run
+    utils.PromptForDeletion(refs, scope_name='zone', prompt_title=msg)
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/api_lib/compute/utils.py", line 160, in PromptForDeletion
+    PromptForDeletionHelper(resource_name, prompt_list, prompt_title=prompt_title)
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/api_lib/compute/utils.py", line 168, in PromptForDeletionHelper
+    raise calliope_exceptions.ToolException('Deletion aborted by user.')
+googlecloudsdk.calliope.exceptions.ToolException: Deletion aborted by user.
+2021-01-30 17:49:13,952 ERROR    root            (gcloud.compute.instances.delete) Deletion aborted by user.

@@ -1,0 +1,7 @@
+sh: sort: command not found
+datamash: read error (on close)
+badsort.7G1uQl/sort: line 7: 1/0: division by 0 (error token is "0")
+1	1
+2	2
+datamash: read error (on close)
+PASS tests/datamash-sort-errors.sh (exit status: 0)

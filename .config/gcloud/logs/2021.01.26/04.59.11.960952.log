@@ -1,0 +1,13 @@
+2021-01-26 04:59:11,964 DEBUG    root            Loaded Command Group: ['gcloud', 'config']
+2021-01-26 04:59:11,970 DEBUG    root            Loaded Command Group: ['gcloud', 'config', 'list']
+2021-01-26 04:59:11,975 DEBUG    root            Running [gcloud.config.list] with arguments: []
+2021-01-26 04:59:11,982 INFO     root            Display format: "config"
+2021-01-26 04:59:12,428 INFO     ___FILE_ONLY___ [core]
+account = shakeer.uid@gmail.com
+disable_usage_reporting = True
+project = shakeergcp
+
+2021-01-26 04:59:12,432 INFO     ___FILE_ONLY___ 
+Your active configuration is: [default]
+
+2021-01-26 04:59:12,434 DEBUG    root            SDK update checks are disabled.

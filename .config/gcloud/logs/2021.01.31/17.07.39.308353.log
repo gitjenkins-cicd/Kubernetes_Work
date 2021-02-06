@@ -1,0 +1,47 @@
+2021-01-31 17:07:39,322 DEBUG    root            Loaded Command Group: ['gcloud', 'survey']
+2021-01-31 17:07:39,331 DEBUG    root            Running [gcloud.survey] with arguments: []
+2021-01-31 17:07:39,405 INFO     ___FILE_ONLY___ Thank you for taking the survey. The response is anonymous and will only be used to improve our product. Please DO NOT report bugs here. Use $ gcloud feedback instead to help us address the issue faster.
+
+2021-01-31 17:07:39,408 INFO     ___FILE_ONLY___ 
+Question 1 of 3:
+
+
+2021-01-31 17:07:39,409 INFO     ___FILE_ONLY___   Overall, how satisfied are you with Cloud SDK?
+    [5] Very satisfied
+    [4] Somewhat satisfied
+    [3] Neither satisfied nor dissatisfied
+    [2] Somewhat dissatisfied
+    [1] Very dissatisfied
+
+2021-01-31 17:07:39,410 INFO     ___FILE_ONLY___ 
+
+2021-01-31 17:07:39,410 INFO     ___FILE_ONLY___ To skip this question, type s; to exit the survey, type x.
+
+2021-01-31 17:07:46,635 INFO     ___FILE_ONLY___ 
+Question 2 of 3:
+
+
+2021-01-31 17:07:46,636 INFO     ___FILE_ONLY___   On a scale from 0-10, where 0 means "Not at all likely" and 10 means "Extremely likely", how likely are you to recommend Cloud SDK to a friend or colleague?
+
+2021-01-31 17:07:46,636 INFO     ___FILE_ONLY___ 
+
+2021-01-31 17:07:46,636 INFO     ___FILE_ONLY___ To skip this question, type s; to exit the survey, type x.
+
+2021-01-31 17:07:53,861 INFO     ___FILE_ONLY___ 
+Question 3 of 3:
+
+
+2021-01-31 17:07:53,862 INFO     ___FILE_ONLY___   What are the reasons for the rating you gave? [Please DO NOT enter personal info]
+
+2021-01-31 17:07:53,862 INFO     ___FILE_ONLY___ 
+
+2021-01-31 17:07:53,862 INFO     ___FILE_ONLY___ To skip this question, type s; to exit the survey, type x.
+
+2021-01-31 17:08:02,557 INFO     ___FILE_ONLY___ Skipped question 3
+
+2021-01-31 17:08:05,885 DEBUG    urllib3.connectionpool Starting new HTTPS connection (1): play.googleapis.com:443
+2021-01-31 17:08:07,249 DEBUG    urllib3.connectionpool https://play.googleapis.com:443 "POST /log HTTP/1.1" 200 None
+2021-01-31 17:08:07,269 INFO     ___FILE_ONLY___ Your response is submitted.
+
+2021-01-31 17:08:07,274 INFO     root            Display format: "default"
+2021-01-31 17:08:07,278 DEBUG    root            SDK update checks are disabled.

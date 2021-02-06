@@ -1,0 +1,3 @@
+2021-01-17 04:02:33,251 DEBUG    root            Loaded Command Group: ['gcloud', 'config']
+2021-01-17 04:02:33,271 DEBUG    root            Loaded Command Group: ['gcloud', 'config', 'set']
+2021-01-17 04:02:33,287 ERROR    root            (gcloud.config.set) argument VALUE: Must be specified.

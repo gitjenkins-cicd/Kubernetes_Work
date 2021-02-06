@@ -1,0 +1,26 @@
+2021-01-25 18:08:52,157 DEBUG    root            Loaded Command Group: ['gcloud', 'auth']
+2021-01-25 18:08:52,164 DEBUG    root            Loaded Command Group: ['gcloud', 'auth', 'list']
+2021-01-25 18:08:52,168 DEBUG    root            Running [gcloud.auth.list] with arguments: []
+2021-01-25 18:08:52,231 INFO     root            Display format: "    table[title='Credentialed Accounts'](
+        status.yesno(yes='*', no=''):label=ACTIVE,
+        account
+    )"
+2021-01-25 18:08:52,427 INFO     ___FILE_ONLY___     Credentialed Accounts
+2021-01-25 18:08:52,427 INFO     ___FILE_ONLY___ 
+
+2021-01-25 18:08:52,427 INFO     ___FILE_ONLY___ ACTIVE
+2021-01-25 18:08:52,427 INFO     ___FILE_ONLY___   
+2021-01-25 18:08:52,428 INFO     ___FILE_ONLY___ ACCOUNT
+2021-01-25 18:08:52,428 INFO     ___FILE_ONLY___ 
+
+2021-01-25 18:08:52,428 INFO     ___FILE_ONLY___ *
+2021-01-25 18:08:52,428 INFO     ___FILE_ONLY___        
+2021-01-25 18:08:52,428 INFO     ___FILE_ONLY___ shakeer.uid@gmail.com
+2021-01-25 18:08:52,429 INFO     ___FILE_ONLY___ 
+
+2021-01-25 18:08:52,429 INFO     ___FILE_ONLY___ 
+To set the active account, run:
+    $ gcloud config set account `ACCOUNT`
+
+
+2021-01-25 18:08:52,429 DEBUG    root            SDK update checks are disabled.

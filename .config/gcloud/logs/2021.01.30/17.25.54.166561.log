@@ -1,0 +1,9 @@
+2021-01-30 17:25:54,194 DEBUG    root            Loaded Command Group: ['gcloud', 'compute']
+2021-01-30 17:25:54,224 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'ssh']
+2021-01-30 17:25:54,231 DEBUG    root            Running [gcloud.compute.ssh] with arguments: [--project: "shakeergcp", --zone: "europe-west2-c", [USER@]INSTANCE: "shakeerinstance1"]
+2021-01-30 17:25:55,130 DEBUG    urllib3.connectionpool Starting new HTTPS connection (1): compute.googleapis.com:443
+2021-01-30 17:25:56,182 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/v1 HTTP/1.1" 200 None
+2021-01-30 17:25:56,951 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/v1 HTTP/1.1" 200 None
+2021-01-30 17:25:56,978 DEBUG    root            Current SSH keys in project: ['shakeer:ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDIYRfZouWDjz0NYo9bVLSvcCummdyBVeTK8P+sgrnIatVE9+QqiNcNcRn+yNHitP0s0jmzBrhGGKEyxjp3Oyfrfq+02rGLpk2OdprUzKX4L7XqXoClHVAWYe0LXyfkiGXEpgreB5PUrlCY3SovjJkQVkAgLUZz4pBgWB0oCkwkCgsUzleEwN7XYT7oOrWNK+zF/9ar6iVcunjF0EOLzfcmRP/l/ohGiVTnb7BsTSWFU3xadDWjA/UJA2BcyMgZaYbfCxGtH1xm/tIxv0O7VaYzhj2zawfQGPV2RcIj/NS+AXt4i9I3OPi+DV4PxxcClmwIu3JFXEWoVh0N1pI0boRH shakeer@localhost.localdomain']
+2021-01-30 17:25:56,979 DEBUG    root            Running command [/usr/bin/ssh -t -i /home/shakeer/.ssh/google_compute_engine -o CheckHostIP=no -o HostKeyAlias=compute.6582287372891437726 -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=/home/shakeer/.ssh/google_compute_known_hosts shakeer@35.246.24.85].
+2021-01-30 17:25:56,979 DEBUG    root            Executing command: ['/usr/bin/ssh', '-t', '-i', '/home/shakeer/.ssh/google_compute_engine', '-o', 'CheckHostIP=no', '-o', 'HostKeyAlias=compute.6582287372891437726', '-o', 'IdentitiesOnly=yes', '-o', 'StrictHostKeyChecking=yes', '-o', 'UserKnownHostsFile=/home/shakeer/.ssh/google_compute_known_hosts', 'shakeer@35.246.24.85']

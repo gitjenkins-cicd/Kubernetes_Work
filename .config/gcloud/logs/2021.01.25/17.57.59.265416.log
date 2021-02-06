@@ -1,0 +1,7 @@
+2021-01-25 17:57:59,267 DEBUG    root            Loaded Command Group: ['gcloud', 'config']
+2021-01-25 17:57:59,274 DEBUG    root            Loaded Command Group: ['gcloud', 'config', 'set']
+2021-01-25 17:57:59,279 DEBUG    root            Running [gcloud.config.set] with arguments: [SECTION/PROPERTY: "project", VALUE: "shakeergcp"]
+2021-01-25 17:57:59,280 INFO     ___FILE_ONLY___ Updated property [core/project].
+
+2021-01-25 17:57:59,843 INFO     root            Display format: "default"
+2021-01-25 17:57:59,844 DEBUG    root            SDK update checks are disabled.

@@ -1,0 +1,23 @@
+2021-01-30 18:10:11,552 DEBUG    root            Loaded Command Group: ['gcloud', 'sql']
+2021-01-30 18:10:11,556 DEBUG    root            Loaded Command Group: ['gcloud', 'sql', 'instances']
+2021-01-30 18:10:11,601 DEBUG    root            Loaded Command Group: ['gcloud', 'sql', 'instances', 'list']
+2021-01-30 18:10:11,609 DEBUG    root            Running [gcloud.sql.instances.list] with arguments: []
+2021-01-30 18:10:11,634 INFO     root            Display format: ":(settings.userLabels:alias=labels:label=LABELS) table(name,databaseVersion,firstof(gceZone,region):label=LOCATION,settings.tier,ip_addresses.filter("type:PRIMARY").*extract(ip_address).flatten().yesno(no="-"):label=PRIMARY_ADDRESS,ip_addresses.filter("type:PRIVATE").*extract(ip_address).flatten().yesno(no="-"):label=PRIVATE_ADDRESS,state:label=STATUS)"
+2021-01-30 18:10:11,640 DEBUG    urllib3.connectionpool Starting new HTTPS connection (1): sqladmin.googleapis.com:443
+2021-01-30 18:10:13,055 DEBUG    urllib3.connectionpool https://sqladmin.googleapis.com:443 "GET /sql/v1beta4/projects/shakeergcp/instances?alt=json&maxResults=100 HTTP/1.1" 403 None
+2021-01-30 18:10:24,003 INFO     ___FILE_ONLY___ Enabling service [sqladmin.googleapis.com] on project [36045258912]...
+
+2021-01-30 18:10:24,032 DEBUG    urllib3.connectionpool Starting new HTTPS connection (1): serviceusage.googleapis.com:443
+2021-01-30 18:10:28,388 DEBUG    urllib3.connectionpool https://serviceusage.googleapis.com:443 "POST /v1/projects/36045258912/services/sqladmin.googleapis.com:enable?alt=json HTTP/1.1" 200 None
+2021-01-30 18:10:28,402 DEBUG    urllib3.connectionpool Starting new HTTPS connection (1): serviceusage.googleapis.com:443
+2021-01-30 18:10:30,129 DEBUG    urllib3.connectionpool https://serviceusage.googleapis.com:443 "GET /v1/operations/acf.p2-36045258912-627a4c39-38c3-4a48-ac95-3eb147308943?alt=json HTTP/1.1" 200 None
+2021-01-30 18:10:32,424 DEBUG    urllib3.connectionpool Starting new HTTPS connection (1): serviceusage.googleapis.com:443
+2021-01-30 18:10:34,935 DEBUG    urllib3.connectionpool https://serviceusage.googleapis.com:443 "GET /v1/operations/acf.p2-36045258912-627a4c39-38c3-4a48-ac95-3eb147308943?alt=json HTTP/1.1" 200 None
+2021-01-30 18:10:34,946 INFO     ___FILE_ONLY___ Operation "operations/acf.p2-36045258912-627a4c39-38c3-4a48-ac95-3eb147308943" finished successfully.
+
+2021-01-30 18:10:34,946 DEBUG    root            Request returned no response, retrying
+2021-01-30 18:10:34,947 DEBUG    root            Retrying request to url https://sqladmin.googleapis.com/sql/v1beta4/projects/shakeergcp/instances?alt=json&maxResults=100 after exception Retry
+2021-01-30 18:10:39,115 DEBUG    urllib3.connectionpool https://sqladmin.googleapis.com:443 "GET /sql/v1beta4/projects/shakeergcp/instances?alt=json&maxResults=100 HTTP/1.1" 200 None
+2021-01-30 18:10:39,117 INFO     ___FILE_ONLY___ Listed 0 items.
+
+2021-01-30 18:10:39,118 DEBUG    root            SDK update checks are disabled.

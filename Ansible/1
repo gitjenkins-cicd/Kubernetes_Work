@@ -1,0 +1,20 @@
+---
+  - name: Check the remote host uptime
+    hosts: servers
+    tasks:
+      - name: Execute the Uptime command over Command module
+        register: uptimeoutput
+        command: "uptime"
+      - name: Execute disk usage
+        register: diskout
+        command: "df -h"
+      
+
+      - debug:
+          var: uptimeoutput.stdout_lines
+          
+      - debug:
+          var: diskout.stdout_lines
+
+      - name: restart httpd
+        service: name: httpd state: started

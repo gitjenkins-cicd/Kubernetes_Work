@@ -1,0 +1,10 @@
+2021-01-16 23:31:26,044 DEBUG    root            Loaded Command Group: ['gcloud', 'config']
+2021-01-16 23:31:26,052 DEBUG    root            Loaded Command Group: ['gcloud', 'config', 'set']
+2021-01-16 23:31:26,057 DEBUG    root            Loaded Command Group: ['gcloud', 'config', 'config_helper']
+2021-01-16 23:31:26,061 DEBUG    root            Loaded Command Group: ['gcloud', 'config', 'get_value']
+2021-01-16 23:31:26,065 DEBUG    root            Loaded Command Group: ['gcloud', 'config', 'unset']
+2021-01-16 23:31:26,068 DEBUG    root            Loaded Command Group: ['gcloud', 'config', 'list']
+2021-01-16 23:31:26,071 DEBUG    root            Loaded Command Group: ['gcloud', 'config', 'configurations']
+2021-01-16 23:31:26,075 DEBUG    root            Loaded Command Group: ['gcloud', 'alpha', 'config']
+2021-01-16 23:31:26,078 DEBUG    root            Loaded Command Group: ['gcloud', 'beta', 'config']
+2021-01-16 23:31:26,081 ERROR    root            (gcloud.config) Invalid choice: 'get'.

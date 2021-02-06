@@ -1,0 +1,193 @@
+2021-01-17 04:50:30,496 DEBUG    root            Loaded Command Group: ['gcloud', 'app']
+2021-01-17 04:50:30,811 DEBUG    root            Loaded Command Group: ['gcloud', 'app', 'deploy']
+2021-01-17 04:50:30,828 DEBUG    root            Running [gcloud.app.deploy] with arguments: [--version: "v2"]
+2021-01-17 04:50:30,954 DEBUG    root            Loading runtimes experiment config from [gs://runtime-builders/experiments.yaml]
+2021-01-17 04:50:31,045 INFO     root            Reading [<googlecloudsdk.api_lib.storage.storage_util.ObjectReference object at 0x7ff623d95588>]
+2021-01-17 04:50:32,417 DEBUG    root            
+Traceback (most recent call last):
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/api_lib/storage/storage_api.py", line 311, in ReadObject
+    self.client.objects.Get(get_req, download=download)
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/third_party/apis/storage/v1/storage_v1_client.py", line 1081, in Get
+    download=download)
+  File "/usr/lib64/google-cloud-sdk/lib/third_party/apitools/base/py/base_api.py", line 709, in _RunMethod
+    download.InitializeDownload(http_request, client=self.client)
+  File "/usr/lib64/google-cloud-sdk/lib/third_party/apitools/base/py/transfer.py", line 322, in InitializeDownload
+    raise exceptions.HttpError.FromResponse(response)
+apitools.base.py.exceptions.HttpNotFoundError: HttpError accessing <https://storage.googleapis.com/storage/v1/b/runtime-builders/o/experiments.yaml?alt=media>: response: <{'x-guploader-uploadid': 'ABg5-UzymzSxFvyZsV79eQ-gfP3U-P42BBhl1mKPd5wgeJnRG6jBEfO0_Q2jja03HvAwCkGWF_bO9jCHFvrd4xqjDDc', 'content-type': 'text/html; charset=UTF-8', 'date': 'Sun, 17 Jan 2021 12:50:32 GMT', 'vary': 'Origin, X-Origin', 'expires': 'Sun, 17 Jan 2021 12:50:32 GMT', 'cache-control': 'private, max-age=0', 'content-length': '49', 'server': 'UploadServer', 'alt-svc': 'h3-29=":443"; ma=2592000,h3-T051=":443"; ma=2592000,h3-Q050=":443"; ma=2592000,h3-Q046=":443"; ma=2592000,h3-Q043=":443"; ma=2592000,quic=":443"; ma=2592000; v="46,43"', 'status': '404'}>, content <No such object: runtime-builders/experiments.yaml>
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/api_lib/app/runtime_builders.py", line 269, in _Read
+    with contextlib.closing(storage_client.ReadObject(object_)) as f:
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/api_lib/storage/storage_api.py", line 315, in ReadObject
+    object_=object_ref, err=http_exc.HttpException(err)))
+googlecloudsdk.calliope.exceptions.BadFileException: Could not read [<googlecloudsdk.api_lib.storage.storage_util.ObjectReference object at 0x7ff623d95588>]. Please retry: HTTPError 404: No such object: runtime-builders/experiments.yaml
+2021-01-17 04:50:32,426 DEBUG    root            Experiment config file could not be read. This error is informational, and does not cause a deployment to fail. Reason: Unable to read the runtimes experiment config: [gs://runtime-builders/experiments.yaml], error: Could not read [<googlecloudsdk.api_lib.storage.storage_util.ObjectReference object at 0x7ff623d95588>]. Please retry: HTTPError 404: No such object: runtime-builders/experiments.yaml
+Traceback (most recent call last):
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/api_lib/storage/storage_api.py", line 311, in ReadObject
+    self.client.objects.Get(get_req, download=download)
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/third_party/apis/storage/v1/storage_v1_client.py", line 1081, in Get
+    download=download)
+  File "/usr/lib64/google-cloud-sdk/lib/third_party/apitools/base/py/base_api.py", line 709, in _RunMethod
+    download.InitializeDownload(http_request, client=self.client)
+  File "/usr/lib64/google-cloud-sdk/lib/third_party/apitools/base/py/transfer.py", line 322, in InitializeDownload
+    raise exceptions.HttpError.FromResponse(response)
+apitools.base.py.exceptions.HttpNotFoundError: HttpError accessing <https://storage.googleapis.com/storage/v1/b/runtime-builders/o/experiments.yaml?alt=media>: response: <{'x-guploader-uploadid': 'ABg5-UzymzSxFvyZsV79eQ-gfP3U-P42BBhl1mKPd5wgeJnRG6jBEfO0_Q2jja03HvAwCkGWF_bO9jCHFvrd4xqjDDc', 'content-type': 'text/html; charset=UTF-8', 'date': 'Sun, 17 Jan 2021 12:50:32 GMT', 'vary': 'Origin, X-Origin', 'expires': 'Sun, 17 Jan 2021 12:50:32 GMT', 'cache-control': 'private, max-age=0', 'content-length': '49', 'server': 'UploadServer', 'alt-svc': 'h3-29=":443"; ma=2592000,h3-T051=":443"; ma=2592000,h3-Q050=":443"; ma=2592000,h3-Q046=":443"; ma=2592000,h3-Q043=":443"; ma=2592000,quic=":443"; ma=2592000; v="46,43"', 'status': '404'}>, content <No such object: runtime-builders/experiments.yaml>
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/api_lib/app/runtime_builders.py", line 269, in _Read
+    with contextlib.closing(storage_client.ReadObject(object_)) as f:
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/api_lib/storage/storage_api.py", line 315, in ReadObject
+    object_=object_ref, err=http_exc.HttpException(err)))
+googlecloudsdk.calliope.exceptions.BadFileException: Could not read [<googlecloudsdk.api_lib.storage.storage_util.ObjectReference object at 0x7ff623d95588>]. Please retry: HTTPError 404: No such object: runtime-builders/experiments.yaml
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/api_lib/app/runtime_builders.py", line 518, in LoadFromURI
+    with _Read(uri) as f:
+  File "/usr/lib64/python3.6/contextlib.py", line 81, in __enter__
+    return next(self.gen)
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/api_lib/app/runtime_builders.py", line 276, in _Read
+    raise FileReadError(six.text_type(e))
+googlecloudsdk.api_lib.app.runtime_builders.FileReadError: Could not read [<googlecloudsdk.api_lib.storage.storage_util.ObjectReference object at 0x7ff623d95588>]. Please retry: HTTPError 404: No such object: runtime-builders/experiments.yaml
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/lib64/google-cloud-sdk/lib/surface/app/deploy.py", line 137, in _ServerSideExperimentEnabled
+    runtimes_builder_root)
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/api_lib/app/runtime_builders.py", line 524, in LoadFromURI
+    .format(uri, e))
+googlecloudsdk.api_lib.app.runtime_builders.ExperimentsError: Unable to read the runtimes experiment config: [gs://runtime-builders/experiments.yaml], error: Could not read [<googlecloudsdk.api_lib.storage.storage_util.ObjectReference object at 0x7ff623d95588>]. Please retry: HTTPError 404: No such object: runtime-builders/experiments.yaml
+2021-01-17 04:50:32,537 DEBUG    root            API endpoint: [https://appengine.googleapis.com/], API version: [v1]
+2021-01-17 04:50:32,586 DEBUG    google.auth.transport.requests Making request: POST https://oauth2.googleapis.com/token
+2021-01-17 04:50:32,593 DEBUG    urllib3.connectionpool Starting new HTTPS connection (1): oauth2.googleapis.com:443
+2021-01-17 04:50:33,195 DEBUG    urllib3.connectionpool https://oauth2.googleapis.com:443 "POST /token HTTP/1.1" 200 None
+2021-01-17 04:50:34,302 INFO     ___FILE_ONLY___ Services to deploy:
+
+
+2021-01-17 04:50:34,304 INFO     ___FILE_ONLY___ descriptor:      [/home/shakeer/python-docs-samples/appengine/standard/hello_world/app.yaml]
+source:          [/home/shakeer/python-docs-samples/appengine/standard/hello_world]
+target project:  [opportune-epoch-301314]
+target service:  [default]
+target version:  [v2]
+target url:      [https://opportune-epoch-301314.uc.r.appspot.com]
+
+
+
+2021-01-17 04:50:38,989 DEBUG    root            No bucket specified, retrieving default bucket.
+2021-01-17 04:50:38,994 DEBUG    root            Using bucket [gs://staging.opportune-epoch-301314.appspot.com].
+2021-01-17 04:50:39,879 INFO     ___FILE_ONLY___ Beginning deployment of service [default]...
+
+2021-01-17 04:50:41,573 DEBUG    root            Skipping upload of [app.yaml]
+2021-01-17 04:50:41,575 INFO     root            Incremental upload skipped 100.0% of data
+2021-01-17 04:50:41,575 INFO     root            Incremental upload skipped 9.2% of data
+2021-01-17 04:50:41,576 DEBUG    root            Skipping upload of [main_test.py]
+2021-01-17 04:50:41,577 INFO     root            Incremental upload skipped 49.55% of data
+2021-01-17 04:50:41,577 DEBUG    root            Skipping upload of [source-context.json]
+2021-01-17 04:50:41,578 INFO     root            Incremental upload skipped 53.13% of data
+2021-01-17 04:50:41,579 DEBUG    root            Uploading 1 file to Google Cloud Storage
+2021-01-17 04:50:41,580 DEBUG    root            Using [16] threads
+2021-01-17 04:50:41,586 INFO     ___FILE_ONLY___ ╔════════════════════════════════════════════════════════════╗
+
+2021-01-17 04:50:41,586 INFO     ___FILE_ONLY___ ╠═ Uploading 1 file to Google Cloud Storage                 ═╣
+
+2021-01-17 04:50:41,588 INFO     ___FILE_ONLY___ ╚
+2021-01-17 04:50:41,644 INFO     root            Uploading [/home/shakeer/python-docs-samples/appengine/standard/hello_world/main.py] to [staging.opportune-epoch-301314.appspot.com/f47ab97b53ef2787d0896b0de44cb3c482f0c13a]
+2021-01-17 04:50:42,511 INFO     ___FILE_ONLY___ ════════════════════════════════════════════════════════════
+2021-01-17 04:50:42,513 INFO     ___FILE_ONLY___ ╝
+
+2021-01-17 04:50:42,527 INFO     ___FILE_ONLY___ File upload done.
+
+2021-01-17 04:50:42,528 INFO     root            Manifest: [{'app.yaml': {'sourceUrl': 'https://storage.googleapis.com/staging.opportune-epoch-301314.appspot.com/3766124335e642959efa1b529199a62bd458cbce', 'sha1Sum': '3766124335e642959efa1b529199a62bd458cbce'}, 'main.py': {'sourceUrl': 'https://storage.googleapis.com/staging.opportune-epoch-301314.appspot.com/f47ab97b53ef2787d0896b0de44cb3c482f0c13a', 'sha1Sum': 'f47ab97b53ef2787d0896b0de44cb3c482f0c13a'}, 'main_test.py': {'sourceUrl': 'https://storage.googleapis.com/staging.opportune-epoch-301314.appspot.com/5848e60ec640c982b95e492cbfe36ca6fd47b0cf', 'sha1Sum': '5848e60ec640c982b95e492cbfe36ca6fd47b0cf'}, 'source-context.json': {'sourceUrl': 'https://storage.googleapis.com/staging.opportune-epoch-301314.appspot.com/7c1037ac3d87affdeb35e0c3ff5649e6493bf55d', 'sha1Sum': '7c1037ac3d87affdeb35e0c3ff5649e6493bf55d'}}]
+2021-01-17 04:50:42,537 DEBUG    root            Converted YAML to JSON: "{
+  "entrypoint": {
+    "shell": ""
+  },
+  "handlers": [
+    {
+      "script": {
+        "scriptPath": "main.app"
+      },
+      "securityLevel": "SECURE_OPTIONAL",
+      "urlRegex": "/.*"
+    }
+  ],
+  "runtime": "python27",
+  "runtimeApiVersion": "1",
+  "threadsafe": true
+}"
+2021-01-17 04:50:43,416 DEBUG    root            Operation [apps/opportune-epoch-301314/operations/cea6229d-6407-4af2-9d76-fcde68656a1a] not complete. Waiting to retry.
+2021-01-17 04:50:43,419 INFO     ___FILE_ONLY___ Updating service [default]...
+2021-01-17 04:50:44,928 DEBUG    root            Operation [apps/opportune-epoch-301314/operations/cea6229d-6407-4af2-9d76-fcde68656a1a] not complete. Waiting to retry.
+2021-01-17 04:50:50,741 DEBUG    root            Operation [apps/opportune-epoch-301314/operations/cea6229d-6407-4af2-9d76-fcde68656a1a] not complete. Waiting to retry.
+2021-01-17 04:50:57,103 DEBUG    root            Operation [apps/opportune-epoch-301314/operations/cea6229d-6407-4af2-9d76-fcde68656a1a] not complete. Waiting to retry.
+2021-01-17 04:51:03,095 DEBUG    root            Operation [apps/opportune-epoch-301314/operations/cea6229d-6407-4af2-9d76-fcde68656a1a] not complete. Waiting to retry.
+2021-01-17 04:51:09,422 DEBUG    root            Operation [apps/opportune-epoch-301314/operations/cea6229d-6407-4af2-9d76-fcde68656a1a] complete. Result: {
+    "done": true,
+    "metadata": {
+        "@type": "type.googleapis.com/google.appengine.v1.OperationMetadataV1",
+        "endTime": "2021-01-17T12:51:08.407Z",
+        "insertTime": "2021-01-17T12:50:43.181Z",
+        "method": "google.appengine.v1.Versions.CreateVersion",
+        "target": "apps/opportune-epoch-301314/services/default/versions/v2",
+        "user": "shakeer.uid@gmail.com"
+    },
+    "name": "apps/opportune-epoch-301314/operations/cea6229d-6407-4af2-9d76-fcde68656a1a",
+    "response": {
+        "@type": "type.googleapis.com/google.appengine.v1.Version",
+        "createTime": "2021-01-17T12:51:02Z",
+        "env": "standard",
+        "id": "v2",
+        "instanceClass": "F1",
+        "name": "apps/opportune-epoch-301314/services/default/versions/v2",
+        "network": {},
+        "runtime": "python27",
+        "runtimeApiVersion": "1",
+        "servingStatus": "SERVING",
+        "threadsafe": true,
+        "versionUrl": "https://v2-dot-opportune-epoch-301314.appspot.com"
+    }
+}
+2021-01-17 04:51:11,832 DEBUG    root            Operation [apps/opportune-epoch-301314/operations/ccdbffcf-0b28-40bc-8b8f-dcc6aaf0354a] not complete. Waiting to retry.
+2021-01-17 04:51:11,836 INFO     ___FILE_ONLY___ Setting traffic split for service [default]...
+2021-01-17 04:51:13,673 DEBUG    root            Operation [apps/opportune-epoch-301314/operations/ccdbffcf-0b28-40bc-8b8f-dcc6aaf0354a] not complete. Waiting to retry.
+2021-01-17 04:51:20,570 DEBUG    root            Operation [apps/opportune-epoch-301314/operations/ccdbffcf-0b28-40bc-8b8f-dcc6aaf0354a] complete. Result: {
+    "done": true,
+    "metadata": {
+        "@type": "type.googleapis.com/google.appengine.v1.OperationMetadataV1",
+        "endTime": "2021-01-17T12:51:16.348Z",
+        "insertTime": "2021-01-17T12:51:11.407Z",
+        "method": "google.appengine.v1.Services.UpdateService",
+        "target": "apps/opportune-epoch-301314/services/default",
+        "user": "shakeer.uid@gmail.com"
+    },
+    "name": "apps/opportune-epoch-301314/operations/ccdbffcf-0b28-40bc-8b8f-dcc6aaf0354a",
+    "response": {
+        "@type": "type.googleapis.com/google.appengine.v1.Service",
+        "id": "default",
+        "name": "apps/opportune-epoch-301314/services/default",
+        "split": {
+            "allocations": {
+                "v2": 1
+            }
+        }
+    }
+}
+2021-01-17 04:51:20,707 INFO     root            Previous default version [opportune-epoch-301314/default/v1] is an automatically scaled standard environment app, so not stopping it.
+2021-01-17 04:51:20,708 INFO     ___FILE_ONLY___ Deployed service [default] to [https://opportune-epoch-301314.uc.r.appspot.com]
+
+2021-01-17 04:51:20,710 INFO     ___FILE_ONLY___ 
+You can stream logs from the command line by running:
+  $ gcloud app logs tail -s default
+
+2021-01-17 04:51:20,710 INFO     ___FILE_ONLY___ 
+To view your application in the web browser run:
+  $ gcloud app browse
+
+2021-01-17 04:51:20,715 INFO     root            Display format: "none"
+2021-01-17 04:51:21,214 DEBUG    root            SDK update checks are disabled.

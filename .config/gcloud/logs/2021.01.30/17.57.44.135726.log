@@ -1,0 +1,41 @@
+2021-01-30 17:57:44,165 DEBUG    root            Loaded Command Group: ['gcloud', 'compute']
+2021-01-30 17:57:44,169 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'firewall_rules']
+2021-01-30 17:57:44,182 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'firewall-rules', 'delete']
+2021-01-30 17:57:44,188 DEBUG    root            Running [gcloud.compute.firewall-rules.delete] with arguments: [NAME:1: "['vpc-2fw-allow-ssh']"]
+2021-01-30 17:57:51,108 DEBUG    urllib3.connectionpool Starting new HTTPS connection (1): compute.googleapis.com:443
+2021-01-30 17:57:52,991 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/v1 HTTP/1.1" 200 None
+2021-01-30 17:57:53,003 DEBUG    root            Operations to inspect: [<Operation
+ id: 7451275573176545359
+ insertTime: '2021-01-30T17:57:52.436-08:00'
+ kind: 'compute#operation'
+ name: 'operation-1612058271783-5ba2890a59b2c-3682c981-433a1734'
+ operationType: 'delete'
+ progress: 0
+ selfLink: 'https://www.googleapis.com/compute/v1/projects/shakeergcp/global/operations/operation-1612058271783-5ba2890a59b2c-3682c981-433a1734'
+ startTime: '2021-01-30T17:57:52.443-08:00'
+ status: StatusValueValuesEnum(RUNNING, 2)
+ targetId: 6454818623356386464
+ targetLink: 'https://www.googleapis.com/compute/v1/projects/shakeergcp/global/firewalls/vpc-2fw-allow-ssh'
+ user: 'shakeer.uid@gmail.com'
+ warnings: []>]
+2021-01-30 17:57:57,273 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/v1 HTTP/1.1" 200 None
+2021-01-30 17:57:57,288 DEBUG    root            Operations to inspect: [<Operation
+ endTime: '2021-01-30T17:57:56.854-08:00'
+ id: 7451275573176545359
+ insertTime: '2021-01-30T17:57:52.436-08:00'
+ kind: 'compute#operation'
+ name: 'operation-1612058271783-5ba2890a59b2c-3682c981-433a1734'
+ operationType: 'delete'
+ progress: 100
+ selfLink: 'https://www.googleapis.com/compute/v1/projects/shakeergcp/global/operations/operation-1612058271783-5ba2890a59b2c-3682c981-433a1734'
+ startTime: '2021-01-30T17:57:52.443-08:00'
+ status: StatusValueValuesEnum(DONE, 0)
+ targetId: 6454818623356386464
+ targetLink: 'https://www.googleapis.com/compute/v1/projects/shakeergcp/global/firewalls/vpc-2fw-allow-ssh'
+ user: 'shakeer.uid@gmail.com'
+ warnings: []>]
+2021-01-30 17:57:57,288 INFO     ___FILE_ONLY___ Deleted [https://www.googleapis.com/compute/v1/projects/shakeergcp/global/firewalls/vpc-2fw-allow-ssh].
+
+2021-01-30 17:57:57,289 INFO     root            Display format: "none"
+2021-01-30 17:57:57,296 INFO     root            cache collection=compute.firewalls api_version=v1 params=['project', 'firewall']
+2021-01-30 17:57:57,336 DEBUG    root            SDK update checks are disabled.

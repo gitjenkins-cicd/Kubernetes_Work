@@ -1,0 +1,61 @@
+2021-01-31 17:11:10,198 DEBUG    root            Loaded Command Group: ['gcloud', 'app']
+2021-01-31 17:11:10,354 DEBUG    root            Loaded Command Group: ['gcloud', 'app', 'describe']
+2021-01-31 17:11:10,366 DEBUG    root            Running [gcloud.app.describe] with arguments: []
+2021-01-31 17:11:12,123 DEBUG    root            No app found:
+Traceback (most recent call last):
+  File "/usr/lib64/google-cloud-sdk/lib/surface/app/describe.py", line 40, in Describe
+    return api_client.GetApplication()
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/api_lib/app/appengine_api_client.py", line 75, in GetApplication
+    return self.client.apps.Get(request)
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/third_party/apis/appengine/v1/appengine_v1_client.py", line 1119, in Get
+    config, request, global_params=global_params)
+  File "/usr/lib64/google-cloud-sdk/lib/third_party/apitools/base/py/base_api.py", line 731, in _RunMethod
+    return self.ProcessHttpResponse(method_config, http_response, request)
+  File "/usr/lib64/google-cloud-sdk/lib/third_party/apitools/base/py/base_api.py", line 737, in ProcessHttpResponse
+    self.__ProcessHttpResponse(method_config, http_response, request))
+  File "/usr/lib64/google-cloud-sdk/lib/third_party/apitools/base/py/base_api.py", line 604, in __ProcessHttpResponse
+    http_response, method_config=method_config, request=request)
+apitools.base.py.exceptions.HttpNotFoundError: HttpError accessing <https://appengine.googleapis.com/v1/apps/shakeergcp?alt=json>: response: <{'vary': 'Origin, X-Origin, Referer', 'content-type': 'application/json; charset=UTF-8', 'date': 'Mon, 01 Feb 2021 01:11:11 GMT', 'server': 'ESF', 'cache-control': 'private', 'x-xss-protection': '0', 'x-frame-options': 'SAMEORIGIN', 'x-content-type-options': 'nosniff', 'alt-svc': 'h3-29=":443"; ma=2592000,h3-T051=":443"; ma=2592000,h3-Q050=":443"; ma=2592000,h3-Q046=":443"; ma=2592000,h3-Q043=":443"; ma=2592000,quic=":443"; ma=2592000; v="46,43"', 'transfer-encoding': 'chunked', 'status': '404', 'content-length': '125', '-content-encoding': 'gzip'}>, content <{
+  "error": {
+    "code": 404,
+    "message": "Could not find Application \"shakeergcp\".",
+    "status": "NOT_FOUND"
+  }
+}
+>
+2021-01-31 17:11:12,137 DEBUG    root            (gcloud.app.describe) The current Google Cloud project [shakeergcp] does not contain an App Engine application. Use `gcloud app create` to initialize an App Engine application within the project.
+Traceback (most recent call last):
+  File "/usr/lib64/google-cloud-sdk/lib/surface/app/describe.py", line 40, in Describe
+    return api_client.GetApplication()
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/api_lib/app/appengine_api_client.py", line 75, in GetApplication
+    return self.client.apps.Get(request)
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/third_party/apis/appengine/v1/appengine_v1_client.py", line 1119, in Get
+    config, request, global_params=global_params)
+  File "/usr/lib64/google-cloud-sdk/lib/third_party/apitools/base/py/base_api.py", line 731, in _RunMethod
+    return self.ProcessHttpResponse(method_config, http_response, request)
+  File "/usr/lib64/google-cloud-sdk/lib/third_party/apitools/base/py/base_api.py", line 737, in ProcessHttpResponse
+    self.__ProcessHttpResponse(method_config, http_response, request))
+  File "/usr/lib64/google-cloud-sdk/lib/third_party/apitools/base/py/base_api.py", line 604, in __ProcessHttpResponse
+    http_response, method_config=method_config, request=request)
+apitools.base.py.exceptions.HttpNotFoundError: HttpError accessing <https://appengine.googleapis.com/v1/apps/shakeergcp?alt=json>: response: <{'vary': 'Origin, X-Origin, Referer', 'content-type': 'application/json; charset=UTF-8', 'date': 'Mon, 01 Feb 2021 01:11:11 GMT', 'server': 'ESF', 'cache-control': 'private', 'x-xss-protection': '0', 'x-frame-options': 'SAMEORIGIN', 'x-content-type-options': 'nosniff', 'alt-svc': 'h3-29=":443"; ma=2592000,h3-T051=":443"; ma=2592000,h3-Q050=":443"; ma=2592000,h3-Q046=":443"; ma=2592000,h3-Q043=":443"; ma=2592000,quic=":443"; ma=2592000; v="46,43"', 'transfer-encoding': 'chunked', 'status': '404', 'content-length': '125', '-content-encoding': 'gzip'}>, content <{
+  "error": {
+    "code": 404,
+    "message": "Could not find Application \"shakeergcp\".",
+    "status": "NOT_FOUND"
+  }
+}
+>
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/calliope/cli.py", line 982, in Execute
+    resources = calliope_command.Run(cli=self, args=args)
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/calliope/backend.py", line 809, in Run
+    resources = command_instance.Run(args)
+  File "/usr/lib64/google-cloud-sdk/lib/surface/app/describe.py", line 53, in Run
+    self.ReleaseTrack()))
+  File "/usr/lib64/google-cloud-sdk/lib/surface/app/describe.py", line 44, in Describe
+    raise exceptions.MissingApplicationError(project)
+googlecloudsdk.command_lib.app.exceptions.MissingApplicationError: The current Google Cloud project [shakeergcp] does not contain an App Engine application. Use `gcloud app create` to initialize an App Engine application within the project.
+2021-01-31 17:11:12,142 ERROR    root            (gcloud.app.describe) The current Google Cloud project [shakeergcp] does not contain an App Engine application. Use `gcloud app create` to initialize an App Engine application within the project.

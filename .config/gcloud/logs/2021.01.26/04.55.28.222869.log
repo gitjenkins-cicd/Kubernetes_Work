@@ -1,0 +1,87 @@
+2021-01-26 04:55:28,326 DEBUG    root            Loaded Command Group: ['gcloud', 'beta', 'compute']
+2021-01-26 04:55:28,348 DEBUG    root            Loaded Command Group: ['gcloud', 'beta', 'compute', 'instances']
+2021-01-26 04:55:28,423 DEBUG    root            Loaded Command Group: ['gcloud', 'beta', 'compute', 'instances', 'create']
+2021-01-26 04:55:29,564 DEBUG    root            Running [gcloud.beta.compute.instances.create] with arguments: [--boot-disk-device-name: "instance-1", --boot-disk-size: "21474836480", --boot-disk-type: "pd-standard", --image: "centos-7-v20210122", --image-project: "centos-cloud", --machine-type: "e2-micro", --maintenance-policy: "MIGRATE", --network-tier: "PREMIUM", --no-shielded-secure-boot: "False", --project: "shakeergcp", --reservation-affinity: "any", --scopes: "['https://www.googleapis.com/auth/cloud-platform']", --service-account: "appadminsvc@shakeergcp.iam.gserviceaccount.com", --shielded-integrity-monitoring: "True", --shielded-vtpm: "True", --subnet: "default", --zone: "us-central1-a", INSTANCE_NAMES:1: "['instance-1']"]
+2021-01-26 04:55:29,865 DEBUG    google.auth.transport.requests Making request: POST https://oauth2.googleapis.com/token
+2021-01-26 04:55:29,878 DEBUG    urllib3.connectionpool Starting new HTTPS connection (1): oauth2.googleapis.com:443
+2021-01-26 04:55:30,564 DEBUG    urllib3.connectionpool https://oauth2.googleapis.com:443 "POST /token HTTP/1.1" 200 None
+2021-01-26 04:55:30,776 DEBUG    urllib3.connectionpool Starting new HTTPS connection (1): compute.googleapis.com:443
+2021-01-26 04:55:32,876 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/beta HTTP/1.1" 200 None
+2021-01-26 04:55:32,898 WARNING  root            You have selected a disk size of under [200GB]. This may result in poor I/O performance. For more information, see: https://developers.google.com/compute/docs/disks#performance.
+2021-01-26 04:55:36,167 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/beta HTTP/1.1" 200 None
+2021-01-26 04:55:36,184 DEBUG    root            Operations to inspect: [<Operation
+ id: 7565110073584627624
+ insertTime: '2021-01-26T04:55:35.741-08:00'
+ kind: 'compute#operation'
+ name: 'operation-1611665733200-5b9cd2b862afc-7cc41468-a147df37'
+ operationType: 'insert'
+ progress: 0
+ selfLink: 'https://www.googleapis.com/compute/beta/projects/shakeergcp/zones/us-central1-a/operations/operation-1611665733200-5b9cd2b862afc-7cc41468-a147df37'
+ startTime: '2021-01-26T04:55:35.744-08:00'
+ status: StatusValueValuesEnum(RUNNING, 2)
+ targetId: 4180659085374238634
+ targetLink: 'https://www.googleapis.com/compute/beta/projects/shakeergcp/zones/us-central1-a/instances/instance-1'
+ user: 'shakeer.uid@gmail.com'
+ warnings: []
+ zone: 'https://www.googleapis.com/compute/beta/projects/shakeergcp/zones/us-central1-a'>]
+2021-01-26 04:56:19,570 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/beta HTTP/1.1" 200 None
+2021-01-26 04:56:19,585 DEBUG    root            Operations to inspect: [<Operation
+ endTime: '2021-01-26T04:56:18.955-08:00'
+ id: 7565110073584627624
+ insertTime: '2021-01-26T04:55:35.741-08:00'
+ kind: 'compute#operation'
+ name: 'operation-1611665733200-5b9cd2b862afc-7cc41468-a147df37'
+ operationType: 'insert'
+ progress: 100
+ selfLink: 'https://www.googleapis.com/compute/beta/projects/shakeergcp/zones/us-central1-a/operations/operation-1611665733200-5b9cd2b862afc-7cc41468-a147df37'
+ startTime: '2021-01-26T04:55:35.744-08:00'
+ status: StatusValueValuesEnum(DONE, 0)
+ targetId: 4180659085374238634
+ targetLink: 'https://www.googleapis.com/compute/beta/projects/shakeergcp/zones/us-central1-a/instances/instance-1'
+ user: 'shakeer.uid@gmail.com'
+ warnings: []
+ zone: 'https://www.googleapis.com/compute/beta/projects/shakeergcp/zones/us-central1-a'>]
+2021-01-26 04:56:19,587 INFO     ___FILE_ONLY___ Created [https://www.googleapis.com/compute/beta/projects/shakeergcp/zones/us-central1-a/instances/instance-1].
+
+2021-01-26 04:56:20,900 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/beta HTTP/1.1" 200 None
+2021-01-26 04:56:20,927 INFO     root            Display format: "
+          table(
+            name,
+            zone.basename(),
+            machineType.machine_type().basename(),
+            scheduling.preemptible.yesno(yes=true, no=''),
+            networkInterfaces[].networkIP.notnull().list():label=INTERNAL_IP,
+            networkInterfaces[].accessConfigs[0].natIP.notnull().list()            :label=EXTERNAL_IP,
+            status
+          )
+        "
+2021-01-26 04:56:21,735 INFO     root            cache collection=compute.instances api_version=v1 params=['project', 'zone', 'instance']
+2021-01-26 04:56:21,833 INFO     ___FILE_ONLY___ NAME
+2021-01-26 04:56:21,833 INFO     ___FILE_ONLY___         
+2021-01-26 04:56:21,834 INFO     ___FILE_ONLY___ ZONE
+2021-01-26 04:56:21,834 INFO     ___FILE_ONLY___            
+2021-01-26 04:56:21,835 INFO     ___FILE_ONLY___ MACHINE_TYPE
+2021-01-26 04:56:21,835 INFO     ___FILE_ONLY___   
+2021-01-26 04:56:21,835 INFO     ___FILE_ONLY___ PREEMPTIBLE
+2021-01-26 04:56:21,836 INFO     ___FILE_ONLY___   
+2021-01-26 04:56:21,836 INFO     ___FILE_ONLY___ INTERNAL_IP
+2021-01-26 04:56:21,836 INFO     ___FILE_ONLY___   
+2021-01-26 04:56:21,837 INFO     ___FILE_ONLY___ EXTERNAL_IP
+2021-01-26 04:56:21,837 INFO     ___FILE_ONLY___      
+2021-01-26 04:56:21,837 INFO     ___FILE_ONLY___ STATUS
+2021-01-26 04:56:21,838 INFO     ___FILE_ONLY___ 
+
+2021-01-26 04:56:21,838 INFO     ___FILE_ONLY___ instance-1
+2021-01-26 04:56:21,839 INFO     ___FILE_ONLY___   
+2021-01-26 04:56:21,839 INFO     ___FILE_ONLY___ us-central1-a
+2021-01-26 04:56:21,839 INFO     ___FILE_ONLY___   
+2021-01-26 04:56:21,840 INFO     ___FILE_ONLY___ e2-micro
+2021-01-26 04:56:21,841 INFO     ___FILE_ONLY___                    
+2021-01-26 04:56:21,841 INFO     ___FILE_ONLY___ 10.128.0.2
+2021-01-26 04:56:21,845 INFO     ___FILE_ONLY___    
+2021-01-26 04:56:21,846 INFO     ___FILE_ONLY___ 35.239.123.136
+2021-01-26 04:56:21,846 INFO     ___FILE_ONLY___   
+2021-01-26 04:56:21,847 INFO     ___FILE_ONLY___ RUNNING
+2021-01-26 04:56:21,847 INFO     ___FILE_ONLY___ 
+
+2021-01-26 04:56:21,859 DEBUG    root            SDK update checks are disabled.

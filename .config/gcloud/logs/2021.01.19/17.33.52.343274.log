@@ -1,0 +1,118 @@
+2021-01-19 17:33:52,352 DEBUG    root            Loaded Command Group: ['gcloud', 'init']
+2021-01-19 17:33:52,356 DEBUG    root            Running [gcloud.init] with arguments: []
+2021-01-19 17:33:52,356 INFO     ___FILE_ONLY___ Welcome! This command will take you through the configuration of gcloud.
+
+
+2021-01-19 17:33:52,359 INFO     ___FILE_ONLY___ Settings from your current configuration [default] are:
+
+2021-01-19 17:33:52,367 INFO     ___FILE_ONLY___ compute:
+  region: us-central1
+  zone: us-central1-a
+core:
+  account: shakeer.uid@gmail.com
+  disable_usage_reporting: 'True'
+  project: opportune-epoch-301314
+
+2021-01-19 17:33:52,367 INFO     ___FILE_ONLY___ 
+
+2021-01-19 17:33:59,570 INFO     ___FILE_ONLY___ Your current configuration has been set to: [default]
+
+
+2021-01-19 17:33:59,570 INFO     ___FILE_ONLY___ You can skip diagnostics next time by using the following flag:
+
+2021-01-19 17:33:59,571 INFO     ___FILE_ONLY___   gcloud init --skip-diagnostics
+
+
+2021-01-19 17:33:59,571 INFO     ___FILE_ONLY___ Network diagnostic detects and fixes local network connection issues.
+
+2021-01-19 17:33:59,573 INFO     ___FILE_ONLY___ Checking network connection...
+2021-01-19 17:34:04,535 DEBUG    urllib3.connectionpool Starting new HTTPS connection (1): accounts.google.com:443
+2021-01-19 17:34:05,000 DEBUG    urllib3.connectionpool https://accounts.google.com:443 "GET / HTTP/1.1" 302 338
+2021-01-19 17:34:05,215 DEBUG    urllib3.connectionpool https://accounts.google.com:443 "GET /ServiceLogin?passive=1209600&continue=https%3A%2F%2Faccounts.google.com%2F&followup=https%3A%2F%2Faccounts.google.com%2F HTTP/1.1" 200 None
+2021-01-19 17:34:05,407 DEBUG    urllib3.connectionpool Starting new HTTPS connection (1): cloudresourcemanager.googleapis.com:443
+2021-01-19 17:34:07,456 DEBUG    urllib3.connectionpool https://cloudresourcemanager.googleapis.com:443 "GET /v1beta1/projects HTTP/1.1" 401 None
+2021-01-19 17:34:07,471 DEBUG    urllib3.connectionpool Starting new HTTPS connection (1): www.googleapis.com:443
+2021-01-19 17:34:07,895 DEBUG    urllib3.connectionpool https://www.googleapis.com:443 "GET /auth/cloud-platform HTTP/1.1" 200 None
+2021-01-19 17:34:07,909 DEBUG    urllib3.connectionpool Starting new HTTPS connection (1): dl.google.com:443
+2021-01-19 17:34:08,466 DEBUG    urllib3.connectionpool https://dl.google.com:443 "GET /dl/cloudsdk/channels/rapid/components-2.json HTTP/1.1" 200 143616
+2021-01-19 17:34:08,843 INFO     ___FILE_ONLY___ Reachability Check passed.
+
+2021-01-19 17:34:08,843 INFO     ___FILE_ONLY___ Network diagnostic passed (1/1 checks passed).
+
+
+2021-01-19 17:34:13,879 INFO     ___FILE_ONLY___ You are logged in as: [shakeer.uid@gmail.com].
+
+
+2021-01-19 17:34:13,920 DEBUG    urllib3.connectionpool Starting new HTTPS connection (1): cloudresourcemanager.googleapis.com:443
+2021-01-19 17:34:16,106 DEBUG    urllib3.connectionpool https://cloudresourcemanager.googleapis.com:443 "GET /v1/projects?alt=json&filter=lifecycleState%3AACTIVE&pageSize=201 HTTP/1.1" 200 None
+2021-01-19 17:34:20,708 INFO     ___FILE_ONLY___ Your current project has been set to: [shakeergcp].
+
+
+2021-01-19 17:34:20,757 DEBUG    root            Loaded Command Group: ['gcloud', 'compute']
+2021-01-19 17:34:20,762 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'project_info']
+2021-01-19 17:34:20,775 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'project-info', 'describe']
+2021-01-19 17:34:20,777 INFO     root            Executing: [gcloud compute project-info describe --quiet]
+2021-01-19 17:34:20,783 DEBUG    root            Running [gcloud.compute.project-info.describe] with arguments: [--no-user-output-enabled: "false", --quiet: "True", --verbosity: "none"]
+2021-01-19 17:34:21,083 DEBUG    urllib3.connectionpool Starting new HTTPS connection (1): compute.googleapis.com:443
+2021-01-19 17:34:21,744 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/v1 HTTP/1.1" 200 None
+2021-01-19 17:34:21,748 DEBUG    root            (gcloud.compute.project-info.describe) HTTPError 403: Access Not Configured. Compute Engine API has not been used in project 36045258912 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=36045258912 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+Traceback (most recent call last):
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/calliope/cli.py", line 982, in Execute
+    resources = calliope_command.Run(cli=self, args=args)
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/calliope/backend.py", line 809, in Run
+    resources = command_instance.Run(args)
+  File "/usr/lib64/google-cloud-sdk/lib/surface/compute/project_info/describe.py", line 39, in Run
+    project=project_ref.projectId))])[0]
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/api_lib/compute/client_adapter.py", line 102, in MakeRequests
+    timeout=timeout))
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/api_lib/compute/request_helper.py", line 272, in MakeRequests
+    requests=requests, http=http, batch_url=batch_url)
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/api_lib/compute/batch_helper.py", line 106, in MakeRequests
+    batch_request_callback=batch_checker.BatchCheck)
+  File "/usr/lib64/google-cloud-sdk/lib/third_party/apitools/base/py/batch.py", line 226, in Execute
+    batch_http_request.Execute(http)
+  File "/usr/lib64/google-cloud-sdk/lib/third_party/apitools/base/py/batch.py", line 506, in Execute
+    self.__callback(response, exception)
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/api_lib/compute/batch_helper.py", line 73, in BatchCheck
+    is_batch_request=True)
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/api_lib/util/apis.py", line 247, in PromptToEnableApi
+    raise exception
+googlecloudsdk.api_lib.util.exceptions.HttpException: HTTPError 403: Access Not Configured. Compute Engine API has not been used in project 36045258912 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=36045258912 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+2021-01-19 17:34:21,756 ERROR    root            (gcloud.compute.project-info.describe) HTTPError 403: Access Not Configured. Compute Engine API has not been used in project 36045258912 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=36045258912 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+2021-01-19 17:34:21,756 INFO     root            [compute project-info describe --quiet] has failed
+
+2021-01-19 17:34:21,756 INFO     ___FILE_ONLY___ Not setting default zone/region (this feature makes it easier to use
+[gcloud compute] by setting an appropriate default value for the
+--zone and --region flag).
+See https://cloud.google.com/compute/docs/gcloud-compute section on how to set
+default compute region and zone manually. If you would like [gcloud init] to be
+able to do this for you the next time you run it, make sure the
+Compute Engine API is enabled for your project on the
+https://console.developers.google.com/apis page.
+
+
+2021-01-19 17:34:21,757 DEBUG    root            Not configuring default .boto file. File already exists at [/home/shakeer/.boto].
+2021-01-19 17:34:21,757 INFO     ___FILE_ONLY___ Your Google Cloud SDK is configured and ready to use!
+
+
+2021-01-19 17:34:21,757 INFO     ___FILE_ONLY___ * Commands that require authentication will use shakeer.uid@gmail.com by default
+
+2021-01-19 17:34:21,757 INFO     ___FILE_ONLY___ * Commands will reference project `shakeergcp` by default
+
+2021-01-19 17:34:21,757 INFO     ___FILE_ONLY___ Run `gcloud help config` to learn how to change individual settings
+
+
+2021-01-19 17:34:21,757 INFO     ___FILE_ONLY___ This gcloud configuration is called [default]. You can create additional configurations if you work with multiple accounts and/or projects.
+
+2021-01-19 17:34:21,757 INFO     ___FILE_ONLY___ Run `gcloud topic configurations` to learn more.
+
+
+2021-01-19 17:34:21,758 INFO     ___FILE_ONLY___ Some things to try next:
+
+
+2021-01-19 17:34:21,758 INFO     ___FILE_ONLY___ * Run `gcloud --help` to see the Cloud Platform services you can interact with. And run `gcloud help COMMAND` to get help on any gcloud command.
+
+2021-01-19 17:34:21,758 INFO     ___FILE_ONLY___ * Run `gcloud topic --help` to learn about advanced features of the SDK like arg files and output formatting
+
+2021-01-19 17:34:21,759 INFO     root            Display format: "default"
+2021-01-19 17:34:21,760 DEBUG    root            SDK update checks are disabled.

@@ -1,0 +1,867 @@
+# Dutch translations for GNU datamash.
+# Copyright (C) 2016 Free Software Foundation, Inc.
+# This file is distributed under the same license as the datamash package.
+#
+# “Dat weet je soms toch niet.”
+#
+# Benno Schulenberg <benno@vertaalt.nl>, 2014, 2015, 2016.
+msgid ""
+msgstr ""
+"Project-Id-Version: datamash-1.0.7.58\n"
+"Report-Msgid-Bugs-To: bug-datamash@gnu.org\n"
+"POT-Creation-Date: 2018-03-15 17:36-0600\n"
+"PO-Revision-Date: 2016-08-09 19:49+0200\n"
+"Last-Translator: Benno Schulenberg <benno@vertaalt.nl>\n"
+"Language-Team: Dutch <vertaling@vrijschrift.org>\n"
+"Language: nl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Bugs: Report translation errors to the Language-Team address.\n"
+"X-Generator: Lokalize 1.0\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+#: lib/closeout.c:122
+msgid "write error"
+msgstr "schrijffout"
+
+#: lib/error.c:195
+msgid "Unknown system error"
+msgstr "Onbekende systeemfout"
+
+#: lib/getopt.c:278
+#, fuzzy, c-format
+msgid "%s: option '%s%s' is ambiguous\n"
+msgstr "%s: optie '%s' is niet eenduidig\n"
+
+#: lib/getopt.c:284
+#, fuzzy, c-format
+msgid "%s: option '%s%s' is ambiguous; possibilities:"
+msgstr "%s: optie '%s' is niet eenduidig; mogelijkheden zijn:"
+
+#: lib/getopt.c:319
+#, fuzzy, c-format
+msgid "%s: unrecognized option '%s%s'\n"
+msgstr "%s: onbekende optie '%c%s'\n"
+
+#: lib/getopt.c:345
+#, fuzzy, c-format
+msgid "%s: option '%s%s' doesn't allow an argument\n"
+msgstr "%s: optie '%c%s' staat geen argument toe\n"
+
+#: lib/getopt.c:360
+#, fuzzy, c-format
+msgid "%s: option '%s%s' requires an argument\n"
+msgstr "%s: optie '--%s' vereist een argument\n"
+
+#: lib/getopt.c:621
+#, c-format
+msgid "%s: invalid option -- '%c'\n"
+msgstr "%s: ongeldige optie -- '%c'\n"
+
+#: lib/getopt.c:636 lib/getopt.c:682
+#, c-format
+msgid "%s: option requires an argument -- '%c'\n"
+msgstr "%s: optie vereist een argument -- '%c'\n"
+
+#. TRANSLATORS:
+#. Get translations for open and closing quotation marks.
+#. The message catalog should translate "`" to a left
+#. quotation mark suitable for the locale, and similarly for
+#. "'".  For example, a French Unicode local should translate
+#. these to U+00AB (LEFT-POINTING DOUBLE ANGLE
+#. QUOTATION MARK), and U+00BB (RIGHT-POINTING DOUBLE ANGLE
+#. QUOTATION MARK), respectively.
+#.
+#. If the catalog has no translation, we will try to
+#. use Unicode U+2018 (LEFT SINGLE QUOTATION MARK) and
+#. Unicode U+2019 (RIGHT SINGLE QUOTATION MARK).  If the
+#. current locale is not Unicode, locale_quoting_style
+#. will quote 'like this', and clocale_quoting_style will
+#. quote "like this".  You should always include translations
+#. for "`" and "'" even if U+2018 and U+2019 are appropriate
+#. for your locale.
+#.
+#. If you don't know what to put here, please see
+#. <https://en.wikipedia.org/wiki/Quotation_marks_in_other_languages>
+#. and use glyphs suitable for your language.
+#: lib/quotearg.c:362
+msgid "`"
+msgstr "‘"
+
+#: lib/quotearg.c:363
+msgid "'"
+msgstr "’"
+
+#: lib/version-etc.c:74
+#, c-format
+msgid "Packaged by %s (%s)\n"
+msgstr "In pakketvorm gebracht door %s (%s)\n"
+
+#: lib/version-etc.c:77
+#, c-format
+msgid "Packaged by %s\n"
+msgstr "In pakketvorm gebracht door %s\n"
+
+#. TRANSLATORS: Translate "(C)" to the copyright symbol
+#. (C-in-a-circle), if this symbol is available in the user's
+#. locale.  Otherwise, do not translate "(C)"; leave it as-is.
+#: lib/version-etc.c:84
+msgid "(C)"
+msgstr "©"
+
+#: lib/version-etc.c:86
+#, fuzzy
+msgid ""
+"\n"
+"License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl."
+"html>.\n"
+"This is free software: you are free to change and redistribute it.\n"
+"There is NO WARRANTY, to the extent permitted by law.\n"
+"\n"
+msgstr ""
+"\n"
+"Dit is vrije software: u mag het vrijelijk wijzigen en verder verspreiden.\n"
+"De precieze licentie is GPL-3+: GNU General Public License versie 3 of "
+"later.\n"
+"Zie http://gnu.org/licenses/gpl.html voor de volledige (Engelse) tekst.\n"
+"Deze software kent GEEN GARANTIE, voor zover de wet dit toestaat.\n"
+"\n"
+
+#. TRANSLATORS: %s denotes an author name.
+#: lib/version-etc.c:102
+#, c-format
+msgid "Written by %s.\n"
+msgstr "Geschreven door %s.\n"
+
+#. TRANSLATORS: Each %s denotes an author name.
+#: lib/version-etc.c:106
+#, c-format
+msgid "Written by %s and %s.\n"
+msgstr "Geschreven door %s en %s.\n"
+
+#. TRANSLATORS: Each %s denotes an author name.
+#: lib/version-etc.c:110
+#, c-format
+msgid "Written by %s, %s, and %s.\n"
+msgstr "Geschreven door %s, %s en %s.\n"
+
+#. TRANSLATORS: Each %s denotes an author name.
+#. You can use line breaks, estimating that each author name occupies
+#. ca. 16 screen columns and that a screen line has ca. 80 columns.
+#: lib/version-etc.c:117
+#, c-format
+msgid ""
+"Written by %s, %s, %s,\n"
+"and %s.\n"
+msgstr ""
+"Geschreven door %s, %s, %s\n"
+"en %s.\n"
+
+#. TRANSLATORS: Each %s denotes an author name.
+#. You can use line breaks, estimating that each author name occupies
+#. ca. 16 screen columns and that a screen line has ca. 80 columns.
+#: lib/version-etc.c:124
+#, c-format
+msgid ""
+"Written by %s, %s, %s,\n"
+"%s, and %s.\n"
+msgstr ""
+"Geschreven door %s, %s, %s,\n"
+"%s en %s.\n"
+
+#. TRANSLATORS: Each %s denotes an author name.
+#. You can use line breaks, estimating that each author name occupies
+#. ca. 16 screen columns and that a screen line has ca. 80 columns.
+#: lib/version-etc.c:131
+#, c-format
+msgid ""
+"Written by %s, %s, %s,\n"
+"%s, %s, and %s.\n"
+msgstr ""
+"Geschreven door %s, %s, %s,\n"
+"%s, %s en %s.\n"
+
+#. TRANSLATORS: Each %s denotes an author name.
+#. You can use line breaks, estimating that each author name occupies
+#. ca. 16 screen columns and that a screen line has ca. 80 columns.
+#: lib/version-etc.c:139
+#, c-format
+msgid ""
+"Written by %s, %s, %s,\n"
+"%s, %s, %s, and %s.\n"
+msgstr ""
+"Geschreven door %s, %s, %s,\n"
+"%s, %s, %s en %s.\n"
+
+#. TRANSLATORS: Each %s denotes an author name.
+#. You can use line breaks, estimating that each author name occupies
+#. ca. 16 screen columns and that a screen line has ca. 80 columns.
+#: lib/version-etc.c:147
+#, c-format
+msgid ""
+"Written by %s, %s, %s,\n"
+"%s, %s, %s, %s,\n"
+"and %s.\n"
+msgstr ""
+"Geschreven door %s, %s, %s,\n"
+"%s, %s, %s, %s\n"
+"en %s.\n"
+
+#. TRANSLATORS: Each %s denotes an author name.
+#. You can use line breaks, estimating that each author name occupies
+#. ca. 16 screen columns and that a screen line has ca. 80 columns.
+#: lib/version-etc.c:156
+#, c-format
+msgid ""
+"Written by %s, %s, %s,\n"
+"%s, %s, %s, %s,\n"
+"%s, and %s.\n"
+msgstr ""
+"Geschreven door %s, %s, %s,\n"
+"%s, %s, %s, %s,\n"
+"%s en %s.\n"
+
+#. TRANSLATORS: Each %s denotes an author name.
+#. You can use line breaks, estimating that each author name occupies
+#. ca. 16 screen columns and that a screen line has ca. 80 columns.
+#: lib/version-etc.c:167
+#, c-format
+msgid ""
+"Written by %s, %s, %s,\n"
+"%s, %s, %s, %s,\n"
+"%s, %s, and others.\n"
+msgstr ""
+"Geschreven door %s, %s, %s,\n"
+"%s, %s, %s, %s,\n"
+"%s, %s en anderen.\n"
+
+#. TRANSLATORS: The placeholder indicates the bug-reporting address
+#. for this package.  Please add _another line_ saying
+#. "Report translation bugs to <...>\n" with the address for translation
+#. bugs (typically your translation team's web or email address).
+#: lib/version-etc.c:245
+#, c-format
+msgid ""
+"\n"
+"Report bugs to: %s\n"
+msgstr ""
+"\n"
+"Rapporteer gebreken in het programma aan <%s>;\n"
+"meld fouten in de vertaling aan <vertaling@vrijschrift.org>.\n"
+
+#: lib/version-etc.c:247
+#, c-format
+msgid "Report %s bugs to: %s\n"
+msgstr ""
+"Rapporteer gebreken in het programma '%s' aan <%s>;\n"
+"meld fouten in de vertaling aan <vertaling@vrijschrift.org>.\n"
+
+#: lib/version-etc.c:251
+#, c-format
+msgid "%s home page: <%s>\n"
+msgstr "Webpagina van %s: <%s>\n"
+
+#: lib/version-etc.c:253
+#, fuzzy, c-format
+msgid "%s home page: <https://www.gnu.org/software/%s/>\n"
+msgstr "Webpagina van %s: <http://www.gnu.org/software/%s/>\n"
+
+#: lib/version-etc.c:256
+#, fuzzy
+msgid "General help using GNU software: <https://www.gnu.org/gethelp/>\n"
+msgstr ""
+"Algemene hulp bij gebruik van GNU-software: <http://www.gnu.org/gethelp/>\n"
+
+#: lib/xalloc-die.c:34
+msgid "memory exhausted"
+msgstr "onvoldoende geheugen beschikbaar"
+
+#: lib/xstrtol-error.c:63
+#, c-format
+msgid "invalid %s%s argument '%s'"
+msgstr "ongeldig argument '%3$s' van %1$s%2$s"
+
+#: lib/xstrtol-error.c:68
+#, c-format
+msgid "invalid suffix in %s%s argument '%s'"
+msgstr "ongeldig achtervoegsel in argument '%3$s' van %1$s%2$s"
+
+#: lib/xstrtol-error.c:72
+#, c-format
+msgid "%s%s argument '%s' too large"
+msgstr "argument '%3$s' van %1$s%2$s is te groot"
+
+#. This is a proper name. See the gettext manual, section Names.
+#: src/datamash.c:65
+msgid "Assaf Gordon"
+msgstr "Assaf Gordon"
+
+#: src/datamash.c:160 src/datamash.c:497
+#, c-format
+msgid "column name %s not found in input file"
+msgstr "kolomnaam %s niet gevonden in invoerbestand"
+
+#: src/datamash.c:173
+#, c-format
+msgid "Usage: %s [OPTION] op [fld] [op fld ...]\n"
+msgstr "Gebruik:  %s [OPTIE...] OPERATIE [VELD] [OPERATIE VELD ...]\n"
+
+#: src/datamash.c:176
+msgid "Performs numeric/string operations on input from stdin."
+msgstr "Voert numerieke of tekenreeksbewerkingen uit op standaardinvoer."
+
+#: src/datamash.c:179
+msgid ""
+"'op' is the operation to perform.  If a primary operation is used,\n"
+"it must be listed first, optionally followed by other operations.\n"
+msgstr ""
+"OPERATIE is de te verrichten bewerking.  Een primaire bewerking moet\n"
+"als eerste gegeven worden, eventueel gevolgd door andere bewerkingen.\n"
+
+#: src/datamash.c:182
+msgid ""
+"'fld' is the input field to use.  'fld' can be a number (1=first field),\n"
+"or a field name when using the -H or --header-in options.\n"
+msgstr ""
+"VELD is het te gebruiken invoerveld.  VELD kan een getal zijn (1 = eerste "
+"veld),\n"
+"of een veldnaam wanneer optie '-H' of '--header-in' gebruikt wordt.\n"
+
+#: src/datamash.c:185
+msgid ""
+"Multiple fields can be listed with a comma (e.g. 1,6,8).  A range of\n"
+"fields can be listed with a dash (e.g. 2-8).  Use colons for operations\n"
+"which require a pair of fields (e.g. 'pcov 2:6').\n"
+msgstr ""
+"Meerdere velden kunnen gegeven worden gescheiden door een komma (bijv. "
+"1,6,8);\n"
+"een reeks velden met een streepje (bijv. 2-8).  Gebruik een dubbelepunt "
+"voor\n"
+"bewerkingen die een veldenpaar vereisen (bijv. 'pcov 2:6').\n"
+
+#: src/datamash.c:190
+msgid "Primary operations:\n"
+msgstr "Primaire bewerkingen:\n"
+
+#: src/datamash.c:193
+msgid "Line-Filtering operations:\n"
+msgstr "Regelfilterbewerkingen:\n"
+
+#: src/datamash.c:196
+msgid "Per-Line operations:\n"
+msgstr "Per-regel-bewerkingen:\n"
+
+#: src/datamash.c:200
+msgid "Numeric Grouping operations:\n"
+msgstr "Numerieke groeperingsbewerkingen:\n"
+
+#: src/datamash.c:203
+msgid "Textual/Numeric Grouping operations:\n"
+msgstr "Tekstuele en numerieke groeperingsbewerkingen:\n"
+
+#: src/datamash.c:207
+msgid "Statistical Grouping operations:\n"
+msgstr "Statistische groeperingsbewerkingen:\n"
+
+#: src/datamash.c:216
+msgid "Grouping Options:\n"
+msgstr "Groeperingsopties:\n"
+
+#: src/datamash.c:217
+msgid ""
+"  -f, --full                print entire input line before op results\n"
+"                              (default: print only the grouped keys)\n"
+msgstr ""
+"  -f, --full                gehele invoerregel tonen vóór "
+"bewerkingsresultaten\n"
+"                              (standaard alleen de gegroepeerde sleutels)\n"
+
+#: src/datamash.c:221
+msgid ""
+"  -g, --group=X[,Y,Z]       group via fields X,[Y,Z];\n"
+"                              equivalent to primary operation 'groupby'\n"
+msgstr ""
+"  -g, --group=X[,Y,Z]       groeperen via de velden X,[Y,Z]; dit is\n"
+"                              hetzelfde als primaire bewerking 'groupby'\n"
+
+#: src/datamash.c:225
+msgid "      --header-in           first input line is column headers\n"
+msgstr "      --header-in           eerste invoerregel zijn kolomkoppen\n"
+
+#: src/datamash.c:228
+msgid "      --header-out          print column headers as first line\n"
+msgstr "      --header-out          kolomkoppen weergeven als eerste regel\n"
+
+#: src/datamash.c:231
+msgid "  -H, --headers             same as '--header-in --header-out'\n"
+msgstr "  -H, --headers             hetzelfde als '--header-in --header-out'\n"
+
+#: src/datamash.c:234
+msgid ""
+"  -i, --ignore-case         ignore upper/lower case when comparing text;\n"
+"                              this affects grouping, and string operations\n"
+msgstr ""
+"  -i, --ignore-case         verschil tussen hoofd- en kleine letters "
+"negeren\n"
+"                              bij tekstvergelijkingen; dit is van invloed "
+"op\n"
+"                              groeperingen en tekenreeksbewerkingen\n"
+
+#: src/datamash.c:238
+msgid ""
+"  -s, --sort                sort the input before grouping; this removes "
+"the\n"
+"                              need to manually pipe the input through "
+"'sort'\n"
+msgstr ""
+"  -s, --sort                de invoer sorteren alvorens te groeperen; dit "
+"maakt\n"
+"                              het handmatig door 'sort' sluizen overbodig\n"
+
+#: src/datamash.c:243
+msgid "File Operation Options:\n"
+msgstr "Bestandsbewerkingsopties:\n"
+
+#: src/datamash.c:244
+msgid "      --no-strict           allow lines with varying number of fields\n"
+msgstr ""
+"      --no-strict           regels met een variërend aantal velden toestaan\n"
+
+#: src/datamash.c:247
+#, c-format
+msgid "      --filler=X            fill missing values with X (default %s)\n"
+msgstr ""
+"      --filler=WAARDE       ontbrekende waarden opvullen met deze (standaard "
+"%s)\n"
+
+#: src/datamash.c:252
+msgid "General Options:\n"
+msgstr "Algemene opties:\n"
+
+#: src/datamash.c:253
+msgid "  -t, --field-separator=X   use X instead of TAB as field delimiter\n"
+msgstr ""
+"  -t, --field-separator=X   dit teken als veldscheider gebruiken i.p.v. tab\n"
+
+#: src/datamash.c:256
+msgid ""
+"      --format=FORMAT       print numeric values with printf style\n"
+"                            floating-point FORMAT.\n"
+msgstr ""
+
+#: src/datamash.c:260
+msgid ""
+"      --output-delimiter=X  use X instead as output field delimiter\n"
+"                            (default: use same delimiter as -t/-W)\n"
+msgstr ""
+
+#: src/datamash.c:264
+msgid "      --narm                skip NA/NaN values\n"
+msgstr ""
+"      --narm                de waarden 'NA', 'N/A' en 'NaN' overslaan\n"
+
+#: src/datamash.c:267
+msgid "  -R, --round=N             round numeric output to N decimal places\n"
+msgstr ""
+
+#: src/datamash.c:270
+msgid ""
+"  -W, --whitespace          use whitespace (one or more spaces and/or tabs)\n"
+"                              for field delimiters\n"
+msgstr ""
+"  -W, --whitespace          witruimte gebruiken om velden te scheiden\n"
+"                              (één of meer spaties en/of tabs) \n"
+
+#: src/datamash.c:274
+msgid "  -z, --zero-terminated     end lines with 0 byte, not newline\n"
+msgstr ""
+"  -z, --zero-terminated      regels afsluiten met 0-byte, niet met "
+"nieuweregel\n"
+
+#: src/datamash.c:283
+msgid "Examples:"
+msgstr "Voorbeelden:"
+
+#: src/datamash.c:285
+msgid "Print the sum and the mean of values from column 1:"
+msgstr "De som en het gemiddelde van de waarden in kolom 1 weergeven:"
+
+#: src/datamash.c:290
+msgid "Transpose input:"
+msgstr "De invoer transponeren:"
+
+#: src/datamash.c:297
+msgid "For detailed usage information and examples, see\n"
+msgstr "Voor gedetailleerde gebruiksinformatie en voorbeelden, zie\n"
+
+#: src/datamash.c:299
+msgid "The manual and more examples are available at\n"
+msgstr "De handleiding en meer voorbeelden zijn beschikbaar op\n"
+
+#: src/datamash.c:308
+#, c-format
+msgid ""
+"invalid input: field %<PRIuMAX> requested, line %<PRIuMAX> has only "
+"%<PRIuMAX> fields"
+msgstr ""
+"ongeldige invoer: veld %<PRIuMAX> werd gevraagd, maar regel %<PRIuMAX> heeft "
+"slechts %<PRIuMAX> velden"
+
+#: src/datamash.c:378
+#, c-format
+msgid "%s in line %<PRIuMAX> field %<PRIuMAX>: '%s'"
+msgstr "%s in regel %<PRIuMAX>, veld %<PRIuMAX>: '%s'"
+
+#: src/datamash.c:706
+#, c-format
+msgid ""
+"transpose input error: line %<PRIuMAX> has %<PRIuMAX> fields (previous lines "
+"had %<PRIuMAX>);\n"
+"see --help to disable strict mode"
+msgstr ""
+"transpositie-invoerfout: regel %<PRIuMAX> heeft %<PRIuMAX> velden\n"
+"(eerdere regels hadden er %<PRIuMAX>);\n"
+"zie --help om strikte modus uit schakelen"
+
+#: src/datamash.c:763
+#, c-format
+msgid ""
+"reverse-field input error: line %<PRIuMAX> has %<PRIuMAX> fields (previous "
+"lines had %<PRIuMAX>);\n"
+"see --help to disable strict mode"
+msgstr ""
+"veldomkerings-invoerfout: regel %<PRIuMAX> heeft %<PRIuMAX> velden\n"
+"(eerdere regels hadden er %<PRIuMAX>);\n"
+"zie --help om strikte modus uit schakelen"
+
+#: src/datamash.c:872 src/datamash.c:889 src/datamash.c:895
+#, c-format
+msgid ""
+"line %<PRIuMAX> (%<PRIuMAX> fields):\n"
+"  "
+msgstr ""
+"regel %<PRIuMAX> (%<PRIuMAX> velden):\n"
+"  "
+
+#: src/datamash.c:878
+#, fuzzy, c-format
+msgid ""
+"check failed: line %<PRIuMAX> has %<PRIuMAX> fields (expecting %<PRIuMAX>)"
+msgstr ""
+"controle is mislukt: regel %<PRIuMAX> heeft %<PRIuMAX> velden (eerdere "
+"regels hadden er %<PRIuMAX>)"
+
+#: src/datamash.c:901
+#, c-format
+msgid ""
+"check failed: line %<PRIuMAX> has %<PRIuMAX> fields (previous line had "
+"%<PRIuMAX>)"
+msgstr ""
+"controle is mislukt: regel %<PRIuMAX> heeft %<PRIuMAX> velden (eerdere "
+"regels hadden er %<PRIuMAX>)"
+
+#: src/datamash.c:915
+#, fuzzy, c-format
+msgid "check failed: input had %<PRIuMAX> lines (expecting %<PRIuMAX>)"
+msgstr ""
+"controle is mislukt: regel %<PRIuMAX> heeft %<PRIuMAX> velden (eerdere "
+"regels hadden er %<PRIuMAX>)"
+
+#: src/datamash.c:921
+#, c-format
+msgid "%<PRIuMAX> line"
+msgid_plural "%<PRIuMAX> lines"
+msgstr[0] "%<PRIuMAX> regel"
+msgstr[1] "%<PRIuMAX> regels"
+
+#: src/datamash.c:924
+#, c-format
+msgid "%<PRIuMAX> field"
+msgid_plural "%<PRIuMAX> fields"
+msgstr[0] "%<PRIuMAX> veld"
+msgstr[1] "%<PRIuMAX> velden"
+
+#: src/datamash.c:1025
+msgid "hash memory allocation error"
+msgstr "onvoldoende geheugen beschikbaar voor hash"
+
+#: src/datamash.c:1087
+msgid "sort command too-long (please report this bug)"
+msgstr "het sorteercommando is te lang (rapporteer deze **programmafout**)"
+
+#: src/datamash.c:1093
+msgid "failed to run 'sort': popen failed"
+msgstr "het aanroepen van 'sort' is mislukt: 'popen()' faalde"
+
+#: src/datamash.c:1109
+msgid "read error"
+msgstr "fout bij lezen"
+
+#: src/datamash.c:1117
+msgid "read error (on close)"
+msgstr "leesfout (bij sluiten)"
+
+#: src/datamash.c:1201 src/datamash.c:1208
+msgid "the delimiter must be a single character"
+msgstr "het scheidingsteken moet een enkel teken zijn"
+
+#: src/datamash.c:1244
+#, c-format
+msgid "missing operation specifiers"
+msgstr "ontbrekende bewerkingsaanduidingen"
+
+#: src/datamash.c:1262
+msgid "-H or --header-in must be used with named columns"
+msgstr "optie '-H' of '--header-in' moet samen met kolomnamen gebruikt worden"
+
+#: src/double-format.c:49
+#, c-format
+msgid "format %s has no %% directive"
+msgstr ""
+
+#: src/double-format.c:62
+#, c-format
+msgid "format %s missing valid type after '%%'"
+msgstr ""
+
+#: src/double-format.c:66
+#, c-format
+msgid "format %s has unknown/invalid type %%%c directive"
+msgstr ""
+
+#: src/double-format.c:79
+#, c-format
+msgid "format %s has too many %% directives"
+msgstr ""
+
+#: src/field-ops.c:325
+#, c-format
+msgid ""
+"input error for operation %s: fields %<PRIuMAX>,%<PRIuMAX> have different "
+"number of items"
+msgstr ""
+"invoerfout voor bewerking %s: velden %<PRIuMAX>,%<PRIuMAX> hebben een "
+"verschillend aantal items"
+
+#: src/field-ops.c:1044
+msgid "invalid numeric value"
+msgstr "ongeldige numerieke waarde"
+
+#: src/field-ops.c:1046
+msgid "invalid base64 value"
+msgstr "ongeldige base64-waarde"
+
+#: src/op-parser.c:165 src/op-parser.c:179 src/op-parser.c:193
+#: src/op-parser.c:208 src/op-parser.c:215
+#, c-format
+msgid "too many parameters for operation %s"
+msgstr "te veel parameters voor bewerking %s"
+
+#: src/op-parser.c:176
+msgid "strbin bucket size must not be zero"
+msgstr "de bucket-grootte voor 'strbin' mag niet nul zijn"
+
+#: src/op-parser.c:190
+#, fuzzy, c-format
+msgid "invalid percentile value %<PRIuMAX>"
+msgstr "ongeldige numerieke waarde '%s'"
+
+#: src/op-parser.c:204
+#, c-format
+msgid "invalid trim mean value %Lg (expected 0 <= X <= 0.5)"
+msgstr ""
+
+#: src/op-parser.c:236 src/op-parser.c:247 src/op-parser.c:505
+#, c-format
+msgid "missing field for operation %s"
+msgstr "ontbrekend veld voor bewerking %s"
+
+#: src/op-parser.c:242 src/op-parser.c:251 src/op-parser.c:307
+#: src/op-parser.c:542
+#, c-format
+msgid "invalid field range for operation %s"
+msgstr "ongeldig veldbereik voor bewerking %s"
+
+#: src/op-parser.c:245 src/op-parser.c:255 src/op-parser.c:545
+#, c-format
+msgid "invalid field pair for operation %s"
+msgstr "ongeldig veldenpaar voor bewerking %s"
+
+#: src/op-parser.c:270 src/op-parser.c:520
+#, c-format
+msgid "invalid field '%s' for operation %s"
+msgstr "ongeldig veld '%s' voor bewerking %s"
+
+#: src/op-parser.c:304
+#, c-format
+msgid "field range for %s must be numeric"
+msgstr "veldbereik voor %s moet numeriek zijn"
+
+#: src/op-parser.c:364
+#, c-format
+msgid "missing parameter for operation %s"
+msgstr "ontbrekende parameter voor bewerking %s"
+
+#: src/op-parser.c:372
+#, c-format
+msgid "invalid parameter %s for operation %s"
+msgstr "ongeldige parameter %s voor bewerking %s"
+
+# FIXME: Does this require a single pair of fields?
+# FIXME: Or does it require multiple pairs?
+#: src/op-parser.c:404
+#, c-format
+msgid "operation %s requires field pairs"
+msgstr "bewerking %s vereist veldparen"
+
+#: src/op-parser.c:407
+#, c-format
+msgid "operation %s cannot use pair of fields"
+msgstr "bewerking %s staat geen veldparen toe"
+
+#: src/op-parser.c:447
+#, c-format
+msgid "conflicting operation %s"
+msgstr "conflicterende bewerking %s"
+
+#: src/op-parser.c:450 src/op-parser.c:703
+#, c-format
+msgid "invalid operation %s"
+msgstr "ongeldige bewerking %s"
+
+#: src/op-parser.c:455
+#, c-format
+msgid ""
+"conflicting operation found: expecting %s operations, but found %s operation "
+"%s"
+msgstr ""
+"conflicterende bewerking gevonden: er werden %s-bewerkingen verwacht, maar "
+"%s-bewerking %s werd gevonden"
+
+#: src/op-parser.c:559
+#, fuzzy, c-format
+msgid "invalid option %s for operation check"
+msgstr "ongeldige parameter %s voor bewerking %s"
+
+#: src/op-parser.c:587
+msgid "number expected after option in operation 'check'"
+msgstr ""
+
+#: src/op-parser.c:593
+msgid "invalid value zero for lines/fields in operation 'check'"
+msgstr ""
+
+#: src/op-parser.c:599
+msgid "number of lines/rows already set in operation 'check'"
+msgstr ""
+
+#: src/op-parser.c:606
+msgid "number of fields/columns already set in operation 'check'"
+msgstr ""
+
+#: src/op-parser.c:643
+#, c-format
+msgid "crosstab requires exactly 2 fields, found %<PRIuMAX>"
+msgstr "'crosstab' vereist precies 2 velden; %<PRIuMAX> gevonden"
+
+#: src/op-parser.c:656
+#, c-format
+msgid "crosstab supports one operation, found %<PRIuMAX>"
+msgstr "'crosstab' ondersteunt één bewerking; %<PRIuMAX> gevonden"
+
+#: src/op-parser.c:665
+msgid "missing operation"
+msgstr "ontbrekende bewerking"
+
+#: src/op-parser.c:679
+#, c-format
+msgid "extra operand %s"
+msgstr "overtollige operand %s"
+
+#: src/op-parser.c:816 src/op-scanner.c:211
+msgid "missing script (among arguments)"
+msgstr "ontbrekend script (tussen argumenten)"
+
+#: src/op-scanner.c:168
+#, c-format
+msgid "invalid numeric value '%s'"
+msgstr "ongeldige numerieke waarde '%s'"
+
+#: src/op-scanner.c:189
+#, c-format
+msgid "invalid operand %s"
+msgstr "ongeldige operand %s"
+
+#: src/op-scanner.c:245
+#, c-format
+msgid "unknown token %d\n"
+msgstr "onbekend token %d\n"
+
+#: src/system.h:133
+msgid "      --help     display this help and exit\n"
+msgstr "      --help      deze hulptekst tonen en stoppen\n"
+
+#: src/system.h:135
+msgid "      --version  output version information and exit\n"
+msgstr "      --version   programmaversie tonen en stoppen\n"
+
+#: src/system.h:140
+#, c-format
+msgid "Try '%s --help' for more information.\n"
+msgstr "Typ '%s --help' voor meer informatie.\n"
+
+#: src/text-options.c:107
+msgid "missing rounding digits value"
+msgstr ""
+
+#: src/text-options.c:112
+#, fuzzy, c-format
+msgid "invalid rounding digits value %s"
+msgstr "ongeldige groeperingsparameter %s"
+
+#~ msgid "%s: option '--%s' doesn't allow an argument\n"
+#~ msgstr "%s: optie '--%s' staat geen argument toe\n"
+
+#~ msgid "%s: unrecognized option '--%s'\n"
+#~ msgstr "%s: onbekende optie '--%s'\n"
+
+#~ msgid "%s: option '-W %s' is ambiguous\n"
+#~ msgstr "%s: optie '-W %s' is niet eenduidig\n"
+
+#~ msgid "%s: option '-W %s' doesn't allow an argument\n"
+#~ msgstr "%s: optie '-W %s' staat geen argument toe\n"
+
+#~ msgid "%s: option '-W %s' requires an argument\n"
+#~ msgstr "%s: optie '-W %s' vereist een argument\n"
+
+#~ msgid "'op' is the operation to perform;\n"
+#~ msgstr "OPERATIE is de uit te voeren bewerking.\n"
+
+#~ msgid "File operations:\n"
+#~ msgstr "Bestandsoperaties:\n"
+
+#~ msgid "Options:\n"
+#~ msgstr "Opties:\n"
+
+#~ msgid "  -g, --group=X[,Y,Z]       group via fields X,[Y,Z]\n"
+#~ msgstr "  -g, --group=X[,Y,Z]       groeperen op de velden X,[Y,Z]\n"
+
+#~ msgid "invalid empty grouping parameter"
+#~ msgstr "ongeldige lege groeperingsparameter"
+
+#~ msgid "For grouping operations 'col' is the input field to use."
+#~ msgstr "Voor groeperingsoperaties is KOLOM het te gebruiken invoerveld."
+
+#~ msgid "      --debug               print helpful debugging information\n"
+#~ msgstr ""
+#~ "      --debug               behulpzame foutopsporingsinformatie tonen\n"
+
+#~ msgid "invalid numeric input in line %zu field %zu: '%s'"
+#~ msgstr "ongeldige numerieke invoer op regel %zu, veld %zu: '%s'"
+
+#~ msgid "invalid field value for grouping '%s'"
+#~ msgstr "ongeldige veldwaarde '%s' voor groepering"
+
+#~ msgid "invalid field value (zero) for grouping"
+#~ msgstr "ongeldige veldwaarde (nul) voor groepering"

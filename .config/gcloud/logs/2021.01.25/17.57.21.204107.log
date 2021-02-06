@@ -1,0 +1,10 @@
+2021-01-25 17:57:21,206 DEBUG    root            Loaded Command Group: ['gcloud', 'config']
+2021-01-25 17:57:21,208 DEBUG    root            Loaded Command Group: ['gcloud', 'config', 'configurations']
+2021-01-25 17:57:21,210 DEBUG    root            Loaded Command Group: ['gcloud', 'config', 'configurations', 'create']
+2021-01-25 17:57:21,214 DEBUG    root            Running [gcloud.config.configurations.create] with arguments: [CONFIGURATION_NAME: "shakeer-dev"]
+2021-01-25 17:57:21,216 INFO     ___FILE_ONLY___ Created [shakeer-dev].
+
+2021-01-25 17:57:21,217 INFO     ___FILE_ONLY___ Activated [shakeer-dev].
+
+2021-01-25 17:57:21,218 INFO     root            Display format: "none"
+2021-01-25 17:57:21,219 DEBUG    root            SDK update checks are disabled.

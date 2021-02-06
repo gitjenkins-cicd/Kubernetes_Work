@@ -1,0 +1,838 @@
+# Vietnamese translations for datamash package
+# Bản dịch tiếng Việt cho gói datamash.
+# Copyright (C) 2015 Free Software Foundation, Inc.
+# This file is distributed under the same license as the datamash package.
+# Trần Ngọc Quân <vnwildman@gmail.com>, 2014, 2015.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: datamash 1.0.6.54\n"
+"Report-Msgid-Bugs-To: bug-datamash@gnu.org\n"
+"POT-Creation-Date: 2018-03-15 17:36-0600\n"
+"PO-Revision-Date: 2015-06-06 15:26+0700\n"
+"Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
+"Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Bugs: Report translation errors to the Language-Team address.\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Gtranslator 2.91.7\n"
+
+#: lib/closeout.c:122
+msgid "write error"
+msgstr "lỗi ghi"
+
+#: lib/error.c:195
+msgid "Unknown system error"
+msgstr "Gặp lỗi hệ thống không rõ"
+
+#: lib/getopt.c:278
+#, fuzzy, c-format
+msgid "%s: option '%s%s' is ambiguous\n"
+msgstr "%s: Tùy chọn “-W %s” chưa rõ ràng\n"
+
+#: lib/getopt.c:284
+#, fuzzy, c-format
+msgid "%s: option '%s%s' is ambiguous; possibilities:"
+msgstr "%s: tùy chọn “%s” chưa rõ ràng; khả năng là:"
+
+#: lib/getopt.c:319
+#, fuzzy, c-format
+msgid "%s: unrecognized option '%s%s'\n"
+msgstr "%s: không nhận ra tùy chọn “%c%s”\n"
+
+#: lib/getopt.c:345
+#, fuzzy, c-format
+msgid "%s: option '%s%s' doesn't allow an argument\n"
+msgstr "%s: tùy chọn “%c%s” không cho phép có đối số\n"
+
+#: lib/getopt.c:360
+#, fuzzy, c-format
+msgid "%s: option '%s%s' requires an argument\n"
+msgstr "%s: tùy chọn “--%s” cần một đối số\n"
+
+#: lib/getopt.c:621
+#, c-format
+msgid "%s: invalid option -- '%c'\n"
+msgstr "%s: tùy chọn không hợp lệ -- “%c”\n"
+
+#: lib/getopt.c:636 lib/getopt.c:682
+#, c-format
+msgid "%s: option requires an argument -- '%c'\n"
+msgstr "%s: tùy chọn yêu cầu một đối số -- “%c”\n"
+
+#. TRANSLATORS:
+#. Get translations for open and closing quotation marks.
+#. The message catalog should translate "`" to a left
+#. quotation mark suitable for the locale, and similarly for
+#. "'".  For example, a French Unicode local should translate
+#. these to U+00AB (LEFT-POINTING DOUBLE ANGLE
+#. QUOTATION MARK), and U+00BB (RIGHT-POINTING DOUBLE ANGLE
+#. QUOTATION MARK), respectively.
+#.
+#. If the catalog has no translation, we will try to
+#. use Unicode U+2018 (LEFT SINGLE QUOTATION MARK) and
+#. Unicode U+2019 (RIGHT SINGLE QUOTATION MARK).  If the
+#. current locale is not Unicode, locale_quoting_style
+#. will quote 'like this', and clocale_quoting_style will
+#. quote "like this".  You should always include translations
+#. for "`" and "'" even if U+2018 and U+2019 are appropriate
+#. for your locale.
+#.
+#. If you don't know what to put here, please see
+#. <https://en.wikipedia.org/wiki/Quotation_marks_in_other_languages>
+#. and use glyphs suitable for your language.
+#: lib/quotearg.c:362
+msgid "`"
+msgstr "“"
+
+#: lib/quotearg.c:363
+msgid "'"
+msgstr "”"
+
+#: lib/version-etc.c:74
+#, c-format
+msgid "Packaged by %s (%s)\n"
+msgstr "Đóng gói bởi %s (%s)\n"
+
+#: lib/version-etc.c:77
+#, c-format
+msgid "Packaged by %s\n"
+msgstr "Đóng gói bởi %s\n"
+
+#. TRANSLATORS: Translate "(C)" to the copyright symbol
+#. (C-in-a-circle), if this symbol is available in the user's
+#. locale.  Otherwise, do not translate "(C)"; leave it as-is.
+#: lib/version-etc.c:84
+msgid "(C)"
+msgstr "©"
+
+#: lib/version-etc.c:86
+#, fuzzy
+msgid ""
+"\n"
+"License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl."
+"html>.\n"
+"This is free software: you are free to change and redistribute it.\n"
+"There is NO WARRANTY, to the extent permitted by law.\n"
+"\n"
+msgstr ""
+"\n"
+"Giấy phép GPL pb3+: Giấy phép Công cộng GNU phiên bản 3 hay sau\n"
+"<http://gnu.org/licenses/gpl.html>\n"
+"Đây là phần mềm tự do: bạn có quyền sửa đổi và phát hành lại nó.\n"
+"KHÔNG CÓ BẢO HÀNH GÌ CẢ, với điều khiển được pháp luật cho phép.\n"
+"\n"
+
+#. TRANSLATORS: %s denotes an author name.
+#: lib/version-etc.c:102
+#, c-format
+msgid "Written by %s.\n"
+msgstr "Viết bởi %s.\n"
+
+#. TRANSLATORS: Each %s denotes an author name.
+#: lib/version-etc.c:106
+#, c-format
+msgid "Written by %s and %s.\n"
+msgstr "Viết bởi %s và %s.\n"
+
+#. TRANSLATORS: Each %s denotes an author name.
+#: lib/version-etc.c:110
+#, c-format
+msgid "Written by %s, %s, and %s.\n"
+msgstr "Viết bởi %s, %s và %s.\n"
+
+#. TRANSLATORS: Each %s denotes an author name.
+#. You can use line breaks, estimating that each author name occupies
+#. ca. 16 screen columns and that a screen line has ca. 80 columns.
+#: lib/version-etc.c:117
+#, c-format
+msgid ""
+"Written by %s, %s, %s,\n"
+"and %s.\n"
+msgstr ""
+"Viết bởi %s, %s, %s\n"
+"và %s.\n"
+
+#. TRANSLATORS: Each %s denotes an author name.
+#. You can use line breaks, estimating that each author name occupies
+#. ca. 16 screen columns and that a screen line has ca. 80 columns.
+#: lib/version-etc.c:124
+#, c-format
+msgid ""
+"Written by %s, %s, %s,\n"
+"%s, and %s.\n"
+msgstr ""
+"Viết bởi %s, %s, %s,\n"
+"%s và %s.\n"
+
+#. TRANSLATORS: Each %s denotes an author name.
+#. You can use line breaks, estimating that each author name occupies
+#. ca. 16 screen columns and that a screen line has ca. 80 columns.
+#: lib/version-etc.c:131
+#, c-format
+msgid ""
+"Written by %s, %s, %s,\n"
+"%s, %s, and %s.\n"
+msgstr ""
+"Viết bởi %s, %s, %s,\n"
+"%s, %s và %s.\n"
+
+#. TRANSLATORS: Each %s denotes an author name.
+#. You can use line breaks, estimating that each author name occupies
+#. ca. 16 screen columns and that a screen line has ca. 80 columns.
+#: lib/version-etc.c:139
+#, c-format
+msgid ""
+"Written by %s, %s, %s,\n"
+"%s, %s, %s, and %s.\n"
+msgstr ""
+"Viết bởi %s, %s, %s,\n"
+"%s, %s, %s và %s.\n"
+
+#. TRANSLATORS: Each %s denotes an author name.
+#. You can use line breaks, estimating that each author name occupies
+#. ca. 16 screen columns and that a screen line has ca. 80 columns.
+#: lib/version-etc.c:147
+#, c-format
+msgid ""
+"Written by %s, %s, %s,\n"
+"%s, %s, %s, %s,\n"
+"and %s.\n"
+msgstr ""
+"Viết bởi %s, %s, %s,\n"
+"%s, %s, %s, %s,\n"
+"và %s.\n"
+
+#. TRANSLATORS: Each %s denotes an author name.
+#. You can use line breaks, estimating that each author name occupies
+#. ca. 16 screen columns and that a screen line has ca. 80 columns.
+#: lib/version-etc.c:156
+#, c-format
+msgid ""
+"Written by %s, %s, %s,\n"
+"%s, %s, %s, %s,\n"
+"%s, and %s.\n"
+msgstr ""
+"Viết bởi %s, %s, %s,\n"
+"%s, %s, %s, %s,\n"
+"%s, và %s.\n"
+
+#. TRANSLATORS: Each %s denotes an author name.
+#. You can use line breaks, estimating that each author name occupies
+#. ca. 16 screen columns and that a screen line has ca. 80 columns.
+#: lib/version-etc.c:167
+#, c-format
+msgid ""
+"Written by %s, %s, %s,\n"
+"%s, %s, %s, %s,\n"
+"%s, %s, and others.\n"
+msgstr ""
+"Viết bởi %s, %s, %s,\n"
+"%s, %s, %s, %s,\n"
+"%s, %s và những người khác.\n"
+
+#. TRANSLATORS: The placeholder indicates the bug-reporting address
+#. for this package.  Please add _another line_ saying
+#. "Report translation bugs to <...>\n" with the address for translation
+#. bugs (typically your translation team's web or email address).
+#: lib/version-etc.c:245
+#, c-format
+msgid ""
+"\n"
+"Report bugs to: %s\n"
+msgstr ""
+"\n"
+"Gửi báo cáo lỗi tới: %s\n"
+"Gửi báo cáo lỗi dịch tới <http://translationproject.org/team/vi.html>\n"
+
+#: lib/version-etc.c:247
+#, c-format
+msgid "Report %s bugs to: %s\n"
+msgstr "Report %s bugs to: %s\n"
+
+#: lib/version-etc.c:251
+#, c-format
+msgid "%s home page: <%s>\n"
+msgstr "Trang chủ %s: <%s>\n"
+
+#: lib/version-etc.c:253
+#, fuzzy, c-format
+msgid "%s home page: <https://www.gnu.org/software/%s/>\n"
+msgstr "Trang chủ %s: <http://www.gnu.org/software/%s/>\n"
+
+#: lib/version-etc.c:256
+#, fuzzy
+msgid "General help using GNU software: <https://www.gnu.org/gethelp/>\n"
+msgstr ""
+"Trợ giúp chung về sử dụng phần mềm GNU: <http://www.gnu.org/gethelp/>\n"
+
+#: lib/xalloc-die.c:34
+msgid "memory exhausted"
+msgstr "hết bộ nhớ"
+
+#: lib/xstrtol-error.c:63
+#, c-format
+msgid "invalid %s%s argument '%s'"
+msgstr "đối số %s%s không hợp lệ “%s”"
+
+#: lib/xstrtol-error.c:68
+#, c-format
+msgid "invalid suffix in %s%s argument '%s'"
+msgstr "gặp hậu tố không hợp lệ trong %s%s đối số “%s”"
+
+#: lib/xstrtol-error.c:72
+#, c-format
+msgid "%s%s argument '%s' too large"
+msgstr "%s%s đối số “%s” quá lớn"
+
+#. This is a proper name. See the gettext manual, section Names.
+#: src/datamash.c:65
+msgid "Assaf Gordon"
+msgstr "Assaf Gordon"
+
+#: src/datamash.c:160 src/datamash.c:497
+#, c-format
+msgid "column name %s not found in input file"
+msgstr "không tìm thấy cột tên %s trong tập tin đầu vào"
+
+#: src/datamash.c:173
+#, fuzzy, c-format
+msgid "Usage: %s [OPTION] op [fld] [op fld ...]\n"
+msgstr "Cách dùng: %s [TÙY-CHỌN] op [cột] [op cột …]\n"
+
+#: src/datamash.c:176
+msgid "Performs numeric/string operations on input from stdin."
+msgstr ""
+"Thực hiện các thao tác với số/chuỗi trên đầu vào từ đầu vào tiêu chuẩn."
+
+#: src/datamash.c:179
+msgid ""
+"'op' is the operation to perform.  If a primary operation is used,\n"
+"it must be listed first, optionally followed by other operations.\n"
+msgstr ""
+
+#: src/datamash.c:182
+#, fuzzy
+msgid ""
+"'fld' is the input field to use.  'fld' can be a number (1=first field),\n"
+"or a field name when using the -H or --header-in options.\n"
+msgstr ""
+"Để nhóm,thao tác mỗi-dòng “cột” là các trường đầu vào muốn dùng;\n"
+"“cột” có thể là số (1=cột đầu tiên), hoặc tên cột khi sử dụng\n"
+"tùy chọn -H hoặc --header-in.\n"
+
+#: src/datamash.c:185
+msgid ""
+"Multiple fields can be listed with a comma (e.g. 1,6,8).  A range of\n"
+"fields can be listed with a dash (e.g. 2-8).  Use colons for operations\n"
+"which require a pair of fields (e.g. 'pcov 2:6').\n"
+msgstr ""
+
+#: src/datamash.c:190
+#, fuzzy
+msgid "Primary operations:\n"
+msgstr "Thao tác trên-dòng:\n"
+
+#: src/datamash.c:193
+msgid "Line-Filtering operations:\n"
+msgstr "Thao tác lọc-dòng:\n"
+
+#: src/datamash.c:196
+msgid "Per-Line operations:\n"
+msgstr "Thao tác trên-dòng:\n"
+
+#: src/datamash.c:200
+msgid "Numeric Grouping operations:\n"
+msgstr "Các thao tác nhóm số:\n"
+
+#: src/datamash.c:203
+msgid "Textual/Numeric Grouping operations:\n"
+msgstr "Thao tác nhóm Số/Chữ:\n"
+
+#: src/datamash.c:207
+msgid "Statistical Grouping operations:\n"
+msgstr "Thao tác nhóm thống kê:\n"
+
+#: src/datamash.c:216
+msgid "Grouping Options:\n"
+msgstr "Tùy chọn nhóm:\n"
+
+#: src/datamash.c:217
+msgid ""
+"  -f, --full                print entire input line before op results\n"
+"                              (default: print only the grouped keys)\n"
+msgstr ""
+"  -f, --full                in toàn bộ dòng đầu vào trước kết quả thao tác\n"
+"                              (mặc định: chỉ in các khóa được nhóm)\n"
+
+#: src/datamash.c:221
+msgid ""
+"  -g, --group=X[,Y,Z]       group via fields X,[Y,Z];\n"
+"                              equivalent to primary operation 'groupby'\n"
+msgstr ""
+
+#: src/datamash.c:225
+msgid "      --header-in           first input line is column headers\n"
+msgstr "      --header-in           dòng đầu vào đầu tiên là đầu cột\n"
+
+#: src/datamash.c:228
+msgid "      --header-out          print column headers as first line\n"
+msgstr "      --header-out          in đầu cột cho dòng đầu tiên\n"
+
+#: src/datamash.c:231
+msgid "  -H, --headers             same as '--header-in --header-out'\n"
+msgstr "  -H, --headers             giống với “--header-in --header-out”\n"
+
+# Ghi chú:
+# Thêm nút
+#: src/datamash.c:234
+msgid ""
+"  -i, --ignore-case         ignore upper/lower case when comparing text;\n"
+"                              this affects grouping, and string operations\n"
+msgstr ""
+"  -i, --ignore-case         không phân biệt HOA/thường khi so sánh chữ;\n"
+"                              nó ảnh hưởng đến thao tác nhóm và chuỗi\n"
+
+#: src/datamash.c:238
+msgid ""
+"  -s, --sort                sort the input before grouping; this removes "
+"the\n"
+"                              need to manually pipe the input through "
+"'sort'\n"
+msgstr ""
+"  -s, --sort                sắp xếp đầu vào trước khi nhóm; lệnh này di "
+"chuyển đầu vào\n"
+"                              cần đến đường ống một cách thủ công thông qua "
+"lệnh “sort”\n"
+
+#: src/datamash.c:243
+msgid "File Operation Options:\n"
+msgstr "Tùy chọn thao tác tập tin:\n"
+
+#: src/datamash.c:244
+msgid "      --no-strict           allow lines with varying number of fields\n"
+msgstr ""
+"      --no-strict           cho phép các dòng với số lượng trường biến đổi\n"
+
+#: src/datamash.c:247
+#, c-format
+msgid "      --filler=X            fill missing values with X (default %s)\n"
+msgstr ""
+"      --filler=X            điền đầy giá trị thiếu bằng X (mặc định %s)\n"
+
+#: src/datamash.c:252
+msgid "General Options:\n"
+msgstr "Tùy chọn chung:\n"
+
+#: src/datamash.c:253
+msgid "  -t, --field-separator=X   use X instead of TAB as field delimiter\n"
+msgstr ""
+"  -t, --field-separator=X   dùng X thay vì TAB làm bộ phân tách trường\n"
+
+#: src/datamash.c:256
+msgid ""
+"      --format=FORMAT       print numeric values with printf style\n"
+"                            floating-point FORMAT.\n"
+msgstr ""
+
+#: src/datamash.c:260
+msgid ""
+"      --output-delimiter=X  use X instead as output field delimiter\n"
+"                            (default: use same delimiter as -t/-W)\n"
+msgstr ""
+
+#: src/datamash.c:264
+msgid "      --narm                skip NA/NaN values\n"
+msgstr "      --narm                bỏ qua các giá trị NA/NaN\n"
+
+#: src/datamash.c:267
+msgid "  -R, --round=N             round numeric output to N decimal places\n"
+msgstr ""
+
+#: src/datamash.c:270
+msgid ""
+"  -W, --whitespace          use whitespace (one or more spaces and/or tabs)\n"
+"                              for field delimiters\n"
+msgstr ""
+"  -W, --whitespace          dùng khoảng trắng (một hoặc nhiều khoảng trắng\n"
+"                              hoặc/và tab) cho bộ phân tách trường\n"
+
+#: src/datamash.c:274
+msgid "  -z, --zero-terminated     end lines with 0 byte, not newline\n"
+msgstr ""
+"  -z, --zero-terminated     kết thúc dòng với byte 0, không phải ký tự dòng "
+"mới\n"
+
+#: src/datamash.c:283
+msgid "Examples:"
+msgstr "Ví dụ:"
+
+#: src/datamash.c:285
+msgid "Print the sum and the mean of values from column 1:"
+msgstr "In tổng và giá trị trung bình từ cột 1:"
+
+#: src/datamash.c:290
+msgid "Transpose input:"
+msgstr "Chuyển vị đầu vào:"
+
+#: src/datamash.c:297
+msgid "For detailed usage information and examples, see\n"
+msgstr "Để có thông tin chi tiết về cách dùng và ví dụ, xem\n"
+
+#: src/datamash.c:299
+msgid "The manual and more examples are available at\n"
+msgstr "Hướng dẫn sử dụng và nhiều ví dụ sẵn có tại\n"
+
+#: src/datamash.c:308
+#, c-format
+msgid ""
+"invalid input: field %<PRIuMAX> requested, line %<PRIuMAX> has only "
+"%<PRIuMAX> fields"
+msgstr ""
+"đầu vào không hợp lệ: đã yêu cầu trường %<PRIuMAX>, dòng %<PRIuMAX> chỉ có "
+"%<PRIuMAX> trường"
+
+#: src/datamash.c:378
+#, c-format
+msgid "%s in line %<PRIuMAX> field %<PRIuMAX>: '%s'"
+msgstr "%s ở dòng %<PRIuMAX> trường %<PRIuMAX>: “%s”"
+
+#: src/datamash.c:706
+#, c-format
+msgid ""
+"transpose input error: line %<PRIuMAX> has %<PRIuMAX> fields (previous lines "
+"had %<PRIuMAX>);\n"
+"see --help to disable strict mode"
+msgstr ""
+"lỗi đầu vào hoán vị: dòng %<PRIuMAX> có %<PRIuMAX> trường (dòng trước đó có "
+"%<PRIuMAX>);\n"
+"xem --help để tắt chế độ hạn chế"
+
+#: src/datamash.c:763
+#, c-format
+msgid ""
+"reverse-field input error: line %<PRIuMAX> has %<PRIuMAX> fields (previous "
+"lines had %<PRIuMAX>);\n"
+"see --help to disable strict mode"
+msgstr ""
+"lỗi đầu vào đảo ngược trường: dòng %<PRIuMAX> có %<PRIuMAX> trường (dòng "
+"trước đó có %<PRIuMAX>);\n"
+"xem --help để tắt chế độ hạn chế"
+
+#: src/datamash.c:872 src/datamash.c:889 src/datamash.c:895
+#, fuzzy, c-format
+msgid ""
+"line %<PRIuMAX> (%<PRIuMAX> fields):\n"
+"  "
+msgstr "%s ở dòng %<PRIuMAX> trường %<PRIuMAX>: “%s”"
+
+#: src/datamash.c:878
+#, fuzzy, c-format
+msgid ""
+"check failed: line %<PRIuMAX> has %<PRIuMAX> fields (expecting %<PRIuMAX>)"
+msgstr ""
+"lỗi đầu vào hoán vị: dòng %<PRIuMAX> có %<PRIuMAX> trường (dòng trước đó có "
+"%<PRIuMAX>);\n"
+"xem --help để tắt chế độ hạn chế"
+
+#: src/datamash.c:901
+#, fuzzy, c-format
+msgid ""
+"check failed: line %<PRIuMAX> has %<PRIuMAX> fields (previous line had "
+"%<PRIuMAX>)"
+msgstr ""
+"lỗi đầu vào hoán vị: dòng %<PRIuMAX> có %<PRIuMAX> trường (dòng trước đó có "
+"%<PRIuMAX>);\n"
+"xem --help để tắt chế độ hạn chế"
+
+#: src/datamash.c:915
+#, fuzzy, c-format
+msgid "check failed: input had %<PRIuMAX> lines (expecting %<PRIuMAX>)"
+msgstr ""
+"lỗi đầu vào hoán vị: dòng %<PRIuMAX> có %<PRIuMAX> trường (dòng trước đó có "
+"%<PRIuMAX>);\n"
+"xem --help để tắt chế độ hạn chế"
+
+#: src/datamash.c:921
+#, c-format
+msgid "%<PRIuMAX> line"
+msgid_plural "%<PRIuMAX> lines"
+msgstr[0] ""
+
+#: src/datamash.c:924
+#, c-format
+msgid "%<PRIuMAX> field"
+msgid_plural "%<PRIuMAX> fields"
+msgstr[0] ""
+
+#: src/datamash.c:1025
+msgid "hash memory allocation error"
+msgstr "lỗi phân bổ bộ nhớ mã băm"
+
+#: src/datamash.c:1087
+msgid "sort command too-long (please report this bug)"
+msgstr "lệnh sort quá dài (vui lòng báo cáo đây là lỗi)"
+
+#: src/datamash.c:1093
+msgid "failed to run 'sort': popen failed"
+msgstr "gặp lỗi khi chạy “sort”: popen bị lỗi"
+
+#: src/datamash.c:1109
+msgid "read error"
+msgstr "lỗi đọc"
+
+#: src/datamash.c:1117
+msgid "read error (on close)"
+msgstr "lỗi đọc (khi đóng)"
+
+#: src/datamash.c:1201 src/datamash.c:1208
+msgid "the delimiter must be a single character"
+msgstr "dấu phân cách phải là một ký tự đơn"
+
+#: src/datamash.c:1244
+#, c-format
+msgid "missing operation specifiers"
+msgstr "thiếu bộ chỉ thị thao tác"
+
+#: src/datamash.c:1262
+msgid "-H or --header-in must be used with named columns"
+msgstr "-H hay --header-in phải được dùng cùng với tên của cột"
+
+#: src/double-format.c:49
+#, c-format
+msgid "format %s has no %% directive"
+msgstr ""
+
+#: src/double-format.c:62
+#, c-format
+msgid "format %s missing valid type after '%%'"
+msgstr ""
+
+#: src/double-format.c:66
+#, c-format
+msgid "format %s has unknown/invalid type %%%c directive"
+msgstr ""
+
+#: src/double-format.c:79
+#, c-format
+msgid "format %s has too many %% directives"
+msgstr ""
+
+#: src/field-ops.c:325
+#, c-format
+msgid ""
+"input error for operation %s: fields %<PRIuMAX>,%<PRIuMAX> have different "
+"number of items"
+msgstr ""
+
+#: src/field-ops.c:1044
+msgid "invalid numeric value"
+msgstr "giá trị số không hợp lệ"
+
+#: src/field-ops.c:1046
+msgid "invalid base64 value"
+msgstr "giá trị base64 không hợp lệ"
+
+#: src/op-parser.c:165 src/op-parser.c:179 src/op-parser.c:193
+#: src/op-parser.c:208 src/op-parser.c:215
+#, fuzzy, c-format
+msgid "too many parameters for operation %s"
+msgstr "cột “%s” không hợp lệ với thao tác %s"
+
+#: src/op-parser.c:176
+msgid "strbin bucket size must not be zero"
+msgstr ""
+
+#: src/op-parser.c:190
+#, fuzzy, c-format
+msgid "invalid percentile value %<PRIuMAX>"
+msgstr "giá trị số không hợp lệ"
+
+#: src/op-parser.c:204
+#, c-format
+msgid "invalid trim mean value %Lg (expected 0 <= X <= 0.5)"
+msgstr ""
+
+#: src/op-parser.c:236 src/op-parser.c:247 src/op-parser.c:505
+#, fuzzy, c-format
+msgid "missing field for operation %s"
+msgstr "thiếu số trường sau thao tác “%s”"
+
+#: src/op-parser.c:242 src/op-parser.c:251 src/op-parser.c:307
+#: src/op-parser.c:542
+#, fuzzy, c-format
+msgid "invalid field range for operation %s"
+msgstr "cột trống không hợp lệ với thao tác %s"
+
+#: src/op-parser.c:245 src/op-parser.c:255 src/op-parser.c:545
+#, fuzzy, c-format
+msgid "invalid field pair for operation %s"
+msgstr "cột “%s” không hợp lệ với thao tác %s"
+
+#: src/op-parser.c:270 src/op-parser.c:520
+#, fuzzy, c-format
+msgid "invalid field '%s' for operation %s"
+msgstr "cột “%s” không hợp lệ với thao tác %s"
+
+#: src/op-parser.c:304
+#, c-format
+msgid "field range for %s must be numeric"
+msgstr ""
+
+#: src/op-parser.c:364
+#, fuzzy, c-format
+msgid "missing parameter for operation %s"
+msgstr "thiếu số trường sau thao tác “%s”"
+
+#: src/op-parser.c:372
+#, fuzzy, c-format
+msgid "invalid parameter %s for operation %s"
+msgstr "cột “%s” không hợp lệ với thao tác %s"
+
+#: src/op-parser.c:404
+#, fuzzy, c-format
+msgid "operation %s requires field pairs"
+msgstr "%s: tùy chọn “--%s” cần một đối số\n"
+
+#: src/op-parser.c:407
+#, c-format
+msgid "operation %s cannot use pair of fields"
+msgstr ""
+
+#: src/op-parser.c:447
+#, fuzzy, c-format
+msgid "conflicting operation %s"
+msgstr "thao tác không hợp lệ “%s”"
+
+#: src/op-parser.c:450 src/op-parser.c:703
+#, fuzzy, c-format
+msgid "invalid operation %s"
+msgstr "thao tác không hợp lệ “%s”"
+
+#: src/op-parser.c:455
+#, c-format
+msgid ""
+"conflicting operation found: expecting %s operations, but found %s operation "
+"%s"
+msgstr ""
+"tìm thấy có xung đột thao tác: cần thao tác %s, nhưng lại nhận được %s thao "
+"tác %s"
+
+#: src/op-parser.c:559
+#, fuzzy, c-format
+msgid "invalid option %s for operation check"
+msgstr "cột “%s” không hợp lệ với thao tác %s"
+
+#: src/op-parser.c:587
+msgid "number expected after option in operation 'check'"
+msgstr ""
+
+#: src/op-parser.c:593
+msgid "invalid value zero for lines/fields in operation 'check'"
+msgstr ""
+
+#: src/op-parser.c:599
+msgid "number of lines/rows already set in operation 'check'"
+msgstr ""
+
+#: src/op-parser.c:606
+msgid "number of fields/columns already set in operation 'check'"
+msgstr ""
+
+#: src/op-parser.c:643
+#, c-format
+msgid "crosstab requires exactly 2 fields, found %<PRIuMAX>"
+msgstr ""
+
+#: src/op-parser.c:656
+#, c-format
+msgid "crosstab supports one operation, found %<PRIuMAX>"
+msgstr ""
+
+#: src/op-parser.c:665
+#, fuzzy
+msgid "missing operation"
+msgstr "thiếu bộ chỉ thị thao tác"
+
+#: src/op-parser.c:679
+#, fuzzy, c-format
+msgid "extra operand %s"
+msgstr "có thao tác thừa nằm sau “%s”"
+
+#: src/op-parser.c:816 src/op-scanner.c:211
+msgid "missing script (among arguments)"
+msgstr ""
+
+#: src/op-scanner.c:168
+#, fuzzy, c-format
+msgid "invalid numeric value '%s'"
+msgstr "giá trị số không hợp lệ"
+
+#: src/op-scanner.c:189
+#, fuzzy, c-format
+msgid "invalid operand %s"
+msgstr "thao tác không hợp lệ “%s”"
+
+#: src/op-scanner.c:245
+#, c-format
+msgid "unknown token %d\n"
+msgstr ""
+
+#: src/system.h:133
+msgid "      --help     display this help and exit\n"
+msgstr "      --help     hiển thị trợ giúp này rồi thoát\n"
+
+#: src/system.h:135
+msgid "      --version  output version information and exit\n"
+msgstr "      --version  đưa ra thông tin phiên bản rồi thoát\n"
+
+#: src/system.h:140
+#, c-format
+msgid "Try '%s --help' for more information.\n"
+msgstr "Hãy chạy lệnh “%s --help” để biết thêm thông tin.\n"
+
+#: src/text-options.c:107
+msgid "missing rounding digits value"
+msgstr ""
+
+#: src/text-options.c:112
+#, fuzzy, c-format
+msgid "invalid rounding digits value %s"
+msgstr "tham số nhóm không hợp lệ “%s”"
+
+#~ msgid "%s: option '--%s' doesn't allow an argument\n"
+#~ msgstr "%s: tùy chọn “--%s” không nhận đối số\n"
+
+#~ msgid "%s: unrecognized option '--%s'\n"
+#~ msgstr "%s: không nhận ra tùy chọn “--%s”\n"
+
+#~ msgid "%s: option '-W %s' is ambiguous\n"
+#~ msgstr "%s: tùy chọn “-W %s” chưa rõ ràng\n"
+
+#~ msgid "%s: option '-W %s' doesn't allow an argument\n"
+#~ msgstr "%s: tùy chọn “-W %s” không cho phép đối số\n"
+
+#~ msgid "%s: option '-W %s' requires an argument\n"
+#~ msgstr "%s: tùy chọn “-W %s” cần một đối số\n"
+
+#~ msgid "'op' is the operation to perform;\n"
+#~ msgstr "“op” là thao tác cần thực hiện;\n"
+
+#~ msgid "File operations:\n"
+#~ msgstr "Thao tác tập tin:\n"
+
+#~ msgid "Options:\n"
+#~ msgstr "Tùy chọn:\n"
+
+#~ msgid "  -g, --group=X[,Y,Z]       group via fields X,[Y,Z]\n"
+#~ msgstr "  -g, --group=X[,Y,Z]       nhóm thông qua các trường X,[Y,Z]\n"
+
+#~ msgid "invalid empty grouping parameter"
+#~ msgstr "tham số nhóm trống rỗng không hợp lệ"
+
+#, fuzzy
+#~ msgid "      --debug               print helpful debugging information\n"
+#~ msgstr "  -d,  --debug               in nhiều thông tin để tìm sửa lỗi.\n"

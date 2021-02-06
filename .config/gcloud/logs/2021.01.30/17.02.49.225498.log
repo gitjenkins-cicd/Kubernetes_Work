@@ -1,0 +1,14 @@
+2021-01-30 17:02:49,275 DEBUG    root            Loaded Command Group: ['gcloud', 'compute']
+2021-01-30 17:02:49,281 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'networks']
+2021-01-30 17:02:49,299 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'networks', 'create']
+2021-01-30 17:02:49,303 DEBUG    root            Loaded Command Group: ['gcloud', 'alpha', 'compute']
+2021-01-30 17:02:49,308 DEBUG    root            Loaded Command Group: ['gcloud', 'alpha', 'compute', 'networks']
+2021-01-30 17:02:49,311 DEBUG    root            Loaded Command Group: ['gcloud', 'alpha', 'compute', 'networks', 'create']
+2021-01-30 17:02:49,313 DEBUG    root            Loaded Command Group: ['gcloud', 'beta', 'compute']
+2021-01-30 17:02:49,318 DEBUG    root            Loaded Command Group: ['gcloud', 'beta', 'compute', 'networks']
+2021-01-30 17:02:49,321 DEBUG    root            Loaded Command Group: ['gcloud', 'beta', 'compute', 'networks', 'create']
+2021-01-30 17:02:49,325 ERROR    root            (gcloud.compute.networks.create) unrecognized arguments:
+  --subnetmode (did you mean '--subnet-mode'?)
+  custom
+  To search the help text of gcloud commands, run:
+  gcloud help -- SEARCH_TERMS

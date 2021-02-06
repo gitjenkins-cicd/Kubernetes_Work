@@ -1,0 +1,85 @@
+2021-01-16 23:29:59,969 DEBUG    root            Loaded Command Group: ['gcloud', 'iam']
+2021-01-16 23:29:59,973 DEBUG    root            Loaded Command Group: ['gcloud', 'iam', 'list_grantable_roles']
+2021-01-16 23:29:59,977 DEBUG    root            Running [gcloud.iam.list-grantable-roles] with arguments: [--help: "None"]
+2021-01-16 23:29:59,980 DEBUG    root            Loaded Command Group: ['gcloud', 'alpha', 'iam']
+2021-01-16 23:29:59,982 DEBUG    root            Loaded Command Group: ['gcloud', 'alpha', 'iam', 'list_grantable_roles']
+2021-01-16 23:29:59,984 DEBUG    root            Loaded Command Group: ['gcloud', 'beta', 'iam']
+2021-01-16 23:29:59,987 DEBUG    root            Loaded Command Group: ['gcloud', 'beta', 'iam', 'list_grantable_roles']
+2021-01-16 23:30:00,026 DEBUG    root            Loaded Command Group: ['gcloud', 'compute']
+2021-01-16 23:30:00,031 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'instances']
+2021-01-16 23:30:00,046 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'instances', 'list']
+2021-01-16 23:30:00,049 DEBUG    root            Loaded Command Group: ['gcloud', 'topic']
+2021-01-16 23:30:00,054 DEBUG    root            Loaded Command Group: ['gcloud', 'topic', 'filters']
+2021-01-16 23:30:00,059 DEBUG    root            Loaded Command Group: ['gcloud', 'help']
+2021-01-16 23:30:00,077 INFO     ___FILE_ONLY___ [m[1mNAME[m
+    gcloud iam list-grantable-roles - list IAM grantable roles for a resource
+
+[m[1mSYNOPSIS[m
+    [1mgcloud iam list-grantable-roles[m [4mRESOURCE[m [[1m--filter[m=[4mEXPRESSION[m]
+        [[1m--page-size[m=[4mPAGE_SIZE[m; default=100] [[4mGCLOUD_WIDE_FLAG ...[m]
+
+[m[1mDESCRIPTION[m
+    This command displays the list of grantable roles for a resource. The
+    resource can be referenced either via the full resource name or via a URI.
+    User can then add IAM policy bindings to grant the roles.
+
+[m[1mPOSITIONAL ARGUMENTS[m
+     [4mRESOURCE[m
+        The full resource name or URI to get the list of roles for.
+
+        See "Resource Names"
+        (https://cloud.google.com/apis/design/resource_names) for details. To
+        get a URI from most [1mlist[m commands in [1mgcloud[m, pass the [1m--uri[m flag. For
+        example:
+
+            $ gcloud compute instances list --project prj --uri \
+            https://compute.googleapis.com/compute/v1/projects/prj/zones/us-east1-c/instances/i1 \
+            https://compute.googleapis.com/compute/v1/projects/prj/zones/us-east1-d/instances/i2
+
+[m[1mLIST COMMAND FLAGS[m
+     [1m--filter[m=[4mEXPRESSION[m
+        Apply a Boolean filter [4mEXPRESSION[m to each resource item to be listed.
+        If the expression evaluates [1mTrue[m, then that item is listed. For more
+        details and examples of filter expressions, run $ gcloud topic filters.
+        This flag interacts with other flags that are applied in this order:
+        [1m--flatten[m, [1m--sort-by[m, [1m--filter[m, [1m--limit[m.
+
+     [1m--page-size[m=[4mPAGE_SIZE[m; default=100
+        Some services group resource list output into pages. This flag
+        specifies the maximum number of resources per page. The default is [1m100[m.
+        Paging may be applied before or after [1m--filter[m and [1m--limit[m depending on
+        the service.
+
+[m[1mGCLOUD WIDE FLAGS[m
+    These flags are available to all commands: --account, --billing-project,
+    --configuration, --flags-file, --flatten, --format, --help,
+    --impersonate-service-account, --log-http, --project, --quiet,
+    --trace-token, --user-output-enabled, --verbosity.
+
+    Run [1m$ gcloud help[m for details.
+
+[m[1mEXAMPLES[m
+    List grantable roles for a project:
+
+        $ gcloud iam list-grantable-roles \
+            //cloudresourcemanager.googleapis.com/projects/PROJECT_ID
+
+    List grantable roles for a resource identified via full resource name:
+
+        $ gcloud iam list-grantable-roles \
+            //compute.googleapis.com/projects/example-project/zones/\
+        us-central1-f/instances/example-instance
+
+    List grantable roles for a resource identified via URI:
+
+        $ gcloud iam list-grantable-roles \
+        https://www.googleapis.com/compute/v1/projects/example-project/zones/us-central1-f/instances/example-instance
+
+[m[1mNOTES[m
+    These variants are also available:
+
+        $ gcloud alpha iam list-grantable-roles
+
+        $ gcloud beta iam list-grantable-roles
+
+[m

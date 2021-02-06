@@ -1,0 +1,8 @@
+2021-01-25 18:03:07,929 DEBUG    root            Loaded Command Group: ['gcloud', 'config']
+2021-01-25 18:03:07,931 DEBUG    root            Loaded Command Group: ['gcloud', 'config', 'configurations']
+2021-01-25 18:03:07,937 DEBUG    root            Loaded Command Group: ['gcloud', 'config', 'configurations', 'activate']
+2021-01-25 18:03:07,941 DEBUG    root            Running [gcloud.config.configurations.activate] with arguments: [CONFIGURATION_NAME: "default"]
+2021-01-25 18:03:07,942 INFO     ___FILE_ONLY___ Activated [default].
+
+2021-01-25 18:03:07,945 INFO     root            Display format: "none"
+2021-01-25 18:03:07,946 DEBUG    root            SDK update checks are disabled.

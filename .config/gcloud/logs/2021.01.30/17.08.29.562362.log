@@ -1,0 +1,30 @@
+2021-01-30 17:08:29,586 DEBUG    root            Loaded Command Group: ['gcloud', 'compute']
+2021-01-30 17:08:29,591 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'networks']
+2021-01-30 17:08:29,593 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'networks', 'subnets']
+2021-01-30 17:08:29,608 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'networks', 'subnets', 'create']
+2021-01-30 17:08:29,895 DEBUG    root            Running [gcloud.compute.networks.subnets.create] with arguments: [--network: "vpc-2", --range: "10.10.1.0/24", --region: "europe-west-2", NAME: "vpc-2-europe-west-2-1"]
+2021-01-30 17:08:29,944 DEBUG    urllib3.connectionpool Starting new HTTPS connection (1): compute.googleapis.com:443
+2021-01-30 17:08:30,762 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/v1 HTTP/1.1" 200 None
+2021-01-30 17:08:30,765 DEBUG    root            (gcloud.compute.networks.subnets.create) Could not fetch resource:
+ - Invalid value for field 'region': 'europe-west-2'. Unknown region.
+Traceback (most recent call last):
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/calliope/cli.py", line 982, in Execute
+    resources = calliope_command.Run(cli=self, args=args)
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/calliope/backend.py", line 809, in Run
+    resources = command_instance.Run(args)
+  File "/usr/lib64/google-cloud-sdk/lib/surface/compute/networks/subnets/create.py", line 416, in Run
+    self._include_ipv6_access_type)
+  File "/usr/lib64/google-cloud-sdk/lib/surface/compute/networks/subnets/create.py", line 383, in _Run
+    request)])
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/api_lib/compute/client_adapter.py", line 105, in MakeRequests
+    errors, error_message='Could not fetch resource:')
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/api_lib/compute/utils.py", line 124, in RaiseToolException
+    RaiseException(problems, calliope_exceptions.ToolException, error_message)
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/api_lib/compute/utils.py", line 136, in RaiseException
+    errors))
+googlecloudsdk.calliope.exceptions.ToolException: Could not fetch resource:
+ - Invalid value for field 'region': 'europe-west-2'. Unknown region.
+
+2021-01-30 17:08:30,773 ERROR    root            (gcloud.compute.networks.subnets.create) Could not fetch resource:
+ - Invalid value for field 'region': 'europe-west-2'. Unknown region.
+

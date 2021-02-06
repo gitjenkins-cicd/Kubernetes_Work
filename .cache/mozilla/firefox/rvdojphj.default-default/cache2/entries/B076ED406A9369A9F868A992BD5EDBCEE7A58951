@@ -1,0 +1,2649 @@
+var Prometheus = Prometheus || {};
+var graphTemplate;
+
+var INPUT_DEBOUNCE_WAIT = 500; // ms
+var SECOND = 1000;
+
+/**
+ * Graph
+*/
+Prometheus.Graph = function(element, options, handleChange, handleRemove) {
+  this.el = element;
+  this.graphHTML = null;
+  this.options = options;
+  this.handleChange = handleChange;
+  this.handleRemove = function() {
+    handleRemove(this);
+  };
+  this.rickshawGraph = null;
+  this.data = [];
+
+  this.initialize();
+};
+
+Prometheus.Graph.timeFactors = {
+  "y": 60 * 60 * 24 * 365,
+  "w": 60 * 60 * 24 * 7,
+  "d": 60 * 60 * 24,
+  "h": 60 * 60,
+  "m": 60,
+  "s": 1
+};
+
+Prometheus.Graph.stepValues = [
+  "1s", "10s", "1m", "5m", "15m", "30m", "1h", "2h", "6h", "12h", "1d", "2d",
+  "1w", "2w", "4w", "8w", "1y", "2y"
+];
+
+Prometheus.Graph.numGraphs = 0;
+
+Prometheus.Graph.prototype.initialize = function() {
+  var self = this;
+  self.id = Prometheus.Graph.numGraphs++;
+
+  // Set default options.
+  self.options.id = self.id;
+  self.options.range_input = self.options.range_input || "1h";
+  if (self.options.tab === undefined) {
+    self.options.tab = 1;
+  }
+
+  // Draw graph controls and container from Handlebars template.
+
+  var options = {
+    'pathPrefix': PATH_PREFIX,
+    'buildVersion': BUILD_VERSION
+  };
+  jQuery.extend(options, self.options);
+  self.graphHTML = $(Mustache.render(graphTemplate, options));
+  self.el.append(self.graphHTML);
+
+  // Get references to all the interesting elements in the graph container and
+  // bind event handlers.
+  var graphWrapper = self.el.find("#graph_wrapper" + self.id);
+  self.queryForm = graphWrapper.find(".query_form");
+
+  // Auto-resize the text area on input or mouseclick
+  var resizeTextarea = function(el) {
+    var offset = el.offsetHeight - el.clientHeight;
+    $(el).css('height', 'auto').css('height', el.scrollHeight + offset);
+  };
+
+  self.expr = graphWrapper.find("textarea[name=expr]");
+  self.expr.keypress(function(e) {
+    const enter = 13;
+    if (e.which == enter && !e.shiftKey) {
+      self.queryForm.submit();
+      e.preventDefault();
+    }
+    $(this).on('keyup input', debounce(function() {
+      resizeTextarea(this);
+    }, INPUT_DEBOUNCE_WAIT));
+  });
+
+  self.expr.click(function(e) {
+    resizeTextarea(this);
+  });
+
+  self.expr.change(self.handleChange);
+
+  self.rangeInput = self.queryForm.find("input[name=range_input]");
+  self.stackedBtn = self.queryForm.find(".stacked_btn");
+  self.stacked = self.queryForm.find("input[name=stacked]");
+  self.insertMetric = self.queryForm.find("select[name=insert_metric]");
+  self.refreshInterval = self.queryForm.find("select[name=refresh]");
+
+  self.consoleTab = graphWrapper.find(".console");
+  self.graphTab   = graphWrapper.find(".graph_container");
+
+  self.tabs = graphWrapper.find("a[data-toggle='tab']");
+  self.tabs.eq(self.options.tab).tab("show");
+  self.tabs.on("shown.bs.tab", function(e) {
+    var target = $(e.target);
+    self.options.tab = target.parent().index();
+    self.handleChange();
+    if ($("#" + target.attr("aria-controls")).hasClass("reload")) {
+      self.submitQuery();
+    }
+  });
+
+  // Return moves focus back to expr instead of submitting.
+  self.insertMetric.bind("keydown", "return", function(e) {
+    self.expr.focus();
+    self.expr.val(self.expr.val());
+    return e.preventDefault();
+  })
+
+  self.error = graphWrapper.find(".error").hide();
+  self.warning = graphWrapper.find(".warning").hide();
+  self.graphArea = graphWrapper.find(".graph_area");
+  self.graph = self.graphArea.find(".graph");
+  self.yAxis = self.graphArea.find(".y_axis");
+  self.legend = graphWrapper.find(".legend");
+  self.spinner = graphWrapper.find(".spinner");
+  self.evalStats = graphWrapper.find(".eval_stats");
+
+  self.endDate = graphWrapper.find("input[name=end_input]");
+  self.endDate.datetimepicker({
+    locale: 'en',
+    format: 'YYYY-MM-DD HH:mm',
+    toolbarPlacement: 'bottom',
+    sideBySide: true,
+    showTodayButton: true,
+    showClear: true,
+    showClose: true,
+    timeZone: 'UTC',
+  });
+  if (self.options.end_input) {
+    self.endDate.data('DateTimePicker').date(self.options.end_input);
+  }
+  self.endDate.on("dp.change", function() { self.submitQuery(); });
+  self.refreshInterval.change(function() { self.updateRefresh(); });
+
+  self.isStacked = function() {
+    return self.stacked.val() === '1';
+  };
+
+  self.moment = graphWrapper.find("input[name=moment_input]");
+  self.moment.datetimepicker({
+    locale: 'en',
+    format: 'YYYY-MM-DD HH:mm:ss',
+    toolbarPlacement: 'bottom',
+    sideBySide: true,
+    showTodayButton: true,
+    showClear: true,
+    showClose: true,
+    timeZone: 'UTC',
+  });
+  if (self.options.timestamp) {
+    var date = new Date(self.options.timestamp*1000)
+    self.moment.data('DateTimePicker').date(date);
+  } else if (self.options.moment_input) {
+    self.moment.data('DateTimePicker').date(self.options.moment_input);
+  }
+  self.moment.on("dp.change", function() { self.submitQuery(); });
+
+
+  var styleStackBtn = function() {
+    var icon = self.stackedBtn.find('.glyphicon');
+    if (self.isStacked()) {
+      self.stackedBtn.addClass("btn-primary");
+      icon.addClass("glyphicon-check");
+      icon.removeClass("glyphicon-unchecked");
+    } else {
+      self.stackedBtn.removeClass("btn-primary");
+      icon.addClass("glyphicon-unchecked");
+      icon.removeClass("glyphicon-check");
+    }
+  };
+  styleStackBtn();
+
+  self.stackedBtn.click(function() {
+    if (self.isStacked() && self.graphJSON) {
+      // If the graph was stacked, the original series data got mutated
+      // (scaled) and we need to reconstruct it from the original JSON data.
+      self.data = self.transformData(self.graphJSON);
+    }
+    self.stacked.val(self.isStacked() ? '0' : '1');
+    styleStackBtn();
+    self.updateGraph();
+  });
+
+  self.queryForm.submit(function() {
+    self.consoleTab.addClass("reload");
+    self.graphTab.addClass("reload");
+    self.handleChange();
+    self.submitQuery();
+    return false;
+  });
+  self.spinner.hide();
+
+  self.queryForm.find("button[name=inc_range]").click(function() { self.increaseRange(); });
+  self.queryForm.find("button[name=dec_range]").click(function() { self.decreaseRange(); });
+
+  self.queryForm.find("button[name=inc_end]").click(function() { self.increaseEnd(); });
+  self.queryForm.find("button[name=dec_end]").click(function() { self.decreaseEnd(); });
+
+  self.queryForm.find("button[name=inc_moment]").click(function() { self.increaseMoment(); });
+  self.queryForm.find("button[name=dec_moment]").click(function() { self.decreaseMoment(); });
+
+  self.insertMetric.change(function() {
+    self.expr.selection("replace", {text: self.insertMetric.val(), mode: "before"});
+    self.expr.focus(); // refocusing
+  });
+
+  var removeBtn = graphWrapper.find("[name=remove]");
+  removeBtn.click(function() {
+    self.remove();
+    return false;
+  });
+
+  self.checkTimeDrift();
+  // initialize query history
+  if (!localStorage.getItem("history")) {
+    localStorage.setItem("history", JSON.stringify([]));
+  }
+  self.populateInsertableMetrics();
+
+  if (self.expr.val()) {
+    self.submitQuery();
+  }
+};
+
+Prometheus.Graph.prototype.checkTimeDrift = function() {
+    var self = this;
+    var browserTime = new Date().getTime() / 1000;
+    $.ajax({
+        method: "GET",
+        url: PATH_PREFIX + "/api/v1/query?query=time()",
+        dataType: "json",
+        success: function(json, textStatus) {
+            if (json.status !== "success") {
+                self.showError("Error querying time.");
+                return;
+            }
+            var serverTime = json.data.result[0];
+            var diff = Math.abs(browserTime - serverTime);
+
+            if (diff >= 30) {
+              self.showWarning(
+                  "<div class=\"alert alert-warning\"><strong>Warning!</strong> Detected " +
+                  diff.toFixed(2) +
+                  " seconds time difference between your browser and the server. Prometheus relies on accurate time and time drift might cause unexpected query results.</div>"
+              );
+            }
+        },
+        error: function() {
+            self.showError("Error loading time.");
+        }
+    });
+};
+
+Prometheus.Graph.prototype.populateInsertableMetrics = function() {
+  var self = this;
+  $.ajax({
+      method: "GET",
+      url: PATH_PREFIX + "/api/v1/label/__name__/values",
+      dataType: "json",
+      success: function(json, textStatus) {
+        if (json.status !== "success") {
+          self.showError("Error loading available metrics!");
+          return;
+        }
+
+        pageConfig.allMetrics = json.data || []; // todo: do we need self.allMetrics? Or can it just live on the page
+        for (var i = 0; i < pageConfig.allMetrics.length; i++) {
+          self.insertMetric[0].options.add(new Option(pageConfig.allMetrics[i], pageConfig.allMetrics[i]));
+        }
+
+        self.fuzzyResult = {
+          query: null,
+          result: null,
+          map: {}
+        }
+
+        self.initTypeahead(self);
+      },
+      error: function() {
+        self.showError("Error loading available metrics!");
+      },
+  });
+};
+
+Prometheus.Graph.prototype.initTypeahead = function(self) {
+  const source = queryHistory.isEnabled() ? pageConfig.queryHistMetrics.concat(pageConfig.allMetrics) : pageConfig.allMetrics;
+  self.expr.typeahead({
+    autoSelect: false,
+    source: source,
+    items: 1000,
+    matcher: function (item) {
+      // If we have result for current query, skip
+      if (self.fuzzyResult.query !== this.query) {
+        self.fuzzyResult.query = this.query;
+        self.fuzzyResult.map = {};
+        self.fuzzyResult.result = fuzzy.filter(this.query.replace(/ /g, ""), this.source, {
+          pre: "<strong>",
+          post: "</strong>"
+        });
+        self.fuzzyResult.result.forEach(function(r) {
+          self.fuzzyResult.map[r.original] = r;
+        });
+      }
+
+      return item in self.fuzzyResult.map;
+    },
+
+    sorter: function (items) {
+      items.sort(function(a,b) {
+        var i = self.fuzzyResult.map[b].score - self.fuzzyResult.map[a].score;
+        return i === 0 ? a.localeCompare(b) : i;
+      });
+      return items;
+    }
+  });
+  // This needs to happen after attaching the typeahead plugin, as it
+  // otherwise breaks the typeahead functionality.
+  self.expr.focus();
+  queryHistory.bindHistoryEvents(self);
+}
+
+Prometheus.Graph.prototype.getOptions = function() {
+  var self = this;
+  var options = {};
+
+  var optionInputs = [
+    "range_input",
+    "end_input",
+    "step_input",
+    "stacked",
+    "moment_input"
+  ];
+
+  self.queryForm.find("input").each(function(index, element) {
+    var name = element.name;
+    if ($.inArray(name, optionInputs) >= 0) {
+      if (element.value.length > 0) {
+        options[name] = element.value;
+      }
+    }
+  });
+  options.expr = self.expr.val();
+  options.tab = self.options.tab;
+  return options;
+};
+
+Prometheus.Graph.prototype.parseDuration = function(rangeText) {
+  var rangeRE = new RegExp("^([0-9]+)([ywdhms]+)$");
+  var matches = rangeText.match(rangeRE);
+  if (!matches) { return; }
+  if (matches.length != 3) {
+    return 60;
+  }
+  var value = parseInt(matches[1]);
+  var unit = matches[2];
+  return value * Prometheus.Graph.timeFactors[unit];
+};
+
+Prometheus.Graph.prototype.increaseRange = function() {
+  var self = this;
+  var rangeSeconds = self.parseDuration(self.rangeInput.val());
+  for (var i = 0; i < Prometheus.Graph.stepValues.length; i++) {
+    if (rangeSeconds < self.parseDuration(Prometheus.Graph.stepValues[i])) {
+      self.rangeInput.val(Prometheus.Graph.stepValues[i]);
+      if (self.expr.val()) {
+        self.submitQuery();
+      }
+      return;
+    }
+  }
+};
+
+Prometheus.Graph.prototype.decreaseRange = function() {
+  var self = this;
+  var rangeSeconds = self.parseDuration(self.rangeInput.val());
+  for (var i = Prometheus.Graph.stepValues.length - 1; i >= 0; i--) {
+    if (rangeSeconds > self.parseDuration(Prometheus.Graph.stepValues[i])) {
+      self.rangeInput.val(Prometheus.Graph.stepValues[i]);
+      if (self.expr.val()) {
+        self.submitQuery();
+      }
+      return;
+    }
+  }
+};
+
+Prometheus.Graph.prototype.getEndDate = function() {
+  var self = this;
+  if (!self.endDate || !self.endDate.val()) {
+    return moment();
+  }
+  return self.endDate.data('DateTimePicker').date();
+};
+
+Prometheus.Graph.prototype.getOrSetEndDate = function() {
+  var self = this;
+  var date = self.getEndDate();
+  self.setEndDate(date);
+  return date;
+};
+
+Prometheus.Graph.prototype.setEndDate = function(date) {
+  var self = this;
+  self.endDate.data('DateTimePicker').date(date);
+};
+
+Prometheus.Graph.prototype.increaseEnd = function() {
+  var self = this;
+  var newDate = moment(self.getOrSetEndDate());
+  newDate.add(self.parseDuration(self.rangeInput.val()) / 2, 'seconds');
+  self.setEndDate(newDate);
+  self.submitQuery();
+};
+
+Prometheus.Graph.prototype.decreaseEnd = function() {
+  var self = this;
+  var newDate = moment(self.getOrSetEndDate());
+  newDate.subtract(self.parseDuration(self.rangeInput.val()) / 2, 'seconds');
+  self.setEndDate(newDate);
+  self.submitQuery();
+};
+
+Prometheus.Graph.prototype.getMoment = function() {
+  var self = this;
+  if (!self.moment || !self.moment.val()) {
+    return moment();
+  }
+  return self.moment.data('DateTimePicker').date();
+};
+
+Prometheus.Graph.prototype.getOrSetMoment = function() {
+  var self = this;
+  var date = self.getMoment();
+  self.setMoment(date);
+  return date;
+};
+
+Prometheus.Graph.prototype.setMoment = function(date) {
+  var self = this;
+  self.moment.data('DateTimePicker').date(date);
+};
+
+Prometheus.Graph.prototype.increaseMoment = function() {
+  var self = this;
+  var newDate = moment(self.getOrSetMoment());
+  newDate.add(10, 'seconds');
+  self.setMoment(newDate);
+  self.submitQuery();
+};
+
+Prometheus.Graph.prototype.decreaseMoment = function() {
+  var self = this;
+  var newDate = moment(self.getOrSetMoment());
+  newDate.subtract(10, 'seconds');
+  self.setMoment(newDate);
+  self.submitQuery();
+};
+
+Prometheus.Graph.prototype.submitQuery = function() {
+  var self = this;
+  self.clearError();
+  self.clearWarning();
+  if (!self.expr.val()) {
+    return;
+  }
+
+  self.spinner.show();
+  self.evalStats.empty();
+
+  var startTime = new Date().getTime();
+  var rangeSeconds = self.parseDuration(self.rangeInput.val());
+  var resolution = parseInt(self.queryForm.find("input[name=step_input]").val()) || Math.max(Math.floor(rangeSeconds / 250), 1);
+  var endDate = self.getEndDate() / 1000;
+  var moment = self.getMoment() / 1000;
+
+  if (self.queryXhr) {
+    self.queryXhr.abort();
+  }
+  var url;
+  var success;
+  var params = {
+    "query": self.expr.val()
+  };
+  if (self.options.tab === 0) {
+    params.start = endDate - rangeSeconds;
+    params.end = endDate;
+    params.step = resolution;
+    url = PATH_PREFIX + "/api/v1/query_range";
+    success = function(json, textStatus) { self.handleGraphResponse(json, textStatus); };
+  } else {
+    params.time = moment;
+    url = PATH_PREFIX + "/api/v1/query";
+    success = function(json, textStatus) { self.handleConsoleResponse(json, textStatus); };
+  }
+  self.params = params;
+
+  self.queryXhr = $.ajax({
+      method: self.queryForm.attr("method"),
+      url: url,
+      dataType: "json",
+      data: params,
+      success: function(json, textStatus) {
+        if (json.status !== "success") {
+          self.showError(json.error);
+          return;
+        }
+
+        if ("warnings" in json && json.warnings.length > 0) {
+          self.showWarning(json.warnings.map(escapeHTML).join('<br>'));
+        }
+
+        queryHistory.handleHistory(self);
+        success(json.data, textStatus);
+      },
+      error: function(xhr, resp) {
+        if (resp != "abort") {
+          var err;
+          if (xhr.responseJSON !== undefined) {
+            err = xhr.responseJSON.error;
+          } else {
+            err = xhr.statusText;
+          }
+          self.showError("Error executing query: " + err);
+        }
+      },
+      complete: function(xhr, resp) {
+        if (resp == "abort") {
+          return;
+        }
+        var duration = new Date().getTime() - startTime;
+        var totalTimeSeries = 0;
+        if (xhr.responseJSON.data !== undefined) {
+          if (xhr.responseJSON.data.resultType === "scalar") {
+            totalTimeSeries = 1;
+          } else if(xhr.responseJSON.data.result !== null) {
+            totalTimeSeries = xhr.responseJSON.data.result.length;
+          }
+        }
+        self.evalStats.html("Load time: " + duration + "ms <br /> Resolution: " + resolution + "s <br />" + "Total time series: " + totalTimeSeries);
+        self.spinner.hide();
+      }
+  });
+};
+
+Prometheus.Graph.prototype.showError = function(msg) {
+  var self = this;
+  self.error.text(msg);
+  self.error.show();
+};
+
+Prometheus.Graph.prototype.clearError = function() {
+  var self = this;
+  self.error.text('');
+  self.error.hide();
+};
+
+Prometheus.Graph.prototype.showWarning = function(msg) {
+  var self = this;
+  self.warning.html(msg);
+  self.warning.show();
+};
+
+Prometheus.Graph.prototype.clearWarning = function() {
+  var self = this;
+  self.warning.html('');
+  self.warning.hide();
+};
+
+Prometheus.Graph.prototype.updateRefresh = function() {
+  var self = this;
+
+  if (self.timeoutID) {
+    window.clearTimeout(self.timeoutID);
+  }
+
+  interval = self.parseDuration(self.refreshInterval.val());
+  if (!interval) { return; }
+
+  self.timeoutID = window.setTimeout(function() {
+    self.submitQuery();
+    self.updateRefresh();
+  }, interval * SECOND);
+};
+
+Prometheus.Graph.prototype.renderLabels = function(labels) {
+  var labelStrings = [];
+  for (var label in labels) {
+    if (label != "__name__") {
+      labelStrings.push("<strong>" + label + "</strong>: " + escapeHTML(labels[label]));
+    }
+  }
+  return labels = "<div class=\"labels\">" + labelStrings.join("<br>") + "</div>";
+};
+
+Prometheus.Graph.prototype.metricToTsName = function(labels) {
+  var tsName = (labels.__name__ || '') + "{";
+  var labelStrings = [];
+   for (var label in labels) {
+     if (label != "__name__") {
+       labelStrings.push(label + "=\"" + labels[label] + "\"");
+     }
+   }
+  tsName += labelStrings.join(",") + "}";
+  return tsName;
+};
+
+Prometheus.Graph.prototype.parseValue = function(value) {
+  var val = parseFloat(value);
+  if (isNaN(val)) {
+    // "+Inf", "-Inf", "+Inf" will be parsed into NaN by parseFloat(). The
+    // can't be graphed, so show them as gaps (null).
+    return null;
+  }
+  return val;
+};
+
+Prometheus.Graph.prototype.transformData = function(json) {
+  var self = this;
+  var palette = new Rickshaw.Color.Palette();
+  if (json.resultType != "matrix") {
+    self.showError("Result is not of matrix type! Please enter a correct expression.");
+    return [];
+  }
+  var data = json.result.map(function(ts) {
+    var name;
+    var labels;
+    if (ts.metric === null) {
+      name = "scalar";
+      labels = {};
+    } else {
+      name = escapeHTML(self.metricToTsName(ts.metric));
+      labels = ts.metric;
+    }
+    return {
+      name: name,
+      labels: labels,
+      data: ts.values.map(function(value) {
+        return {
+          x: value[0],
+          y: self.parseValue(value[1])
+        };
+      }),
+      color: palette.color()
+    };
+  });
+  data.forEach(function(s) {
+    // Insert nulls for all missing steps.
+    var newSeries = [];
+    var pos = 0;
+    for (var t = self.params.start; t <= self.params.end; t += self.params.step) {
+      // Allow for floating point inaccuracy.
+      if (s.data.length > pos && s.data[pos].x < t + self.params.step / 100) {
+        newSeries.push(s.data[pos]);
+        pos++;
+      } else {
+        newSeries.push({x: t, y: null});
+      }
+    }
+    s.data = newSeries;
+  });
+  return data;
+};
+
+Prometheus.Graph.prototype.updateGraph = function() {
+  var self = this;
+  if (self.data.length === 0) { return; }
+
+  // Remove any traces of an existing graph.
+  self.legend.empty();
+  if (self.graphArea.children().length > 0) {
+    self.graph.remove();
+    self.yAxis.remove();
+  }
+  self.graph = $('<div class="graph"></div>');
+  self.yAxis = $('<div class="y_axis"></div>');
+  self.graphArea.append(self.graph);
+  self.graphArea.append(self.yAxis);
+
+  var endTime = self.getEndDate() / 1000; // Convert to UNIX timestamp.
+  var duration = self.parseDuration(self.rangeInput.val()) || 3600; // 1h default.
+  var startTime = endTime - duration;
+  self.data.forEach(function(s) {
+    // Padding series with invisible "null" values at the configured x-axis boundaries ensures
+    // that graphs are displayed with a fixed x-axis range instead of snapping to the available
+    // time range in the data.
+    if (s.data[0].x > startTime) {
+      s.data.unshift({x: startTime, y: null});
+    }
+    if (s.data[s.data.length - 1].x < endTime) {
+      s.data.push({x: endTime, y: null});
+    }
+  });
+
+  // Now create the new graph.
+  self.rickshawGraph = new Rickshaw.Graph({
+    element: self.graph[0],
+    height: Math.max(self.graph.innerHeight(), 100),
+    width: Math.max(self.graph.innerWidth() - 80, 200),
+    renderer: (self.isStacked() ? "stack" : "line"),
+    interpolation: "linear",
+    series: self.data,
+    min: "auto",
+  });
+
+  // Find and set graph's max/min
+  if (self.isStacked() === true) {
+    // When stacked is toggled
+    var max = 0;
+    self.data.forEach(function(timeSeries) {
+      var currSeriesMax = 0;
+      timeSeries.data.forEach(function(dataPoint) {
+        if (dataPoint.y > currSeriesMax && dataPoint.y != null) {
+          currSeriesMax = dataPoint.y;
+        }
+      });
+      max += currSeriesMax;
+    });
+    self.rickshawGraph.max = max*1.05;
+    self.rickshawGraph.min = 0;
+  } else {
+    var min = Infinity;
+    var max = -Infinity;
+    self.data.forEach(function(timeSeries) {
+      timeSeries.data.forEach(function(dataPoint) {
+        if (dataPoint.y < min && dataPoint.y != null) {
+          min = dataPoint.y;
+        }
+        if (dataPoint.y > max && dataPoint.y != null) {
+          max = dataPoint.y;
+        }
+      });
+    });
+    var offset = 0.1 * (min === max ? max : Math.abs(max-min));
+    self.rickshawGraph.max = max + offset;
+    self.rickshawGraph.min = min - offset;
+  }
+
+  var xAxis = new Rickshaw.Graph.Axis.Time({ graph: self.rickshawGraph });
+
+  var yAxis = new Rickshaw.Graph.Axis.Y({
+    graph: self.rickshawGraph,
+    orientation: "left",
+    tickFormat: this.formatKMBT,
+    element: self.yAxis[0],
+  });
+
+  self.rickshawGraph.render();
+
+  var hoverDetail = new Rickshaw.Graph.HoverDetail({
+    graph: self.rickshawGraph,
+    formatter: function(series, x, y) {
+      var date = '<span class="date">' + new Date(x * 1000).toUTCString() + '</span>';
+      var swatch = '<span class="detail_swatch" style="background-color: ' + series.color + '"></span>';
+      var content = swatch + (series.labels.__name__ || 'value') + ": <strong>" + y + '</strong>';
+      return date + '<br>' + content + '<br>' + self.renderLabels(series.labels);
+    }
+  });
+
+  var legend = new Rickshaw.Graph.Legend({
+    element: self.legend[0],
+    graph: self.rickshawGraph,
+  });
+
+  var highlighter = new Rickshaw.Graph.Behavior.Series.Highlight( {
+    graph: self.rickshawGraph,
+    legend: legend
+  });
+
+  var shelving = new Rickshaw.Graph.Behavior.Series.Toggle({
+    graph: self.rickshawGraph,
+    legend: legend
+  });
+
+  self.handleChange();
+};
+
+Prometheus.Graph.prototype.resizeGraph = function() {
+  var self = this;
+  if (self.rickshawGraph !== null) {
+    self.rickshawGraph.configure({
+      width: Math.max(self.graph.innerWidth() - 80, 200),
+    });
+    self.rickshawGraph.render();
+  }
+};
+
+Prometheus.Graph.prototype.handleGraphResponse = function(json, textStatus) {
+  var self = this;
+  // Rickshaw mutates passed series data for stacked graphs, so we need to save
+  // the original AJAX response in order to re-transform it into series data
+  // when the user disables the stacking.
+  self.graphJSON = json;
+  self.data = self.transformData(json);
+  if (self.data.length === 0) {
+    self.showError("No datapoints found.");
+    return;
+  }
+  self.graphTab.removeClass("reload");
+  self.updateGraph();
+};
+
+Prometheus.Graph.prototype.handleConsoleResponse = function(data, textStatus) {
+  var self = this;
+  self.consoleTab.removeClass("reload");
+  self.graphJSON = null;
+
+  var tBody = self.consoleTab.find(".console_table tbody");
+  tBody.empty();
+
+  switch(data.resultType) {
+  case "vector":
+    if (data.result === null || data.result.length === 0) {
+      tBody.append("<tr><td colspan='2'><i>no data</i></td></tr>");
+      return;
+    }
+    data.result = self.limitSeries(data.result);
+    for (var i = 0; i < data.result.length; i++) {
+      var s = data.result[i];
+      var tsName = self.metricToTsName(s.metric);
+      tBody.append("<tr><td>" + escapeHTML(tsName) + "</td><td>" + s.value[1] + "</td></tr>");
+    }
+    break;
+  case "matrix":
+    if (data.result.length === 0) {
+      tBody.append("<tr><td colspan='2'><i>no data</i></td></tr>");
+      return;
+    }
+    data.result = self.limitSeries(data.result);
+    for (var i = 0; i < data.result.length; i++) {
+      var v = data.result[i];
+      var tsName = self.metricToTsName(v.metric);
+      var valueText = "";
+      for (var j = 0; j < v.values.length; j++) {
+        valueText += v.values[j][1] + " @" + v.values[j][0] + "<br/>";
+      }
+      tBody.append("<tr><td>" + escapeHTML(tsName) + "</td><td>" + valueText + "</td></tr>");
+    }
+    break;
+  case "scalar":
+    tBody.append("<tr><td>scalar</td><td>" + data.result[1] + "</td></tr>");
+    break;
+  case "string":
+    tBody.append("<tr><td>string</td><td>" + escapeHTML(data.result[1]) + "</td></tr>");
+    break;
+  default:
+    self.showError("Unsupported value type!");
+    break;
+  }
+  self.handleChange();
+};
+
+Prometheus.Graph.prototype.remove = function() {
+  var self = this;
+  $(self.graphHTML).remove();
+  self.handleRemove();
+  self.handleChange();
+};
+
+Prometheus.Graph.prototype.formatKMBT = function(y) {
+  var abs_y = Math.abs(y);
+  if (abs_y >= 1e24) {
+    return (y / 1e24).toString() + "Y";
+  } else if (abs_y >= 1e21) {
+    return (y / 1e21).toString() + "Z";
+  } else if (abs_y >= 1e18) {
+    return (y / 1e18).toString() + "E";
+  } else if (abs_y >= 1e15) {
+    return (y / 1e15).toString() + "P";
+  } else if (abs_y >= 1e12) {
+    return (y / 1e12).toString() + "T";
+  } else if (abs_y >= 1e9) {
+    return (y / 1e9).toString() + "G";
+  } else if (abs_y >= 1e6) {
+    return (y / 1e6).toString() + "M";
+  } else if (abs_y >= 1e3) {
+    return (y / 1e3).toString() + "k";
+  } else if (abs_y >= 1) {
+    return y
+  } else if (abs_y === 0) {
+    return y
+  } else if (abs_y <= 1e-24) {
+    return (y / 1e-24).toString() + "y";
+  } else if (abs_y <= 1e-21) {
+    return (y / 1e-21).toString() + "z";
+  } else if (abs_y <= 1e-18) {
+    return (y / 1e-18).toString() + "a";
+  } else if (abs_y <= 1e-15) {
+    return (y / 1e-15).toString() + "f";
+  } else if (abs_y <= 1e-12) {
+    return (y / 1e-12).toString() + "p";
+  } else if (abs_y <= 1e-9) {
+      return (y / 1e-9).toString() + "n";
+  } else if (abs_y <= 1e-6) {
+    return (y / 1e-6).toString() + "¬µ";
+  } else if (abs_y <=1e-3) {
+    return (y / 1e-3).toString() + "m";
+  } else if (abs_y <= 1) {
+    return y
+  }
+}
+
+Prometheus.Graph.prototype.limitSeries = function(result) {
+  var self = this;
+  var MAX_SERIES_NUM = 10000;
+  var message = "<strong>Warning!</strong> Fetched " +
+    result.length + " series, but displaying only first " +
+    MAX_SERIES_NUM + ".";
+
+  if (result.length > MAX_SERIES_NUM) {
+    self.showWarning(message);
+    return result.splice(0, MAX_SERIES_NUM);
+  }
+  return result;
+}
+
+/**
+ * Page
+*/
+const pageConfig = {
+  allMetrics: [],
+  graphs: [],
+  queryHistMetrics: JSON.parse(localStorage.getItem('history')) || [],
+};
+
+Prometheus.Page = function() {};
+
+Prometheus.Page.prototype.init = function() {
+  var graphOptions = this.parseURL();
+  if (graphOptions.length === 0) {
+    graphOptions.push({});
+  }
+
+  graphOptions.forEach(this.addGraph, this);
+  $("#add_graph").click(this.addGraph.bind(this, {}));
+};
+
+Prometheus.Page.prototype.parseURL = function() {
+  if (window.location.search == "") {
+    return [];
+  }
+
+  var queryParams = window.location.search.substring(1).split('&');
+  var queryParamHelper = new Prometheus.Page.QueryParamHelper();
+  return queryParamHelper.parseQueryParams(queryParams);
+};
+
+Prometheus.Page.prototype.addGraph = function(options) {
+  var graph = new Prometheus.Graph(
+    $("#graph_container"),
+    options,
+    this.updateURL.bind(this),
+    this.removeGraph.bind(this)
+  );
+
+  pageConfig.graphs.push(graph);
+
+  $(window).resize(function() {
+    graph.resizeGraph();
+  });
+};
+
+// NOTE: This needs to be kept in sync with /util/strutil/strconv.go:GraphLinkForExpression
+Prometheus.Page.prototype.updateURL = function() {
+  var queryString = pageConfig.graphs.map(function(graph, index) {
+    var graphOptions = graph.getOptions();
+    var queryParamHelper = new Prometheus.Page.QueryParamHelper();
+    var queryObject = queryParamHelper.generateQueryObject(graphOptions, index);
+    return $.param(queryObject);
+  }, this).join("&");
+
+  history.pushState({}, "", "graph?" + queryString);
+};
+
+Prometheus.Page.prototype.removeGraph = function(graph) {
+  pageConfig.graphs = pageConfig.graphs.filter(function(g) {return g !== graph});
+};
+
+Prometheus.Page.QueryParamHelper = function() {};
+
+Prometheus.Page.QueryParamHelper.prototype.parseQueryParams = function(queryParams) {
+  var orderedQueryParams = this.filterInvalidParams(queryParams).sort();
+  return this.fetchOptionsFromOrderedParams(orderedQueryParams, 0);
+};
+
+Prometheus.Page.QueryParamHelper.queryParamFormat = /^g\d+\..+=.+$/;
+
+Prometheus.Page.QueryParamHelper.prototype.filterInvalidParams = function(paramTuples) {
+  return paramTuples.filter(function(paramTuple) {
+    return Prometheus.Page.QueryParamHelper.queryParamFormat.test(paramTuple);
+  });
+};
+
+Prometheus.Page.QueryParamHelper.prototype.fetchOptionsFromOrderedParams = function(queryParams, graphIndex) {
+  if (queryParams.length == 0) {
+    return [];
+  }
+
+  var prefixOfThisIndex = this.queryParamPrefix(graphIndex);
+  var numberOfParamsForThisGraph = queryParams.filter(function(paramTuple) {
+    return paramTuple.startsWith(prefixOfThisIndex);
+  }).length;
+
+  if (numberOfParamsForThisGraph == 0) {
+    return [];
+  }
+
+  var paramsForThisGraph = queryParams.splice(0, numberOfParamsForThisGraph);
+
+  paramsForThisGraph = paramsForThisGraph.map(function(paramTuple) {
+    return paramTuple.substring(prefixOfThisIndex.length);
+  });
+
+  var options = this.parseQueryParamsOfOneGraph(paramsForThisGraph);
+  var optionAccumulator = this.fetchOptionsFromOrderedParams(queryParams, graphIndex + 1);
+  optionAccumulator.unshift(options);
+
+  return optionAccumulator;
+};
+
+Prometheus.Page.QueryParamHelper.prototype.parseQueryParamsOfOneGraph = function(queryParams) {
+  var options = {};
+  queryParams.forEach(function(tuple) {
+    var optionNameAndValue = tuple.split('=');
+    var optionName = optionNameAndValue[0];
+
+    var optionValue = decodeURIComponent(optionNameAndValue[1].replace(/\+/g, " "));
+
+    if (optionName == "tab") {
+      optionValue = parseInt(optionValue); // tab is integer
+    }
+
+    options[optionName] = optionValue;
+  });
+
+  return options;
+};
+
+Prometheus.Page.QueryParamHelper.prototype.queryParamPrefix = function(index) {
+  return "g" + index + ".";
+};
+
+Prometheus.Page.QueryParamHelper.prototype.generateQueryObject = function(graphOptions, index) {
+  var prefix = this.queryParamPrefix(index);
+  var queryObject = {};
+  Object.keys(graphOptions).forEach(function(key) {
+    queryObject[prefix + key] = graphOptions[key];
+  });
+  return queryObject;
+};
+
+// These two methods (isDeprecatedGraphURL and redirectToMigratedURL)
+// are added only for backward compatibility to old query format.
+function isDeprecatedGraphURL() {
+  if (window.location.hash.length == 0) {
+    return false;
+  }
+
+  var decodedFragment = decodeURIComponent(window.location.hash);
+  try {
+      JSON.parse(decodedFragment.substr(1)); // drop the hash #
+  } catch (e) {
+      return false;
+  }
+  return true;
+}
+
+function redirectToMigratedURL() {
+  var decodedFragment = decodeURIComponent(window.location.hash);
+  var graphOptions = JSON.parse(decodedFragment.substr(1)); // drop the hash #
+  var queryObject = {};
+
+  graphOptions.map(function(options, index){
+    var prefix = "g" + index + ".";
+    Object.keys(options).forEach(function(key) {
+      queryObject[prefix + key] = options[key];
+    });
+  });
+  var query = $.param(queryObject);
+  window.location = PATH_PREFIX + "/graph?" + query;
+}
+
+/**
+ * Query History helper functions
+ * **/
+const queryHistory = {
+  isEnabled: function() {
+    return JSON.parse(localStorage.getItem('enable-query-history'))
+  },
+
+  bindHistoryEvents: function(graph) {
+    const targetEl = $('div.query-history');
+    const icon = $(targetEl).children('i');
+    targetEl.off('click');
+
+    if (queryHistory.isEnabled()) {
+      this.toggleOn(targetEl);
+    }
+
+    targetEl.on('click', function() {
+      if (icon.hasClass('glyphicon-unchecked')) {
+        queryHistory.toggleOn(targetEl);
+      } else if (icon.hasClass('glyphicon-check')) {
+        queryHistory.toggleOff(targetEl);
+      }
+    });
+  },
+
+  handleHistory: function(graph) {
+    const query = graph.expr.val();
+    const isSimpleMetric = pageConfig.allMetrics.indexOf(query) !== -1;
+    if (isSimpleMetric) {
+      return;
+    }
+
+    let parsedQueryHistory = JSON.parse(localStorage.getItem('history'));
+    const hasStoredQuery = parsedQueryHistory.indexOf(query) !== -1;
+    if (hasStoredQuery) {
+      parsedQueryHistory.splice(parsedQueryHistory.indexOf(query), 1);
+    }
+
+    parsedQueryHistory.push(query);
+    const queryCount = parsedQueryHistory.length;
+    parsedQueryHistory = parsedQueryHistory.slice(queryCount - 50, queryCount);
+
+    localStorage.setItem('history', JSON.stringify(parsedQueryHistory));
+    pageConfig.queryHistMetrics = parsedQueryHistory;
+    if (queryHistory.isEnabled()) {
+      this.updateTypeaheadMetricSet(pageConfig.queryHistMetrics.concat(pageConfig.allMetrics));
+    }
+  },
+
+  toggleOn: function(targetEl) {
+    this.updateTypeaheadMetricSet(pageConfig.queryHistMetrics.concat(pageConfig.allMetrics));
+
+    $(targetEl).children('i').removeClass('glyphicon-unchecked').addClass('glyphicon-check');
+    targetEl.addClass('is-checked');
+    localStorage.setItem('enable-query-history', true);
+  },
+
+  toggleOff: function(targetEl) {
+    this.updateTypeaheadMetricSet(pageConfig.allMetrics);
+
+    $(targetEl).children('i').removeClass('glyphicon-check').addClass('glyphicon-unchecked');
+    targetEl.removeClass('is-checked');
+    localStorage.setItem('enable-query-history', false);
+  },
+
+  updateTypeaheadMetricSet: function(metricSet) {
+    pageConfig.graphs.forEach(function(graph) {
+      if (graph.expr.data('typeahead')) {
+        graph.expr.data('typeahead').source = metricSet;
+      }
+    });
+  }
+};
+
+// Defers invocation of fn for waitPeriod if returned function is called repeatedly
+function debounce(fn, waitPeriod) {
+  var timeout;
+  return function() {
+    clearTimeout(timeout);
+    var args = arguments;
+    var scope = this;
+    function invokeFn() {
+      return fn.apply(scope, args);
+    }
+    timeout = setTimeout(invokeFn, waitPeriod);
+  };
+}
+
+function escapeHTML(string) {
+  var entityMap = {
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': '&quot;',
+    "'": '&#39;',
+    "/": '&#x2F;'
+  };
+
+  return String(string).replace(/[&<>"'\/]/g, function (s) {
+    return entityMap[s];
+  });
+}
+
+function init() {
+  $.ajaxSetup({
+    cache: false
+  });
+
+  $.ajax({
+    url: PATH_PREFIX + "/static/js/graph/graph_template.handlebar?v=" + BUILD_VERSION,
+    success: function(data) {
+
+      graphTemplate = data;
+      Mustache.parse(data);
+      if (isDeprecatedGraphURL()) {
+        redirectToMigratedURL();
+      } else {
+        var Page = new Prometheus.Page();
+        Page.init();
+      }
+    }
+  });
+}
+
+$(init);
+        20200321005938       <                  å      å    å  v a r   P r o m e t h e u s   =   P r o m e t h e u s   | |   { } ; 
+ v a r   g r a p h T e m p l a t e ; 
+ 
+ v a r   I N P U T _ D E B O U N C E _ W A I T   =   5 0 0 ;   / /   m s 
+ v a r   S E C O N D   =   1 0 0 0 ; 
+ 
+ / * * 
+   *   G r a p h 
+ * / 
+ P r o m e t h e u s . G r a p h   =   f u n c t i o n ( e l e m e n t ,   o p t i o n s ,   h a n d l e C h a n g e ,   h a n d l e R e m o v e )   { 
+     t h i s . e l   =   e l e m e n t ; 
+     t h i s . g r a p h H T M L   =   n u l l ; 
+     t h i s . o p t i o n s   =   o p t i o n s ; 
+     t h i s . h a n d l e C h a n g e   =   h a n d l e C h a n g e ; 
+     t h i s . h a n d l e R e m o v e   =   f u n c t i o n ( )   { 
+         h a n d l e R e m o v e ( t h i s ) ; 
+     } ; 
+     t h i s . r i c k s h a w G r a p h   =   n u l l ; 
+     t h i s . d a t a   =   [ ] ; 
+ 
+     t h i s . i n i t i a l i z e ( ) ; 
+ } ; 
+ 
+ P r o m e t h e u s . G r a p h . t i m e F a c t o r s   =   { 
+     " y " :   6 0   *   6 0   *   2 4   *   3 6 5 , 
+     " w " :   6 0   *   6 0   *   2 4   *   7 , 
+     " d " :   6 0   *   6 0   *   2 4 , 
+     " h " :   6 0   *   6 0 , 
+     " m " :   6 0 , 
+     " s " :   1 
+ } ; 
+ 
+ P r o m e t h e u s . G r a p h . s t e p V a l u e s   =   [ 
+     " 1 s " ,   " 1 0 s " ,   " 1 m " ,   " 5 m " ,   " 1 5 m " ,   " 3 0 m " ,   " 1 h " ,   " 2 h " ,   " 6 h " ,   " 1 2 h " ,   " 1 d " ,   " 2 d " , 
+     " 1 w " ,   " 2 w " ,   " 4 w " ,   " 8 w " ,   " 1 y " ,   " 2 y " 
+ ] ; 
+ 
+ P r o m e t h e u s . G r a p h . n u m G r a p h s   =   0 ; 
+ 
+ P r o m e t h e u s . G r a p h . p r o t o t y p e . i n i t i a l i z e   =   f u n c t i o n ( )   { 
+     v a r   s e l f   =   t h i s ; 
+     s e l f . i d   =   P r o m e t h e u s . G r a p h . n u m G r a p h s + + ; 
+ 
+     / /   S e t   d e f a u l t   o p t i o n s . 
+     s e l f . o p t i o n s . i d   =   s e l f . i d ; 
+     s e l f . o p t i o n s . r a n g e _ i n p u t   =   s e l f . o p t i o n s . r a n g e _ i n p u t   | |   " 1 h " ; 
+     i f   ( s e l f . o p t i o n s . t a b   = = =   u n d e f i n e d )   { 
+         s e l f . o p t i o n s . t a b   =   1 ; 
+     } 
+ 
+     / /   D r a w   g r a p h   c o n t r o l s   a n d   c o n t a i n e r   f r o m   H a n d l e b a r s   t e m p l a t e . 
+ 
+     v a r   o p t i o n s   =   { 
+         ' p a t h P r e f i x ' :   P A T H _ P R E F I X , 
+         ' b u i l d V e r s i o n ' :   B U I L D _ V E R S I O N 
+     } ; 
+     j Q u e r y . e x t e n d ( o p t i o n s ,   s e l f . o p t i o n s ) ; 
+     s e l f . g r a p h H T M L   =   $ ( M u s t a c h e . r e n d e r ( g r a p h T e m p l a t e ,   o p t i o n s ) ) ; 
+     s e l f . e l . a p p e n d ( s e l f . g r a p h H T M L ) ; 
+ 
+     / /   G e t   r e f e r e n c e s   t o   a l l   t h e   i n t e r e s t i n g   e l e m e n t s   i n   t h e   g r a p h   c o n t a i n e r   a n d 
+     / /   b i n d   e v e n t   h a n d l e r s . 
+     v a r   g r a p h W r a p p e r   =   s e l f . e l . f i n d ( " # g r a p h _ w r a p p e r "   +   s e l f . i d ) ; 
+     s e l f . q u e r y F o r m   =   g r a p h W r a p p e r . f i n d ( " . q u e r y _ f o r m " ) ; 
+ 
+     / /   A u t o - r e s i z e   t h e   t e x t   a r e a   o n   i n p u t   o r   m o u s e c l i c k 
+     v a r   r e s i z e T e x t a r e a   =   f u n c t i o n ( e l )   { 
+         v a r   o f f s e t   =   e l . o f f s e t H e i g h t   -   e l . c l i e n t H e i g h t ; 
+         $ ( e l ) . c s s ( ' h e i g h t ' ,   ' a u t o ' ) . c s s ( ' h e i g h t ' ,   e l . s c r o l l H e i g h t   +   o f f s e t ) ; 
+     } ; 
+ 
+     s e l f . e x p r   =   g r a p h W r a p p e r . f i n d ( " t e x t a r e a [ n a m e = e x p r ] " ) ; 
+     s e l f . e x p r . k e y p r e s s ( f u n c t i o n ( e )   { 
+         c o n s t   e n t e r   =   1 3 ; 
+         i f   ( e . w h i c h   = =   e n t e r   & &   ! e . s h i f t K e y )   { 
+             s e l f . q u e r y F o r m . s u b m i t ( ) ; 
+             e . p r e v e n t D e f a u l t ( ) ; 
+         } 
+         $ ( t h i s ) . o n ( ' k e y u p   i n p u t ' ,   d e b o u n c e ( f u n c t i o n ( )   { 
+             r e s i z e T e x t a r e a ( t h i s ) ; 
+         } ,   I N P U T _ D E B O U N C E _ W A I T ) ) ; 
+     } ) ; 
+ 
+     s e l f . e x p r . c l i c k ( f u n c t i o n ( e )   { 
+         r e s i z e T e x t a r e a ( t h i s ) ; 
+     } ) ; 
+ 
+     s e l f . e x p r . c h a n g e ( s e l f . h a n d l e C h a n g e ) ; 
+ 
+     s e l f . r a n g e I n p u t   =   s e l f . q u e r y F o r m . f i n d ( " i n p u t [ n a m e = r a n g e _ i n p u t ] " ) ; 
+     s e l f . s t a c k e d B t n   =   s e l f . q u e r y F o r m . f i n d ( " . s t a c k e d _ b t n " ) ; 
+     s e l f . s t a c k e d   =   s e l f . q u e r y F o r m . f i n d ( " i n p u t [ n a m e = s t a c k e d ] " ) ; 
+     s e l f . i n s e r t M e t r i c   =   s e l f . q u e r y F o r m . f i n d ( " s e l e c t [ n a m e = i n s e r t _ m e t r i c ] " ) ; 
+     s e l f . r e f r e s h I n t e r v a l   =   s e l f . q u e r y F o r m . f i n d ( " s e l e c t [ n a m e = r e f r e s h ] " ) ; 
+ 
+     s e l f . c o n s o l e T a b   =   g r a p h W r a p p e r . f i n d ( " . c o n s o l e " ) ; 
+     s e l f . g r a p h T a b       =   g r a p h W r a p p e r . f i n d ( " . g r a p h _ c o n t a i n e r " ) ; 
+ 
+     s e l f . t a b s   =   g r a p h W r a p p e r . f i n d ( " a [ d a t a - t o g g l e = ' t a b ' ] " ) ; 
+     s e l f . t a b s . e q ( s e l f . o p t i o n s . t a b ) . t a b ( " s h o w " ) ; 
+     s e l f . t a b s . o n ( " s h o w n . b s . t a b " ,   f u n c t i o n ( e )   { 
+         v a r   t a r g e t   =   $ ( e . t a r g e t ) ; 
+         s e l f . o p t i o n s . t a b   =   t a r g e t . p a r e n t ( ) . i n d e x ( ) ; 
+         s e l f . h a n d l e C h a n g e ( ) ; 
+         i f   ( $ ( " # "   +   t a r g e t . a t t r ( " a r i a - c o n t r o l s " ) ) . h a s C l a s s ( " r e l o a d " ) )   { 
+             s e l f . s u b m i t Q u e r y ( ) ; 
+         } 
+     } ) ; 
+ 
+     / /   R e t u r n   m o v e s   f o c u s   b a c k   t o   e x p r   i n s t e a d   o f   s u b m i t t i n g . 
+     s e l f . i n s e r t M e t r i c . b i n d ( " k e y d o w n " ,   " r e t u r n " ,   f u n c t i o n ( e )   { 
+         s e l f . e x p r . f o c u s ( ) ; 
+         s e l f . e x p r . v a l ( s e l f . e x p r . v a l ( ) ) ; 
+         r e t u r n   e . p r e v e n t D e f a u l t ( ) ; 
+     } ) 
+ 
+     s e l f . e r r o r   =   g r a p h W r a p p e r . f i n d ( " . e r r o r " ) . h i d e ( ) ; 
+     s e l f . w a r n i n g   =   g r a p h W r a p p e r . f i n d ( " . w a r n i n g " ) . h i d e ( ) ; 
+     s e l f . g r a p h A r e a   =   g r a p h W r a p p e r . f i n d ( " . g r a p h _ a r e a " ) ; 
+     s e l f . g r a p h   =   s e l f . g r a p h A r e a . f i n d ( " . g r a p h " ) ; 
+     s e l f . y A x i s   =   s e l f . g r a p h A r e a . f i n d ( " . y _ a x i s " ) ; 
+     s e l f . l e g e n d   =   g r a p h W r a p p e r . f i n d ( " . l e g e n d " ) ; 
+     s e l f . s p i n n e r   =   g r a p h W r a p p e r . f i n d ( " . s p i n n e r " ) ; 
+     s e l f . e v a l S t a t s   =   g r a p h W r a p p e r . f i n d ( " . e v a l _ s t a t s " ) ; 
+ 
+     s e l f . e n d D a t e   =   g r a p h W r a p p e r . f i n d ( " i n p u t [ n a m e = e n d _ i n p u t ] " ) ; 
+     s e l f . e n d D a t e . d a t e t i m e p i c k e r ( { 
+         l o c a l e :   ' e n ' , 
+         f o r m a t :   ' Y Y Y Y - M M - D D   H H : m m ' , 
+         t o o l b a r P l a c e m e n t :   ' b o t t o m ' , 
+         s i d e B y S i d e :   t r u e , 
+         s h o w T o d a y B u t t o n :   t r u e , 
+         s h o w C l e a r :   t r u e , 
+         s h o w C l o s e :   t r u e , 
+         t i m e Z o n e :   ' U T C ' , 
+     } ) ; 
+     i f   ( s e l f . o p t i o n s . e n d _ i n p u t )   { 
+         s e l f . e n d D a t e . d a t a ( ' D a t e T i m e P i c k e r ' ) . d a t e ( s e l f . o p t i o n s . e n d _ i n p u t ) ; 
+     } 
+     s e l f . e n d D a t e . o n ( " d p . c h a n g e " ,   f u n c t i o n ( )   {   s e l f . s u b m i t Q u e r y ( ) ;   } ) ; 
+     s e l f . r e f r e s h I n t e r v a l . c h a n g e ( f u n c t i o n ( )   {   s e l f . u p d a t e R e f r e s h ( ) ;   } ) ; 
+ 
+     s e l f . i s S t a c k e d   =   f u n c t i o n ( )   { 
+         r e t u r n   s e l f . s t a c k e d . v a l ( )   = = =   ' 1 ' ; 
+     } ; 
+ 
+     s e l f . m o m e n t   =   g r a p h W r a p p e r . f i n d ( " i n p u t [ n a m e = m o m e n t _ i n p u t ] " ) ; 
+     s e l f . m o m e n t . d a t e t i m e p i c k e r ( { 
+         l o c a l e :   ' e n ' , 
+         f o r m a t :   ' Y Y Y Y - M M - D D   H H : m m : s s ' , 
+         t o o l b a r P l a c e m e n t :   ' b o t t o m ' , 
+         s i d e B y S i d e :   t r u e , 
+         s h o w T o d a y B u t t o n :   t r u e , 
+         s h o w C l e a r :   t r u e , 
+         s h o w C l o s e :   t r u e , 
+         t i m e Z o n e :   ' U T C ' , 
+     } ) ; 
+     i f   ( s e l f . o p t i o n s . t i m e s t a m p )   { 
+         v a r   d a t e   =   n e w   D a t e ( s e l f . o p t i o n s . t i m e s t a m p * 1 0 0 0 ) 
+         s e l f . m o m e n t . d a t a ( ' D a t e T i m e P i c k e r ' ) . d a t e ( d a t e ) ; 
+     }   e l s e   i f   ( s e l f . o p t i o n s . m o m e n t _ i n p u t )   { 
+         s e l f . m o m e n t . d a t a ( ' D a t e T i m e P i c k e r ' ) . d a t e ( s e l f . o p t i o n s . m o m e n t _ i n p u t ) ; 
+     } 
+     s e l f . m o m e n t . o n ( " d p . c h a n g e " ,   f u n c t i o n ( )   {   s e l f . s u b m i t Q u e r y ( ) ;   } ) ; 
+ 
+ 
+     v a r   s t y l e S t a c k B t n   =   f u n c t i o n ( )   { 
+         v a r   i c o n   =   s e l f . s t a c k e d B t n . f i n d ( ' . g l y p h i c o n ' ) ; 
+         i f   ( s e l f . i s S t a c k e d ( ) )   { 
+             s e l f . s t a c k e d B t n . a d d C l a s s ( " b t n - p r i m a r y " ) ; 
+             i c o n . a d d C l a s s ( " g l y p h i c o n - c h e c k " ) ; 
+             i c o n . r e m o v e C l a s s ( " g l y p h i c o n - u n c h e c k e d " ) ; 
+         }   e l s e   { 
+             s e l f . s t a c k e d B t n . r e m o v e C l a s s ( " b t n - p r i m a r y " ) ; 
+             i c o n . a d d C l a s s ( " g l y p h i c o n - u n c h e c k e d " ) ; 
+             i c o n . r e m o v e C l a s s ( " g l y p h i c o n - c h e c k " ) ; 
+         } 
+     } ; 
+     s t y l e S t a c k B t n ( ) ; 
+ 
+     s e l f . s t a c k e d B t n . c l i c k ( f u n c t i o n ( )   { 
+         i f   ( s e l f . i s S t a c k e d ( )   & &   s e l f . g r a p h J S O N )   { 
+             / /   I f   t h e   g r a p h   w a s   s t a c k e d ,   t h e   o r i g i n a l   s e r i e s   d a t a   g o t   m u t a t e d 
+             / /   ( s c a l e d )   a n d   w e   n e e d   t o   r e c o n s t r u c t   i t   f r o m   t h e   o r i g i n a l   J S O N   d a t a . 
+             s e l f . d a t a   =   s e l f . t r a n s f o r m D a t a ( s e l f . g r a p h J S O N ) ; 
+         } 
+         s e l f . s t a c k e d . v a l ( s e l f . i s S t a c k e d ( )   ?   ' 0 '   :   ' 1 ' ) ; 
+         s t y l e S t a c k B t n ( ) ; 
+         s e l f . u p d a t e G r a p h ( ) ; 
+     } ) ; 
+ 
+     s e l f . q u e r y F o r m . s u b m i t ( f u n c t i o n ( )   { 
+         s e l f . c o n s o l e T a b . a d d C l a s s ( " r e l o a d " ) ; 
+         s e l f . g r a p h T a b . a d d C l a s s ( " r e l o a d " ) ; 
+         s e l f . h a n d l e C h a n g e ( ) ; 
+         s e l f . s u b m i t Q u e r y ( ) ; 
+         r e t u r n   f a l s e ; 
+     } ) ; 
+     s e l f . s p i n n e r . h i d e ( ) ; 
+ 
+     s e l f . q u e r y F o r m . f i n d ( " b u t t o n [ n a m e = i n c _ r a n g e ] " ) . c l i c k ( f u n c t i o n ( )   {   s e l f . i n c r e a s e R a n g e ( ) ;   } ) ; 
+     s e l f . q u e r y F o r m . f i n d ( " b u t t o n [ n a m e = d e c _ r a n g e ] " ) . c l i c k ( f u n c t i o n ( )   {   s e l f . d e c r e a s e R a n g e ( ) ;   } ) ; 
+ 
+     s e l f . q u e r y F o r m . f i n d ( " b u t t o n [ n a m e = i n c _ e n d ] " ) . c l i c k ( f u n c t i o n ( )   {   s e l f . i n c r e a s e E n d ( ) ;   } ) ; 
+     s e l f . q u e r y F o r m . f i n d ( " b u t t o n [ n a m e = d e c _ e n d ] " ) . c l i c k ( f u n c t i o n ( )   {   s e l f . d e c r e a s e E n d ( ) ;   } ) ; 
+ 
+     s e l f . q u e r y F o r m . f i n d ( " b u t t o n [ n a m e = i n c _ m o m e n t ] " ) . c l i c k ( f u n c t i o n ( )   {   s e l f . i n c r e a s e M o m e n t ( ) ;   } ) ; 
+     s e l f . q u e r y F o r m . f i n d ( " b u t t o n [ n a m e = d e c _ m o m e n t ] " ) . c l i c k ( f u n c t i o n ( )   {   s e l f . d e c r e a s e M o m e n t ( ) ;   } ) ; 
+ 
+     s e l f . i n s e r t M e t r i c . c h a n g e ( f u n c t i o n ( )   { 
+         s e l f . e x p r . s e l e c t i o n ( " r e p l a c e " ,   { t e x t :   s e l f . i n s e r t M e t r i c . v a l ( ) ,   m o d e :   " b e f o r e " } ) ; 
+         s e l f . e x p r . f o c u s ( ) ;   / /   r e f o c u s i n g 
+     } ) ; 
+ 
+     v a r   r e m o v e B t n   =   g r a p h W r a p p e r . f i n d ( " [ n a m e = r e m o v e ] " ) ; 
+     r e m o v e B t n . c l i c k ( f u n c t i o n ( )   { 
+         s e l f . r e m o v e ( ) ; 
+         r e t u r n   f a l s e ; 
+     } ) ; 
+ 
+     s e l f . c h e c k T i m e D r i f t ( ) ; 
+     / /   i n i t i a l i z e   q u e r y   h i s t o r y 
+     i f   ( ! l o c a l S t o r a g e . g e t I t e m ( " h i s t o r y " ) )   { 
+         l o c a l S t o r a g e . s e t I t e m ( " h i s t o r y " ,   J S O N . s t r i n g i f y ( [ ] ) ) ; 
+     } 
+     s e l f . p o p u l a t e I n s e r t a b l e M e t r i c s ( ) ; 
+ 
+     i f   ( s e l f . e x p r . v a l ( ) )   { 
+         s e l f . s u b m i t Q u e r y ( ) ; 
+     } 
+ } ; 
+ 
+ P r o m e t h e u s . G r a p h . p r o t o t y p e . c h e c k T i m e D r i f t   =   f u n c t i o n ( )   { 
+         v a r   s e l f   =   t h i s ; 
+         v a r   b r o w s e r T i m e   =   n e w   D a t e ( ) . g e t T i m e ( )   /   1 0 0 0 ; 
+         $ . a j a x ( { 
+                 m e t h o d :   " G E T " , 
+                 u r l :   P A T H _ P R E F I X   +   " / a p i / v 1 / q u e r y ? q u e r y = t i m e ( ) " , 
+                 d a t a T y p e :   " j s o n " , 
+                 s u c c e s s :   f u n c t i o n ( j s o n ,   t e x t S t a t u s )   { 
+                         i f   ( j s o n . s t a t u s   ! = =   " s u c c e s s " )   { 
+                                 s e l f . s h o w E r r o r ( " E r r o r   q u e r y i n g   t i m e . " ) ; 
+                                 r e t u r n ; 
+                         } 
+                         v a r   s e r v e r T i m e   =   j s o n . d a t a . r e s u l t [ 0 ] ; 
+                         v a r   d i f f   =   M a t h . a b s ( b r o w s e r T i m e   -   s e r v e r T i m e ) ; 
+ 
+                         i f   ( d i f f   > =   3 0 )   { 
+                             s e l f . s h o w W a r n i n g ( 
+                                     " < d i v   c l a s s = \ " a l e r t   a l e r t - w a r n i n g \ " > < s t r o n g > W a r n i n g ! < / s t r o n g >   D e t e c t e d   "   + 
+                                     d i f f . t o F i x e d ( 2 )   + 
+                                     "   s e c o n d s   t i m e   d i f f e r e n c e   b e t w e e n   y o u r   b r o w s e r   a n d   t h e   s e r v e r .   P r o m e t h e u s   r e l i e s   o n   a c c u r a t e   t i m e   a n d   t i m e   d r i f t   m i g h t   c a u s e   u n e x p e c t e d   q u e r y   r e s u l t s . < / d i v > " 
+                             ) ; 
+                         } 
+                 } , 
+                 e r r o r :   f u n c t i o n ( )   { 
+                         s e l f . s h o w E r r o r ( " E r r o r   l o a d i n g   t i m e . " ) ; 
+                 } 
+         } ) ; 
+ } ; 
+ 
+ P r o m e t h e u s . G r a p h . p r o t o t y p e . p o p u l a t e I n s e r t a b l e M e t r i c s   =   f u n c t i o n ( )   { 
+     v a r   s e l f   =   t h i s ; 
+     $ . a j a x ( { 
+             m e t h o d :   " G E T " , 
+             u r l :   P A T H _ P R E F I X   +   " / a p i / v 1 / l a b e l / _ _ n a m e _ _ / v a l u e s " , 
+             d a t a T y p e :   " j s o n " , 
+             s u c c e s s :   f u n c t i o n ( j s o n ,   t e x t S t a t u s )   { 
+                 i f   ( j s o n . s t a t u s   ! = =   " s u c c e s s " )   { 
+                     s e l f . s h o w E r r o r ( " E r r o r   l o a d i n g   a v a i l a b l e   m e t r i c s ! " ) ; 
+                     r e t u r n ; 
+                 } 
+ 
+                 p a g e C o n f i g . a l l M e t r i c s   =   j s o n . d a t a   | |   [ ] ;   / /   t o d o :   d o   w e   n e e d   s e l f . a l l M e t r i c s ?   O r   c a n   i t   j u s t   l i v e   o n   t h e   p a g e 
+                 f o r   ( v a r   i   =   0 ;   i   <   p a g e C o n f i g . a l l M e t r i c s . l e n g t h ;   i + + )   { 
+                     s e l f . i n s e r t M e t r i c [ 0 ] . o p t i o n s . a d d ( n e w   O p t i o n ( p a g e C o n f i g . a l l M e t r i c s [ i ] ,   p a g e C o n f i g . a l l M e t r i c s [ i ] ) ) ; 
+                 } 
+ 
+                 s e l f . f u z z y R e s u l t   =   { 
+                     q u e r y :   n u l l , 
+                     r e s u l t :   n u l l , 
+                     m a p :   { } 
+                 } 
+ 
+                 s e l f . i n i t T y p e a h e a d ( s e l f ) ; 
+             } , 
+             e r r o r :   f u n c t i o n ( )   { 
+                 s e l f . s h o w E r r o r ( " E r r o r   l o a d i n g   a v a i l a b l e   m e t r i c s ! " ) ; 
+             } , 
+     } ) ; 
+ } ; 
+ 
+ P r o m e t h e u s . G r a p h . p r o t o t y p e . i n i t T y p e a h e a d   =   f u n c t i o n ( s e l f )   { 
+     c o n s t   s o u r c e   =   q u e r y H i s t o r y . i s E n a b l e d ( )   ?   p a g e C o n f i g . q u e r y H i s t M e t r i c s . c o n c a t ( p a g e C o n f i g . a l l M e t r i c s )   :   p a g e C o n f i g . a l l M e t r i c s ; 
+     s e l f . e x p r . t y p e a h e a d ( { 
+         a u t o S e l e c t :   f a l s e , 
+         s o u r c e :   s o u r c e , 
+         i t e m s :   1 0 0 0 , 
+         m a t c h e r :   f u n c t i o n   ( i t e m )   { 
+             / /   I f   w e   h a v e   r e s u l t   f o r   c u r r e n t   q u e r y ,   s k i p 
+             i f   ( s e l f . f u z z y R e s u l t . q u e r y   ! = =   t h i s . q u e r y )   { 
+                 s e l f . f u z z y R e s u l t . q u e r y   =   t h i s . q u e r y ; 
+                 s e l f . f u z z y R e s u l t . m a p   =   { } ; 
+                 s e l f . f u z z y R e s u l t . r e s u l t   =   f u z z y . f i l t e r ( t h i s . q u e r y . r e p l a c e ( /   / g ,   " " ) ,   t h i s . s o u r c e ,   { 
+                     p r e :   " < s t r o n g > " , 
+                     p o s t :   " < / s t r o n g > " 
+                 } ) ; 
+                 s e l f . f u z z y R e s u l t . r e s u l t . f o r E a c h ( f u n c t i o n ( r )   { 
+                     s e l f . f u z z y R e s u l t . m a p [ r . o r i g i n a l ]   =   r ; 
+                 } ) ; 
+             } 
+ 
+             r e t u r n   i t e m   i n   s e l f . f u z z y R e s u l t . m a p ; 
+         } , 
+ 
+         s o r t e r :   f u n c t i o n   ( i t e m s )   { 
+             i t e m s . s o r t ( f u n c t i o n ( a , b )   { 
+                 v a r   i   =   s e l f . f u z z y R e s u l t . m a p [ b ] . s c o r e   -   s e l f . f u z z y R e s u l t . m a p [ a ] . s c o r e ; 
+                 r e t u r n   i   = = =   0   ?   a . l o c a l e C o m p a r e ( b )   :   i ; 
+             } ) ; 
+             r e t u r n   i t e m s ; 
+         } 
+     } ) ; 
+     / /   T h i s   n e e d s   t o   h a p p e n   a f t e r   a t t a c h i n g   t h e   t y p e a h e a d   p l u g i n ,   a s   i t 
+     / /   o t h e r w i s e   b r e a k s   t h e   t y p e a h e a d   f u n c t i o n a l i t y . 
+     s e l f . e x p r . f o c u s ( ) ; 
+     q u e r y H i s t o r y . b i n d H i s t o r y E v e n t s ( s e l f ) ; 
+ } 
+ 
+ P r o m e t h e u s . G r a p h . p r o t o t y p e . g e t O p t i o n s   =   f u n c t i o n ( )   { 
+     v a r   s e l f   =   t h i s ; 
+     v a r   o p t i o n s   =   { } ; 
+ 
+     v a r   o p t i o n I n p u t s   =   [ 
+         " r a n g e _ i n p u t " , 
+         " e n d _ i n p u t " , 
+         " s t e p _ i n p u t " , 
+         " s t a c k e d " , 
+         " m o m e n t _ i n p u t " 
+     ] ; 
+ 
+     s e l f . q u e r y F o r m . f i n d ( " i n p u t " ) . e a c h ( f u n c t i o n ( i n d e x ,   e l e m e n t )   { 
+         v a r   n a m e   =   e l e m e n t . n a m e ; 
+         i f   ( $ . i n A r r a y ( n a m e ,   o p t i o n I n p u t s )   > =   0 )   { 
+             i f   ( e l e m e n t . v a l u e . l e n g t h   >   0 )   { 
+                 o p t i o n s [ n a m e ]   =   e l e m e n t . v a l u e ; 
+             } 
+         } 
+     } ) ; 
+     o p t i o n s . e x p r   =   s e l f . e x p r . v a l ( ) ; 
+     o p t i o n s . t a b   =   s e l f . o p t i o n s . t a b ; 
+     r e t u r n   o p t i o n s ; 
+ } ; 
+ 
+ P r o m e t h e u s . G r a p h . p r o t o t y p e . p a r s e D u r a t i o n   =   f u n c t i o n ( r a n g e T e x t )   { 
+     v a r   r a n g e R E   =   n e w   R e g E x p ( " ^ ( [ 0 - 9 ] + ) ( [ y w d h m s ] + ) $ " ) ; 
+     v a r   m a t c h e s   =   r a n g e T e x t . m a t c h ( r a n g e R E ) ; 
+     i f   ( ! m a t c h e s )   {   r e t u r n ;   } 
+     i f   ( m a t c h e s . l e n g t h   ! =   3 )   { 
+         r e t u r n   6 0 ; 
+     } 
+     v a r   v a l u e   =   p a r s e I n t ( m a t c h e s [ 1 ] ) ; 
+     v a r   u n i t   =   m a t c h e s [ 2 ] ; 
+     r e t u r n   v a l u e   *   P r o m e t h e u s . G r a p h . t i m e F a c t o r s [ u n i t ] ; 
+ } ; 
+ 
+ P r o m e t h e u s . G r a p h . p r o t o t y p e . i n c r e a s e R a n g e   =   f u n c t i o n ( )   { 
+     v a r   s e l f   =   t h i s ; 
+     v a r   r a n g e S e c o n d s   =   s e l f . p a r s e D u r a t i o n ( s e l f . r a n g e I n p u t . v a l ( ) ) ; 
+     f o r   ( v a r   i   =   0 ;   i   <   P r o m e t h e u s . G r a p h . s t e p V a l u e s . l e n g t h ;   i + + )   { 
+         i f   ( r a n g e S e c o n d s   <   s e l f . p a r s e D u r a t i o n ( P r o m e t h e u s . G r a p h . s t e p V a l u e s [ i ] ) )   { 
+             s e l f . r a n g e I n p u t . v a l ( P r o m e t h e u s . G r a p h . s t e p V a l u e s [ i ] ) ; 
+             i f   ( s e l f . e x p r . v a l ( ) )   { 
+                 s e l f . s u b m i t Q u e r y ( ) ; 
+             } 
+             r e t u r n ; 
+         } 
+     } 
+ } ; 
+ 
+ P r o m e t h e u s . G r a p h . p r o t o t y p e . d e c r e a s e R a n g e   =   f u n c t i o n ( )   { 
+     v a r   s e l f   =   t h i s ; 
+     v a r   r a n g e S e c o n d s   =   s e l f . p a r s e D u r a t i o n ( s e l f . r a n g e I n p u t . v a l ( ) ) ; 
+     f o r   ( v a r   i   =   P r o m e t h e u s . G r a p h . s t e p V a l u e s . l e n g t h   -   1 ;   i   > =   0 ;   i - - )   { 
+         i f   ( r a n g e S e c o n d s   >   s e l f . p a r s e D u r a t i o n ( P r o m e t h e u s . G r a p h . s t e p V a l u e s [ i ] ) )   { 
+             s e l f . r a n g e I n p u t . v a l ( P r o m e t h e u s . G r a p h . s t e p V a l u e s [ i ] ) ; 
+             i f   ( s e l f . e x p r . v a l ( ) )   { 
+                 s e l f . s u b m i t Q u e r y ( ) ; 
+             } 
+             r e t u r n ; 
+         } 
+     } 
+ } ; 
+ 
+ P r o m e t h e u s . G r a p h . p r o t o t y p e . g e t E n d D a t e   =   f u n c t i o n ( )   { 
+     v a r   s e l f   =   t h i s ; 
+     i f   ( ! s e l f . e n d D a t e   | |   ! s e l f . e n d D a t e . v a l ( ) )   { 
+         r e t u r n   m o m e n t ( ) ; 
+     } 
+     r e t u r n   s e l f . e n d D a t e . d a t a ( ' D a t e T i m e P i c k e r ' ) . d a t e ( ) ; 
+ } ; 
+ 
+ P r o m e t h e u s . G r a p h . p r o t o t y p e . g e t O r S e t E n d D a t e   =   f u n c t i o n ( )   { 
+     v a r   s e l f   =   t h i s ; 
+     v a r   d a t e   =   s e l f . g e t E n d D a t e ( ) ; 
+     s e l f . s e t E n d D a t e ( d a t e ) ; 
+     r e t u r n   d a t e ; 
+ } ; 
+ 
+ P r o m e t h e u s . G r a p h . p r o t o t y p e . s e t E n d D a t e   =   f u n c t i o n ( d a t e )   { 
+     v a r   s e l f   =   t h i s ; 
+     s e l f . e n d D a t e . d a t a ( ' D a t e T i m e P i c k e r ' ) . d a t e ( d a t e ) ; 
+ } ; 
+ 
+ P r o m e t h e u s . G r a p h . p r o t o t y p e . i n c r e a s e E n d   =   f u n c t i o n ( )   { 
+     v a r   s e l f   =   t h i s ; 
+     v a r   n e w D a t e   =   m o m e n t ( s e l f . g e t O r S e t E n d D a t e ( ) ) ; 
+     n e w D a t e . a d d ( s e l f . p a r s e D u r a t i o n ( s e l f . r a n g e I n p u t . v a l ( ) )   /   2 ,   ' s e c o n d s ' ) ; 
+     s e l f . s e t E n d D a t e ( n e w D a t e ) ; 
+     s e l f . s u b m i t Q u e r y ( ) ; 
+ } ; 
+ 
+ P r o m e t h e u s . G r a p h . p r o t o t y p e . d e c r e a s e E n d   =   f u n c t i o n ( )   { 
+     v a r   s e l f   =   t h i s ; 
+     v a r   n e w D a t e   =   m o m e n t ( s e l f . g e t O r S e t E n d D a t e ( ) ) ; 
+     n e w D a t e . s u b t r a c t ( s e l f . p a r s e D u r a t i o n ( s e l f . r a n g e I n p u t . v a l ( ) )   /   2 ,   ' s e c o n d s ' ) ; 
+     s e l f . s e t E n d D a t e ( n e w D a t e ) ; 
+     s e l f . s u b m i t Q u e r y ( ) ; 
+ } ; 
+ 
+ P r o m e t h e u s . G r a p h . p r o t o t y p e . g e t M o m e n t   =   f u n c t i o n ( )   { 
+     v a r   s e l f   =   t h i s ; 
+     i f   ( ! s e l f . m o m e n t   | |   ! s e l f . m o m e n t . v a l ( ) )   { 
+         r e t u r n   m o m e n t ( ) ; 
+     } 
+     r e t u r n   s e l f . m o m e n t . d a t a ( ' D a t e T i m e P i c k e r ' ) . d a t e ( ) ; 
+ } ; 
+ 
+ P r o m e t h e u s . G r a p h . p r o t o t y p e . g e t O r S e t M o m e n t   =   f u n c t i o n ( )   { 
+     v a r   s e l f   =   t h i s ; 
+     v a r   d a t e   =   s e l f . g e t M o m e n t ( ) ; 
+     s e l f . s e t M o m e n t ( d a t e ) ; 
+     r e t u r n   d a t e ; 
+ } ; 
+ 
+ P r o m e t h e u s . G r a p h . p r o t o t y p e . s e t M o m e n t   =   f u n c t i o n ( d a t e )   { 
+     v a r   s e l f   =   t h i s ; 
+     s e l f . m o m e n t . d a t a ( ' D a t e T i m e P i c k e r ' ) . d a t e ( d a t e ) ; 
+ } ; 
+ 
+ P r o m e t h e u s . G r a p h . p r o t o t y p e . i n c r e a s e M o m e n t   =   f u n c t i o n ( )   { 
+     v a r   s e l f   =   t h i s ; 
+     v a r   n e w D a t e   =   m o m e n t ( s e l f . g e t O r S e t M o m e n t ( ) ) ; 
+     n e w D a t e . a d d ( 1 0 ,   ' s e c o n d s ' ) ; 
+     s e l f . s e t M o m e n t ( n e w D a t e ) ; 
+     s e l f . s u b m i t Q u e r y ( ) ; 
+ } ; 
+ 
+ P r o m e t h e u s . G r a p h . p r o t o t y p e . d e c r e a s e M o m e n t   =   f u n c t i o n ( )   { 
+     v a r   s e l f   =   t h i s ; 
+     v a r   n e w D a t e   =   m o m e n t ( s e l f . g e t O r S e t M o m e n t ( ) ) ; 
+     n e w D a t e . s u b t r a c t ( 1 0 ,   ' s e c o n d s ' ) ; 
+     s e l f . s e t M o m e n t ( n e w D a t e ) ; 
+     s e l f . s u b m i t Q u e r y ( ) ; 
+ } ; 
+ 
+ P r o m e t h e u s . G r a p h . p r o t o t y p e . s u b m i t Q u e r y   =   f u n c t i o n ( )   { 
+     v a r   s e l f   =   t h i s ; 
+     s e l f . c l e a r E r r o r ( ) ; 
+     s e l f . c l e a r W a r n i n g ( ) ; 
+     i f   ( ! s e l f . e x p r . v a l ( ) )   { 
+         r e t u r n ; 
+     } 
+ 
+     s e l f . s p i n n e r . s h o w ( ) ; 
+     s e l f . e v a l S t a t s . e m p t y ( ) ; 
+ 
+     v a r   s t a r t T i m e   =   n e w   D a t e ( ) . g e t T i m e ( ) ; 
+     v a r   r a n g e S e c o n d s   =   s e l f . p a r s e D u r a t i o n ( s e l f . r a n g e I n p u t . v a l ( ) ) ; 
+     v a r   r e s o l u t i o n   =   p a r s e I n t ( s e l f . q u e r y F o r m . f i n d ( " i n p u t [ n a m e = s t e p _ i n p u t ] " ) . v a l ( ) )   | |   M a t h . m a x ( M a t h . f l o o r ( r a n g e S e c o n d s   /   2 5 0 ) ,   1 ) ; 
+     v a r   e n d D a t e   =   s e l f . g e t E n d D a t e ( )   /   1 0 0 0 ; 
+     v a r   m o m e n t   =   s e l f . g e t M o m e n t ( )   /   1 0 0 0 ; 
+ 
+     i f   ( s e l f . q u e r y X h r )   { 
+         s e l f . q u e r y X h r . a b o r t ( ) ; 
+     } 
+     v a r   u r l ; 
+     v a r   s u c c e s s ; 
+     v a r   p a r a m s   =   { 
+         " q u e r y " :   s e l f . e x p r . v a l ( ) 
+     } ; 
+     i f   ( s e l f . o p t i o n s . t a b   = = =   0 )   { 
+         p a r a m s . s t a r t   =   e n d D a t e   -   r a n g e S e c o n d s ; 
+         p a r a m s . e n d   =   e n d D a t e ; 
+         p a r a m s . s t e p   =   r e s o l u t i o n ; 
+         u r l   =   P A T H _ P R E F I X   +   " / a p i / v 1 / q u e r y _ r a n g e " ; 
+         s u c c e s s   =   f u n c t i o n ( j s o n ,   t e x t S t a t u s )   {   s e l f . h a n d l e G r a p h R e s p o n s e ( j s o n ,   t e x t S t a t u s ) ;   } ; 
+     }   e l s e   { 
+         p a r a m s . t i m e   =   m o m e n t ; 
+         u r l   =   P A T H _ P R E F I X   +   " / a p i / v 1 / q u e r y " ; 
+         s u c c e s s   =   f u n c t i o n ( j s o n ,   t e x t S t a t u s )   {   s e l f . h a n d l e C o n s o l e R e s p o n s e ( j s o n ,   t e x t S t a t u s ) ;   } ; 
+     } 
+     s e l f . p a r a m s   =   p a r a m s ; 
+ 
+     s e l f . q u e r y X h r   =   $ . a j a x ( { 
+             m e t h o d :   s e l f . q u e r y F o r m . a t t r ( " m e t h o d " ) , 
+             u r l :   u r l , 
+             d a t a T y p e :   " j s o n " , 
+             d a t a :   p a r a m s , 
+             s u c c e s s :   f u n c t i o n ( j s o n ,   t e x t S t a t u s )   { 
+                 i f   ( j s o n . s t a t u s   ! = =   " s u c c e s s " )   { 
+                     s e l f . s h o w E r r o r ( j s o n . e r r o r ) ; 
+                     r e t u r n ; 
+                 } 
+ 
+                 i f   ( " w a r n i n g s "   i n   j s o n   & &   j s o n . w a r n i n g s . l e n g t h   >   0 )   { 
+                     s e l f . s h o w W a r n i n g ( j s o n . w a r n i n g s . m a p ( e s c a p e H T M L ) . j o i n ( ' < b r > ' ) ) ; 
+                 } 
+ 
+                 q u e r y H i s t o r y . h a n d l e H i s t o r y ( s e l f ) ; 
+                 s u c c e s s ( j s o n . d a t a ,   t e x t S t a t u s ) ; 
+             } , 
+             e r r o r :   f u n c t i o n ( x h r ,   r e s p )   { 
+                 i f   ( r e s p   ! =   " a b o r t " )   { 
+                     v a r   e r r ; 
+                     i f   ( x h r . r e s p o n s e J S O N   ! = =   u n d e f i n e d )   { 
+                         e r r   =   x h r . r e s p o n s e J S O N . e r r o r ; 
+                     }   e l s e   { 
+                         e r r   =   x h r . s t a t u s T e x t ; 
+                     } 
+                     s e l f . s h o w E r r o r ( " E r r o r   e x e c u t i n g   q u e r y :   "   +   e r r ) ; 
+                 } 
+             } , 
+             c o m p l e t e :   f u n c t i o n ( x h r ,   r e s p )   { 
+                 i f   ( r e s p   = =   " a b o r t " )   { 
+                     r e t u r n ; 
+                 } 
+                 v a r   d u r a t i o n   =   n e w   D a t e ( ) . g e t T i m e ( )   -   s t a r t T i m e ; 
+                 v a r   t o t a l T i m e S e r i e s   =   0 ; 
+                 i f   ( x h r . r e s p o n s e J S O N . d a t a   ! = =   u n d e f i n e d )   { 
+                     i f   ( x h r . r e s p o n s e J S O N . d a t a . r e s u l t T y p e   = = =   " s c a l a r " )   { 
+                         t o t a l T i m e S e r i e s   =   1 ; 
+                     }   e l s e   i f ( x h r . r e s p o n s e J S O N . d a t a . r e s u l t   ! = =   n u l l )   { 
+                         t o t a l T i m e S e r i e s   =   x h r . r e s p o n s e J S O N . d a t a . r e s u l t . l e n g t h ; 
+                     } 
+                 } 
+                 s e l f . e v a l S t a t s . h t m l ( " L o a d   t i m e :   "   +   d u r a t i o n   +   " m s   < b r   / >   R e s o l u t i o n :   "   +   r e s o l u t i o n   +   " s   < b r   / > "   +   " T o t a l   t i m e   s e r i e s :   "   +   t o t a l T i m e S e r i e s ) ; 
+                 s e l f . s p i n n e r . h i d e ( ) ; 
+             } 
+     } ) ; 
+ } ; 
+ 
+ P r o m e t h e u s . G r a p h . p r o t o t y p e . s h o w E r r o r   =   f u n c t i o n ( m s g )   { 
+     v a r   s e l f   =   t h i s ; 
+     s e l f . e r r o r . t e x t ( m s g ) ; 
+     s e l f . e r r o r . s h o w ( ) ; 
+ } ; 
+ 
+ P r o m e t h e u s . G r a p h . p r o t o t y p e . c l e a r E r r o r   =   f u n c t i o n ( )   { 
+     v a r   s e l f   =   t h i s ; 
+     s e l f . e r r o r . t e x t ( ' ' ) ; 
+     s e l f . e r r o r . h i d e ( ) ; 
+ } ; 
+ 
+ P r o m e t h e u s . G r a p h . p r o t o t y p e . s h o w W a r n i n g   =   f u n c t i o n ( m s g )   { 
+     v a r   s e l f   =   t h i s ; 
+     s e l f . w a r n i n g . h t m l ( m s g ) ; 
+     s e l f . w a r n i n g . s h o w ( ) ; 
+ } ; 
+ 
+ P r o m e t h e u s . G r a p h . p r o t o t y p e . c l e a r W a r n i n g   =   f u n c t i o n ( )   { 
+     v a r   s e l f   =   t h i s ; 
+     s e l f . w a r n i n g . h t m l ( ' ' ) ; 
+     s e l f . w a r n i n g . h i d e ( ) ; 
+ } ; 
+ 
+ P r o m e t h e u s . G r a p h . p r o t o t y p e . u p d a t e R e f r e s h   =   f u n c t i o n ( )   { 
+     v a r   s e l f   =   t h i s ; 
+ 
+     i f   ( s e l f . t i m e o u t I D )   { 
+         w i n d o w . c l e a r T i m e o u t ( s e l f . t i m e o u t I D ) ; 
+     } 
+ 
+     i n t e r v a l   =   s e l f . p a r s e D u r a t i o n ( s e l f . r e f r e s h I n t e r v a l . v a l ( ) ) ; 
+     i f   ( ! i n t e r v a l )   {   r e t u r n ;   } 
+ 
+     s e l f . t i m e o u t I D   =   w i n d o w . s e t T i m e o u t ( f u n c t i o n ( )   { 
+         s e l f . s u b m i t Q u e r y ( ) ; 
+         s e l f . u p d a t e R e f r e s h ( ) ; 
+     } ,   i n t e r v a l   *   S E C O N D ) ; 
+ } ; 
+ 
+ P r o m e t h e u s . G r a p h . p r o t o t y p e . r e n d e r L a b e l s   =   f u n c t i o n ( l a b e l s )   { 
+     v a r   l a b e l S t r i n g s   =   [ ] ; 
+     f o r   ( v a r   l a b e l   i n   l a b e l s )   { 
+         i f   ( l a b e l   ! =   " _ _ n a m e _ _ " )   { 
+             l a b e l S t r i n g s . p u s h ( " < s t r o n g > "   +   l a b e l   +   " < / s t r o n g > :   "   +   e s c a p e H T M L ( l a b e l s [ l a b e l ] ) ) ; 
+         } 
+     } 
+     r e t u r n   l a b e l s   =   " < d i v   c l a s s = \ " l a b e l s \ " > "   +   l a b e l S t r i n g s . j o i n ( " < b r > " )   +   " < / d i v > " ; 
+ } ; 
+ 
+ P r o m e t h e u s . G r a p h . p r o t o t y p e . m e t r i c T o T s N a m e   =   f u n c t i o n ( l a b e l s )   { 
+     v a r   t s N a m e   =   ( l a b e l s . _ _ n a m e _ _   | |   ' ' )   +   " { " ; 
+     v a r   l a b e l S t r i n g s   =   [ ] ; 
+       f o r   ( v a r   l a b e l   i n   l a b e l s )   { 
+           i f   ( l a b e l   ! =   " _ _ n a m e _ _ " )   { 
+               l a b e l S t r i n g s . p u s h ( l a b e l   +   " = \ " "   +   l a b e l s [ l a b e l ]   +   " \ " " ) ; 
+           } 
+       } 
+     t s N a m e   + =   l a b e l S t r i n g s . j o i n ( " , " )   +   " } " ; 
+     r e t u r n   t s N a m e ; 
+ } ; 
+ 
+ P r o m e t h e u s . G r a p h . p r o t o t y p e . p a r s e V a l u e   =   f u n c t i o n ( v a l u e )   { 
+     v a r   v a l   =   p a r s e F l o a t ( v a l u e ) ; 
+     i f   ( i s N a N ( v a l ) )   { 
+         / /   " + I n f " ,   " - I n f " ,   " + I n f "   w i l l   b e   p a r s e d   i n t o   N a N   b y   p a r s e F l o a t ( ) .   T h e 
+         / /   c a n ' t   b e   g r a p h e d ,   s o   s h o w   t h e m   a s   g a p s   ( n u l l ) . 
+         r e t u r n   n u l l ; 
+     } 
+     r e t u r n   v a l ; 
+ } ; 
+ 
+ P r o m e t h e u s . G r a p h . p r o t o t y p e . t r a n s f o r m D a t a   =   f u n c t i o n ( j s o n )   { 
+     v a r   s e l f   =   t h i s ; 
+     v a r   p a l e t t e   =   n e w   R i c k s h a w . C o l o r . P a l e t t e ( ) ; 
+     i f   ( j s o n . r e s u l t T y p e   ! =   " m a t r i x " )   { 
+         s e l f . s h o w E r r o r ( " R e s u l t   i s   n o t   o f   m a t r i x   t y p e !   P l e a s e   e n t e r   a   c o r r e c t   e x p r e s s i o n . " ) ; 
+         r e t u r n   [ ] ; 
+     } 
+     v a r   d a t a   =   j s o n . r e s u l t . m a p ( f u n c t i o n ( t s )   { 
+         v a r   n a m e ; 
+         v a r   l a b e l s ; 
+         i f   ( t s . m e t r i c   = = =   n u l l )   { 
+             n a m e   =   " s c a l a r " ; 
+             l a b e l s   =   { } ; 
+         }   e l s e   { 
+             n a m e   =   e s c a p e H T M L ( s e l f . m e t r i c T o T s N a m e ( t s . m e t r i c ) ) ; 
+             l a b e l s   =   t s . m e t r i c ; 
+         } 
+         r e t u r n   { 
+             n a m e :   n a m e , 
+             l a b e l s :   l a b e l s , 
+             d a t a :   t s . v a l u e s . m a p ( f u n c t i o n ( v a l u e )   { 
+                 r e t u r n   { 
+                     x :   v a l u e [ 0 ] , 
+                     y :   s e l f . p a r s e V a l u e ( v a l u e [ 1 ] ) 
+                 } ; 
+             } ) , 
+             c o l o r :   p a l e t t e . c o l o r ( ) 
+         } ; 
+     } ) ; 
+     d a t a . f o r E a c h ( f u n c t i o n ( s )   { 
+         / /   I n s e r t   n u l l s   f o r   a l l   m i s s i n g   s t e p s . 
+         v a r   n e w S e r i e s   =   [ ] ; 
+         v a r   p o s   =   0 ; 
+         f o r   ( v a r   t   =   s e l f . p a r a m s . s t a r t ;   t   < =   s e l f . p a r a m s . e n d ;   t   + =   s e l f . p a r a m s . s t e p )   { 
+             / /   A l l o w   f o r   f l o a t i n g   p o i n t   i n a c c u r a c y . 
+             i f   ( s . d a t a . l e n g t h   >   p o s   & &   s . d a t a [ p o s ] . x   <   t   +   s e l f . p a r a m s . s t e p   /   1 0 0 )   { 
+                 n e w S e r i e s . p u s h ( s . d a t a [ p o s ] ) ; 
+                 p o s + + ; 
+             }   e l s e   { 
+                 n e w S e r i e s . p u s h ( { x :   t ,   y :   n u l l } ) ; 
+             } 
+         } 
+         s . d a t a   =   n e w S e r i e s ; 
+     } ) ; 
+     r e t u r n   d a t a ; 
+ } ; 
+ 
+ P r o m e t h e u s . G r a p h . p r o t o t y p e . u p d a t e G r a p h   =   f u n c t i o n ( )   { 
+     v a r   s e l f   =   t h i s ; 
+     i f   ( s e l f . d a t a . l e n g t h   = = =   0 )   {   r e t u r n ;   } 
+ 
+     / /   R e m o v e   a n y   t r a c e s   o f   a n   e x i s t i n g   g r a p h . 
+     s e l f . l e g e n d . e m p t y ( ) ; 
+     i f   ( s e l f . g r a p h A r e a . c h i l d r e n ( ) . l e n g t h   >   0 )   { 
+         s e l f . g r a p h . r e m o v e ( ) ; 
+         s e l f . y A x i s . r e m o v e ( ) ; 
+     } 
+     s e l f . g r a p h   =   $ ( ' < d i v   c l a s s = " g r a p h " > < / d i v > ' ) ; 
+     s e l f . y A x i s   =   $ ( ' < d i v   c l a s s = " y _ a x i s " > < / d i v > ' ) ; 
+     s e l f . g r a p h A r e a . a p p e n d ( s e l f . g r a p h ) ; 
+     s e l f . g r a p h A r e a . a p p e n d ( s e l f . y A x i s ) ; 
+ 
+     v a r   e n d T i m e   =   s e l f . g e t E n d D a t e ( )   /   1 0 0 0 ;   / /   C o n v e r t   t o   U N I X   t i m e s t a m p . 
+     v a r   d u r a t i o n   =   s e l f . p a r s e D u r a t i o n ( s e l f . r a n g e I n p u t . v a l ( ) )   | |   3 6 0 0 ;   / /   1 h   d e f a u l t . 
+     v a r   s t a r t T i m e   =   e n d T i m e   -   d u r a t i o n ; 
+     s e l f . d a t a . f o r E a c h ( f u n c t i o n ( s )   { 
+         / /   P a d d i n g   s e r i e s   w i t h   i n v i s i b l e   " n u l l "   v a l u e s   a t   t h e   c o n f i g u r e d   x - a x i s   b o u n d a r i e s   e n s u r e s 
+         / /   t h a t   g r a p h s   a r e   d i s p l a y e d   w i t h   a   f i x e d   x - a x i s   r a n g e   i n s t e a d   o f   s n a p p i n g   t o   t h e   a v a i l a b l e 
+         / /   t i m e   r a n g e   i n   t h e   d a t a . 
+         i f   ( s . d a t a [ 0 ] . x   >   s t a r t T i m e )   { 
+             s . d a t a . u n s h i f t ( { x :   s t a r t T i m e ,   y :   n u l l } ) ; 
+         } 
+         i f   ( s . d a t a [ s . d a t a . l e n g t h   -   1 ] . x   <   e n d T i m e )   { 
+             s . d a t a . p u s h ( { x :   e n d T i m e ,   y :   n u l l } ) ; 
+         } 
+     } ) ; 
+ 
+     / /   N o w   c r e a t e   t h e   n e w   g r a p h . 
+     s e l f . r i c k s h a w G r a p h   =   n e w   R i c k s h a w . G r a p h ( { 
+         e l e m e n t :   s e l f . g r a p h [ 0 ] , 
+         h e i g h t :   M a t h . m a x ( s e l f . g r a p h . i n n e r H e i g h t ( ) ,   1 0 0 ) , 
+         w i d t h :   M a t h . m a x ( s e l f . g r a p h . i n n e r W i d t h ( )   -   8 0 ,   2 0 0 ) , 
+         r e n d e r e r :   ( s e l f . i s S t a c k e d ( )   ?   " s t a c k "   :   " l i n e " ) , 
+         i n t e r p o l a t i o n :   " l i n e a r " , 
+         s e r i e s :   s e l f . d a t a , 
+         m i n :   " a u t o " , 
+     } ) ; 
+ 
+     / /   F i n d   a n d   s e t   g r a p h ' s   m a x / m i n 
+     i f   ( s e l f . i s S t a c k e d ( )   = = =   t r u e )   { 
+         / /   W h e n   s t a c k e d   i s   t o g g l e d 
+         v a r   m a x   =   0 ; 
+         s e l f . d a t a . f o r E a c h ( f u n c t i o n ( t i m e S e r i e s )   { 
+             v a r   c u r r S e r i e s M a x   =   0 ; 
+             t i m e S e r i e s . d a t a . f o r E a c h ( f u n c t i o n ( d a t a P o i n t )   { 
+                 i f   ( d a t a P o i n t . y   >   c u r r S e r i e s M a x   & &   d a t a P o i n t . y   ! =   n u l l )   { 
+                     c u r r S e r i e s M a x   =   d a t a P o i n t . y ; 
+                 } 
+             } ) ; 
+             m a x   + =   c u r r S e r i e s M a x ; 
+         } ) ; 
+         s e l f . r i c k s h a w G r a p h . m a x   =   m a x * 1 . 0 5 ; 
+         s e l f . r i c k s h a w G r a p h . m i n   =   0 ; 
+     }   e l s e   { 
+         v a r   m i n   =   I n f i n i t y ; 
+         v a r   m a x   =   - I n f i n i t y ; 
+         s e l f . d a t a . f o r E a c h ( f u n c t i o n ( t i m e S e r i e s )   { 
+             t i m e S e r i e s . d a t a . f o r E a c h ( f u n c t i o n ( d a t a P o i n t )   { 
+                 i f   ( d a t a P o i n t . y   <   m i n   & &   d a t a P o i n t . y   ! =   n u l l )   { 
+                     m i n   =   d a t a P o i n t . y ; 
+                 } 
+                 i f   ( d a t a P o i n t . y   >   m a x   & &   d a t a P o i n t . y   ! =   n u l l )   { 
+                     m a x   =   d a t a P o i n t . y ; 
+                 } 
+             } ) ; 
+         } ) ; 
+         v a r   o f f s e t   =   0 . 1   *   ( m i n   = = =   m a x   ?   m a x   :   M a t h . a b s ( m a x - m i n ) ) ; 
+         s e l f . r i c k s h a w G r a p h . m a x   =   m a x   +   o f f s e t ; 
+         s e l f . r i c k s h a w G r a p h . m i n   =   m i n   -   o f f s e t ; 
+     } 
+ 
+     v a r   x A x i s   =   n e w   R i c k s h a w . G r a p h . A x i s . T i m e ( {   g r a p h :   s e l f . r i c k s h a w G r a p h   } ) ; 
+ 
+     v a r   y A x i s   =   n e w   R i c k s h a w . G r a p h . A x i s . Y ( { 
+         g r a p h :   s e l f . r i c k s h a w G r a p h , 
+         o r i e n t a t i o n :   " l e f t " , 
+         t i c k F o r m a t :   t h i s . f o r m a t K M B T , 
+         e l e m e n t :   s e l f . y A x i s [ 0 ] , 
+     } ) ; 
+ 
+     s e l f . r i c k s h a w G r a p h . r e n d e r ( ) ; 
+ 
+     v a r   h o v e r D e t a i l   =   n e w   R i c k s h a w . G r a p h . H o v e r D e t a i l ( { 
+         g r a p h :   s e l f . r i c k s h a w G r a p h , 
+         f o r m a t t e r :   f u n c t i o n ( s e r i e s ,   x ,   y )   { 
+             v a r   d a t e   =   ' < s p a n   c l a s s = " d a t e " > '   +   n e w   D a t e ( x   *   1 0 0 0 ) . t o U T C S t r i n g ( )   +   ' < / s p a n > ' ; 
+             v a r   s w a t c h   =   ' < s p a n   c l a s s = " d e t a i l _ s w a t c h "   s t y l e = " b a c k g r o u n d - c o l o r :   '   +   s e r i e s . c o l o r   +   ' " > < / s p a n > ' ; 
+             v a r   c o n t e n t   =   s w a t c h   +   ( s e r i e s . l a b e l s . _ _ n a m e _ _   | |   ' v a l u e ' )   +   " :   < s t r o n g > "   +   y   +   ' < / s t r o n g > ' ; 
+             r e t u r n   d a t e   +   ' < b r > '   +   c o n t e n t   +   ' < b r > '   +   s e l f . r e n d e r L a b e l s ( s e r i e s . l a b e l s ) ; 
+         } 
+     } ) ; 
+ 
+     v a r   l e g e n d   =   n e w   R i c k s h a w . G r a p h . L e g e n d ( { 
+         e l e m e n t :   s e l f . l e g e n d [ 0 ] , 
+         g r a p h :   s e l f . r i c k s h a w G r a p h , 
+     } ) ; 
+ 
+     v a r   h i g h l i g h t e r   =   n e w   R i c k s h a w . G r a p h . B e h a v i o r . S e r i e s . H i g h l i g h t (   { 
+         g r a p h :   s e l f . r i c k s h a w G r a p h , 
+         l e g e n d :   l e g e n d 
+     } ) ; 
+ 
+     v a r   s h e l v i n g   =   n e w   R i c k s h a w . G r a p h . B e h a v i o r . S e r i e s . T o g g l e ( { 
+         g r a p h :   s e l f . r i c k s h a w G r a p h , 
+         l e g e n d :   l e g e n d 
+     } ) ; 
+ 
+     s e l f . h a n d l e C h a n g e ( ) ; 
+ } ; 
+ 
+ P r o m e t h e u s . G r a p h . p r o t o t y p e . r e s i z e G r a p h   =   f u n c t i o n ( )   { 
+     v a r   s e l f   =   t h i s ; 
+     i f   ( s e l f . r i c k s h a w G r a p h   ! = =   n u l l )   { 
+         s e l f . r i c k s h a w G r a p h . c o n f i g u r e ( { 
+             w i d t h :   M a t h . m a x ( s e l f . g r a p h . i n n e r W i d t h ( )   -   8 0 ,   2 0 0 ) , 
+         } ) ; 
+         s e l f . r i c k s h a w G r a p h . r e n d e r ( ) ; 
+     } 
+ } ; 
+ 
+ P r o m e t h e u s . G r a p h . p r o t o t y p e . h a n d l e G r a p h R e s p o n s e   =   f u n c t i o n ( j s o n ,   t e x t S t a t u s )   { 
+     v a r   s e l f   =   t h i s ; 
+     / /   R i c k s h a w   m u t a t e s   p a s s e d   s e r i e s   d a t a   f o r   s t a c k e d   g r a p h s ,   s o   w e   n e e d   t o   s a v e 
+     / /   t h e   o r i g i n a l   A J A X   r e s p o n s e   i n   o r d e r   t o   r e - t r a n s f o r m   i t   i n t o   s e r i e s   d a t a 
+     / /   w h e n   t h e   u s e r   d i s a b l e s   t h e   s t a c k i n g . 
+     s e l f . g r a p h J S O N   =   j s o n ; 
+     s e l f . d a t a   =   s e l f . t r a n s f o r m D a t a ( j s o n ) ; 
+     i f   ( s e l f . d a t a . l e n g t h   = = =   0 )   { 
+         s e l f . s h o w E r r o r ( " N o   d a t a p o i n t s   f o u n d . " ) ; 
+         r e t u r n ; 
+     } 
+     s e l f . g r a p h T a b . r e m o v e C l a s s ( " r e l o a d " ) ; 
+     s e l f . u p d a t e G r a p h ( ) ; 
+ } ; 
+ 
+ P r o m e t h e u s . G r a p h . p r o t o t y p e . h a n d l e C o n s o l e R e s p o n s e   =   f u n c t i o n ( d a t a ,   t e x t S t a t u s )   { 
+     v a r   s e l f   =   t h i s ; 
+     s e l f . c o n s o l e T a b . r e m o v e C l a s s ( " r e l o a d " ) ; 
+     s e l f . g r a p h J S O N   =   n u l l ; 
+ 
+     v a r   t B o d y   =   s e l f . c o n s o l e T a b . f i n d ( " . c o n s o l e _ t a b l e   t b o d y " ) ; 
+     t B o d y . e m p t y ( ) ; 
+ 
+     s w i t c h ( d a t a . r e s u l t T y p e )   { 
+     c a s e   " v e c t o r " : 
+         i f   ( d a t a . r e s u l t   = = =   n u l l   | |   d a t a . r e s u l t . l e n g t h   = = =   0 )   { 
+             t B o d y . a p p e n d ( " < t r > < t d   c o l s p a n = ' 2 ' > < i > n o   d a t a < / i > < / t d > < / t r > " ) ; 
+             r e t u r n ; 
+         } 
+         d a t a . r e s u l t   =   s e l f . l i m i t S e r i e s ( d a t a . r e s u l t ) ; 
+         f o r   ( v a r   i   =   0 ;   i   <   d a t a . r e s u l t . l e n g t h ;   i + + )   { 
+             v a r   s   =   d a t a . r e s u l t [ i ] ; 
+             v a r   t s N a m e   =   s e l f . m e t r i c T o T s N a m e ( s . m e t r i c ) ; 
+             t B o d y . a p p e n d ( " < t r > < t d > "   +   e s c a p e H T M L ( t s N a m e )   +   " < / t d > < t d > "   +   s . v a l u e [ 1 ]   +   " < / t d > < / t r > " ) ; 
+         } 
+         b r e a k ; 
+     c a s e   " m a t r i x " : 
+         i f   ( d a t a . r e s u l t . l e n g t h   = = =   0 )   { 
+             t B o d y . a p p e n d ( " < t r > < t d   c o l s p a n = ' 2 ' > < i > n o   d a t a < / i > < / t d > < / t r > " ) ; 
+             r e t u r n ; 
+         } 
+         d a t a . r e s u l t   =   s e l f . l i m i t S e r i e s ( d a t a . r e s u l t ) ; 
+         f o r   ( v a r   i   =   0 ;   i   <   d a t a . r e s u l t . l e n g t h ;   i + + )   { 
+             v a r   v   =   d a t a . r e s u l t [ i ] ; 
+             v a r   t s N a m e   =   s e l f . m e t r i c T o T s N a m e ( v . m e t r i c ) ; 
+             v a r   v a l u e T e x t   =   " " ; 
+             f o r   ( v a r   j   =   0 ;   j   <   v . v a l u e s . l e n g t h ;   j + + )   { 
+                 v a l u e T e x t   + =   v . v a l u e s [ j ] [ 1 ]   +   "   @ "   +   v . v a l u e s [ j ] [ 0 ]   +   " < b r / > " ; 
+             } 
+             t B o d y . a p p e n d ( " < t r > < t d > "   +   e s c a p e H T M L ( t s N a m e )   +   " < / t d > < t d > "   +   v a l u e T e x t   +   " < / t d > < / t r > " ) ; 
+         } 
+         b r e a k ; 
+     c a s e   " s c a l a r " : 
+         t B o d y . a p p e n d ( " < t r > < t d > s c a l a r < / t d > < t d > "   +   d a t a . r e s u l t [ 1 ]   +   " < / t d > < / t r > " ) ; 
+         b r e a k ; 
+     c a s e   " s t r i n g " : 
+         t B o d y . a p p e n d ( " < t r > < t d > s t r i n g < / t d > < t d > "   +   e s c a p e H T M L ( d a t a . r e s u l t [ 1 ] )   +   " < / t d > < / t r > " ) ; 
+         b r e a k ; 
+     d e f a u l t : 
+         s e l f . s h o w E r r o r ( " U n s u p p o r t e d   v a l u e   t y p e ! " ) ; 
+         b r e a k ; 
+     } 
+     s e l f . h a n d l e C h a n g e ( ) ; 
+ } ; 
+ 
+ P r o m e t h e u s . G r a p h . p r o t o t y p e . r e m o v e   =   f u n c t i o n ( )   { 
+     v a r   s e l f   =   t h i s ; 
+     $ ( s e l f . g r a p h H T M L ) . r e m o v e ( ) ; 
+     s e l f . h a n d l e R e m o v e ( ) ; 
+     s e l f . h a n d l e C h a n g e ( ) ; 
+ } ; 
+ 
+ P r o m e t h e u s . G r a p h . p r o t o t y p e . f o r m a t K M B T   =   f u n c t i o n ( y )   { 
+     v a r   a b s _ y   =   M a t h . a b s ( y ) ; 
+     i f   ( a b s _ y   > =   1 e 2 4 )   { 
+         r e t u r n   ( y   /   1 e 2 4 ) . t o S t r i n g ( )   +   " Y " ; 
+     }   e l s e   i f   ( a b s _ y   > =   1 e 2 1 )   { 
+         r e t u r n   ( y   /   1 e 2 1 ) . t o S t r i n g ( )   +   " Z " ; 
+     }   e l s e   i f   ( a b s _ y   > =   1 e 1 8 )   { 
+         r e t u r n   ( y   /   1 e 1 8 ) . t o S t r i n g ( )   +   " E " ; 
+     }   e l s e   i f   ( a b s _ y   > =   1 e 1 5 )   { 
+         r e t u r n   ( y   /   1 e 1 5 ) . t o S t r i n g ( )   +   " P " ; 
+     }   e l s e   i f   ( a b s _ y   > =   1 e 1 2 )   { 
+         r e t u r n   ( y   /   1 e 1 2 ) . t o S t r i n g ( )   +   " T " ; 
+     }   e l s e   i f   ( a b s _ y   > =   1 e 9 )   { 
+         r e t u r n   ( y   /   1 e 9 ) . t o S t r i n g ( )   +   " G " ; 
+     }   e l s e   i f   ( a b s _ y   > =   1 e 6 )   { 
+         r e t u r n   ( y   /   1 e 6 ) . t o S t r i n g ( )   +   " M " ; 
+     }   e l s e   i f   ( a b s _ y   > =   1 e 3 )   { 
+         r e t u r n   ( y   /   1 e 3 ) . t o S t r i n g ( )   +   " k " ; 
+     }   e l s e   i f   ( a b s _ y   > =   1 )   { 
+         r e t u r n   y 
+     }   e l s e   i f   ( a b s _ y   = = =   0 )   { 
+         r e t u r n   y 
+     }   e l s e   i f   ( a b s _ y   < =   1 e - 2 4 )   { 
+         r e t u r n   ( y   /   1 e - 2 4 ) . t o S t r i n g ( )   +   " y " ; 
+     }   e l s e   i f   ( a b s _ y   < =   1 e - 2 1 )   { 
+         r e t u r n   ( y   /   1 e - 2 1 ) . t o S t r i n g ( )   +   " z " ; 
+     }   e l s e   i f   ( a b s _ y   < =   1 e - 1 8 )   { 
+         r e t u r n   ( y   /   1 e - 1 8 ) . t o S t r i n g ( )   +   " a " ; 
+     }   e l s e   i f   ( a b s _ y   < =   1 e - 1 5 )   { 
+         r e t u r n   ( y   /   1 e - 1 5 ) . t o S t r i n g ( )   +   " f " ; 
+     }   e l s e   i f   ( a b s _ y   < =   1 e - 1 2 )   { 
+         r e t u r n   ( y   /   1 e - 1 2 ) . t o S t r i n g ( )   +   " p " ; 
+     }   e l s e   i f   ( a b s _ y   < =   1 e - 9 )   { 
+             r e t u r n   ( y   /   1 e - 9 ) . t o S t r i n g ( )   +   " n " ; 
+     }   e l s e   i f   ( a b s _ y   < =   1 e - 6 )   { 
+         r e t u r n   ( y   /   1 e - 6 ) . t o S t r i n g ( )   +   " µ " ; 
+     }   e l s e   i f   ( a b s _ y   < = 1 e - 3 )   { 
+         r e t u r n   ( y   /   1 e - 3 ) . t o S t r i n g ( )   +   " m " ; 
+     }   e l s e   i f   ( a b s _ y   < =   1 )   { 
+         r e t u r n   y 
+     } 
+ } 
+ 
+ P r o m e t h e u s . G r a p h . p r o t o t y p e . l i m i t S e r i e s   =   f u n c t i o n ( r e s u l t )   { 
+     v a r   s e l f   =   t h i s ; 
+     v a r   M A X _ S E R I E S _ N U M   =   1 0 0 0 0 ; 
+     v a r   m e s s a g e   =   " < s t r o n g > W a r n i n g ! < / s t r o n g >   F e t c h e d   "   + 
+         r e s u l t . l e n g t h   +   "   s e r i e s ,   b u t   d i s p l a y i n g   o n l y   f i r s t   "   + 
+         M A X _ S E R I E S _ N U M   +   " . " ; 
+ 
+     i f   ( r e s u l t . l e n g t h   >   M A X _ S E R I E S _ N U M )   { 
+         s e l f . s h o w W a r n i n g ( m e s s a g e ) ; 
+         r e t u r n   r e s u l t . s p l i c e ( 0 ,   M A X _ S E R I E S _ N U M ) ; 
+     } 
+     r e t u r n   r e s u l t ; 
+ } 
+ 
+ / * * 
+   *   P a g e 
+ * / 
+ c o n s t   p a g e C o n f i g   =   { 
+     a l l M e t r i c s :   [ ] , 
+     g r a p h s :   [ ] , 
+     q u e r y H i s t M e t r i c s :   J S O N . p a r s e ( l o c a l S t o r a g e . g e t I t e m ( ' h i s t o r y ' ) )   | |   [ ] , 
+ } ; 
+ 
+ P r o m e t h e u s . P a g e   =   f u n c t i o n ( )   { } ; 
+ 
+ P r o m e t h e u s . P a g e . p r o t o t y p e . i n i t   =   f u n c t i o n ( )   { 
+     v a r   g r a p h O p t i o n s   =   t h i s . p a r s e U R L ( ) ; 
+     i f   ( g r a p h O p t i o n s . l e n g t h   = = =   0 )   { 
+         g r a p h O p t i o n s . p u s h ( { } ) ; 
+     } 
+ 
+     g r a p h O p t i o n s . f o r E a c h ( t h i s . a d d G r a p h ,   t h i s ) ; 
+     $ ( " # a d d _ g r a p h " ) . c l i c k ( t h i s . a d d G r a p h . b i n d ( t h i s ,   { } ) ) ; 
+ } ; 
+ 
+ P r o m e t h e u s . P a g e . p r o t o t y p e . p a r s e U R L   =   f u n c t i o n ( )   { 
+     i f   ( w i n d o w . l o c a t i o n . s e a r c h   = =   " " )   { 
+         r e t u r n   [ ] ; 
+     } 
+ 
+     v a r   q u e r y P a r a m s   =   w i n d o w . l o c a t i o n . s e a r c h . s u b s t r i n g ( 1 ) . s p l i t ( ' & ' ) ; 
+     v a r   q u e r y P a r a m H e l p e r   =   n e w   P r o m e t h e u s . P a g e . Q u e r y P a r a m H e l p e r ( ) ; 
+     r e t u r n   q u e r y P a r a m H e l p e r . p a r s e Q u e r y P a r a m s ( q u e r y P a r a m s ) ; 
+ } ; 
+ 
+ P r o m e t h e u s . P a g e . p r o t o t y p e . a d d G r a p h   =   f u n c t i o n ( o p t i o n s )   { 
+     v a r   g r a p h   =   n e w   P r o m e t h e u s . G r a p h ( 
+         $ ( " # g r a p h _ c o n t a i n e r " ) , 
+         o p t i o n s , 
+         t h i s . u p d a t e U R L . b i n d ( t h i s ) , 
+         t h i s . r e m o v e G r a p h . b i n d ( t h i s ) 
+     ) ; 
+ 
+     p a g e C o n f i g . g r a p h s . p u s h ( g r a p h ) ; 
+ 
+     $ ( w i n d o w ) . r e s i z e ( f u n c t i o n ( )   { 
+         g r a p h . r e s i z e G r a p h ( ) ; 
+     } ) ; 
+ } ; 
+ 
+ / /   N O T E :   T h i s   n e e d s   t o   b e   k e p t   i n   s y n c   w i t h   / u t i l / s t r u t i l / s t r c o n v . g o : G r a p h L i n k F o r E x p r e s s i o n 
+ P r o m e t h e u s . P a g e . p r o t o t y p e . u p d a t e U R L   =   f u n c t i o n ( )   { 
+     v a r   q u e r y S t r i n g   =   p a g e C o n f i g . g r a p h s . m a p ( f u n c t i o n ( g r a p h ,   i n d e x )   { 
+         v a r   g r a p h O p t i o n s   =   g r a p h . g e t O p t i o n s ( ) ; 
+         v a r   q u e r y P a r a m H e l p e r   =   n e w   P r o m e t h e u s . P a g e . Q u e r y P a r a m H e l p e r ( ) ; 
+         v a r   q u e r y O b j e c t   =   q u e r y P a r a m H e l p e r . g e n e r a t e Q u e r y O b j e c t ( g r a p h O p t i o n s ,   i n d e x ) ; 
+         r e t u r n   $ . p a r a m ( q u e r y O b j e c t ) ; 
+     } ,   t h i s ) . j o i n ( " & " ) ; 
+ 
+     h i s t o r y . p u s h S t a t e ( { } ,   " " ,   " g r a p h ? "   +   q u e r y S t r i n g ) ; 
+ } ; 
+ 
+ P r o m e t h e u s . P a g e . p r o t o t y p e . r e m o v e G r a p h   =   f u n c t i o n ( g r a p h )   { 
+     p a g e C o n f i g . g r a p h s   =   p a g e C o n f i g . g r a p h s . f i l t e r ( f u n c t i o n ( g )   { r e t u r n   g   ! = =   g r a p h } ) ; 
+ } ; 
+ 
+ P r o m e t h e u s . P a g e . Q u e r y P a r a m H e l p e r   =   f u n c t i o n ( )   { } ; 
+ 
+ P r o m e t h e u s . P a g e . Q u e r y P a r a m H e l p e r . p r o t o t y p e . p a r s e Q u e r y P a r a m s   =   f u n c t i o n ( q u e r y P a r a m s )   { 
+     v a r   o r d e r e d Q u e r y P a r a m s   =   t h i s . f i l t e r I n v a l i d P a r a m s ( q u e r y P a r a m s ) . s o r t ( ) ; 
+     r e t u r n   t h i s . f e t c h O p t i o n s F r o m O r d e r e d P a r a m s ( o r d e r e d Q u e r y P a r a m s ,   0 ) ; 
+ } ; 
+ 
+ P r o m e t h e u s . P a g e . Q u e r y P a r a m H e l p e r . q u e r y P a r a m F o r m a t   =   / ^ g \ d + \ . . + = . + $ / ; 
+ 
+ P r o m e t h e u s . P a g e . Q u e r y P a r a m H e l p e r . p r o t o t y p e . f i l t e r I n v a l i d P a r a m s   =   f u n c t i o n ( p a r a m T u p l e s )   { 
+     r e t u r n   p a r a m T u p l e s . f i l t e r ( f u n c t i o n ( p a r a m T u p l e )   { 
+         r e t u r n   P r o m e t h e u s . P a g e . Q u e r y P a r a m H e l p e r . q u e r y P a r a m F o r m a t . t e s t ( p a r a m T u p l e ) ; 
+     } ) ; 
+ } ; 
+ 
+ P r o m e t h e u s . P a g e . Q u e r y P a r a m H e l p e r . p r o t o t y p e . f e t c h O p t i o n s F r o m O r d e r e d P a r a m s   =   f u n c t i o n ( q u e r y P a r a m s ,   g r a p h I n d e x )   { 
+     i f   ( q u e r y P a r a m s . l e n g t h   = =   0 )   { 
+         r e t u r n   [ ] ; 
+     } 
+ 
+     v a r   p r e f i x O f T h i s I n d e x   =   t h i s . q u e r y P a r a m P r e f i x ( g r a p h I n d e x ) ; 
+     v a r   n u m b e r O f P a r a m s F o r T h i s G r a p h   =   q u e r y P a r a m s . f i l t e r ( f u n c t i o n ( p a r a m T u p l e )   { 
+         r e t u r n   p a r a m T u p l e . s t a r t s W i t h ( p r e f i x O f T h i s I n d e x ) ; 
+     } ) . l e n g t h ; 
+ 
+     i f   ( n u m b e r O f P a r a m s F o r T h i s G r a p h   = =   0 )   { 
+         r e t u r n   [ ] ; 
+     } 
+ 
+     v a r   p a r a m s F o r T h i s G r a p h   =   q u e r y P a r a m s . s p l i c e ( 0 ,   n u m b e r O f P a r a m s F o r T h i s G r a p h ) ; 
+ 
+     p a r a m s F o r T h i s G r a p h   =   p a r a m s F o r T h i s G r a p h . m a p ( f u n c t i o n ( p a r a m T u p l e )   { 
+         r e t u r n   p a r a m T u p l e . s u b s t r i n g ( p r e f i x O f T h i s I n d e x . l e n g t h ) ; 
+     } ) ; 
+ 
+     v a r   o p t i o n s   =   t h i s . p a r s e Q u e r y P a r a m s O f O n e G r a p h ( p a r a m s F o r T h i s G r a p h ) ; 
+     v a r   o p t i o n A c c u m u l a t o r   =   t h i s . f e t c h O p t i o n s F r o m O r d e r e d P a r a m s ( q u e r y P a r a m s ,   g r a p h I n d e x   +   1 ) ; 
+     o p t i o n A c c u m u l a t o r . u n s h i f t ( o p t i o n s ) ; 
+ 
+     r e t u r n   o p t i o n A c c u m u l a t o r ; 
+ } ; 
+ 
+ P r o m e t h e u s . P a g e . Q u e r y P a r a m H e l p e r . p r o t o t y p e . p a r s e Q u e r y P a r a m s O f O n e G r a p h   =   f u n c t i o n ( q u e r y P a r a m s )   { 
+     v a r   o p t i o n s   =   { } ; 
+     q u e r y P a r a m s . f o r E a c h ( f u n c t i o n ( t u p l e )   { 
+         v a r   o p t i o n N a m e A n d V a l u e   =   t u p l e . s p l i t ( ' = ' ) ; 
+         v a r   o p t i o n N a m e   =   o p t i o n N a m e A n d V a l u e [ 0 ] ; 
+ 
+         v a r   o p t i o n V a l u e   =   d e c o d e U R I C o m p o n e n t ( o p t i o n N a m e A n d V a l u e [ 1 ] . r e p l a c e ( / \ + / g ,   "   " ) ) ; 
+ 
+         i f   ( o p t i o n N a m e   = =   " t a b " )   { 
+             o p t i o n V a l u e   =   p a r s e I n t ( o p t i o n V a l u e ) ;   / /   t a b   i s   i n t e g e r 
+         } 
+ 
+         o p t i o n s [ o p t i o n N a m e ]   =   o p t i o n V a l u e ; 
+     } ) ; 
+ 
+     r e t u r n   o p t i o n s ; 
+ } ; 
+ 
+ P r o m e t h e u s . P a g e . Q u e r y P a r a m H e l p e r . p r o t o t y p e . q u e r y P a r a m P r e f i x   =   f u n c t i o n ( i n d e x )   { 
+     r e t u r n   " g "   +   i n d e x   +   " . " ; 
+ } ; 
+ 
+ P r o m e t h e u s . P a g e . Q u e r y P a r a m H e l p e r . p r o t o t y p e . g e n e r a t e Q u e r y O b j e c t   =   f u n c t i o n ( g r a p h O p t i o n s ,   i n d e x )   { 
+     v a r   p r e f i x   =   t h i s . q u e r y P a r a m P r e f i x ( i n d e x ) ; 
+     v a r   q u e r y O b j e c t   =   { } ; 
+     O b j e c t . k e y s ( g r a p h O p t i o n s ) . f o r E a c h ( f u n c t i o n ( k e y )   { 
+         q u e r y O b j e c t [ p r e f i x   +   k e y ]   =   g r a p h O p t i o n s [ k e y ] ; 
+     } ) ; 
+     r e t u r n   q u e r y O b j e c t ; 
+ } ; 
+ 
+ / /   T h e s e   t w o   m e t h o d s   ( i s D e p r e c a t e d G r a p h U R L   a n d   r e d i r e c t T o M i g r a t e d U R L ) 
+ / /   a r e   a d d e d   o n l y   f o r   b a c k w a r d   c o m p a t i b i l i t y   t o   o l d   q u e r y   f o r m a t . 
+ f u n c t i o n   i s D e p r e c a t e d G r a p h U R L ( )   { 
+     i f   ( w i n d o w . l o c a t i o n . h a s h . l e n g t h   = =   0 )   { 
+         r e t u r n   f a l s e ; 
+     } 
+ 
+     v a r   d e c o d e d F r a g m e n t   =   d e c o d e U R I C o m p o n e n t ( w i n d o w . l o c a t i o n . h a s h ) ; 
+     t r y   { 
+             J S O N . p a r s e ( d e c o d e d F r a g m e n t . s u b s t r ( 1 ) ) ;   / /   d r o p   t h e   h a s h   # 
+     }   c a t c h   ( e )   { 
+             r e t u r n   f a l s e ; 
+     } 
+     r e t u r n   t r u e ; 
+ } 
+ 
+ f u n c t i o n   r e d i r e c t T o M i g r a t e d U R L ( )   { 
+     v a r   d e c o d e d F r a g m e n t   =   d e c o d e U R I C o m p o n e n t ( w i n d o w . l o c a t i o n . h a s h ) ; 
+     v a r   g r a p h O p t i o n s   =   J S O N . p a r s e ( d e c o d e d F r a g m e n t . s u b s t r ( 1 ) ) ;   / /   d r o p   t h e   h a s h   # 
+     v a r   q u e r y O b j e c t   =   { } ; 
+ 
+     g r a p h O p t i o n s . m a p ( f u n c t i o n ( o p t i o n s ,   i n d e x ) { 
+         v a r   p r e f i x   =   " g "   +   i n d e x   +   " . " ; 
+         O b j e c t . k e y s ( o p t i o n s ) . f o r E a c h ( f u n c t i o n ( k e y )   { 
+             q u e r y O b j e c t [ p r e f i x   +   k e y ]   =   o p t i o n s [ k e y ] ; 
+         } ) ; 
+     } ) ; 
+     v a r   q u e r y   =   $ . p a r a m ( q u e r y O b j e c t ) ; 
+     w i n d o w . l o c a t i o n   =   P A T H _ P R E F I X   +   " / g r a p h ? "   +   q u e r y ; 
+ } 
+ 
+ / * * 
+   *   Q u e r y   H i s t o r y   h e l p e r   f u n c t i o n s 
+   *   * * / 
+ c o n s t   q u e r y H i s t o r y   =   { 
+     i s E n a b l e d :   f u n c t i o n ( )   { 
+         r e t u r n   J S O N . p a r s e ( l o c a l S t o r a g e . g e t I t e m ( ' e n a b l e - q u e r y - h i s t o r y ' ) ) 
+     } , 
+ 
+     b i n d H i s t o r y E v e n t s :   f u n c t i o n ( g r a p h )   { 
+         c o n s t   t a r g e t E l   =   $ ( ' d i v . q u e r y - h i s t o r y ' ) ; 
+         c o n s t   i c o n   =   $ ( t a r g e t E l ) . c h i l d r e n ( ' i ' ) ; 
+         t a r g e t E l . o f f ( ' c l i c k ' ) ; 
+ 
+         i f   ( q u e r y H i s t o r y . i s E n a b l e d ( ) )   { 
+             t h i s . t o g g l e O n ( t a r g e t E l ) ; 
+         } 
+ 
+         t a r g e t E l . o n ( ' c l i c k ' ,   f u n c t i o n ( )   { 
+             i f   ( i c o n . h a s C l a s s ( ' g l y p h i c o n - u n c h e c k e d ' ) )   { 
+                 q u e r y H i s t o r y . t o g g l e O n ( t a r g e t E l ) ; 
+             }   e l s e   i f   ( i c o n . h a s C l a s s ( ' g l y p h i c o n - c h e c k ' ) )   { 
+                 q u e r y H i s t o r y . t o g g l e O f f ( t a r g e t E l ) ; 
+             } 
+         } ) ; 
+     } , 
+ 
+     h a n d l e H i s t o r y :   f u n c t i o n ( g r a p h )   { 
+         c o n s t   q u e r y   =   g r a p h . e x p r . v a l ( ) ; 
+         c o n s t   i s S i m p l e M e t r i c   =   p a g e C o n f i g . a l l M e t r i c s . i n d e x O f ( q u e r y )   ! = =   - 1 ; 
+         i f   ( i s S i m p l e M e t r i c )   { 
+             r e t u r n ; 
+         } 
+ 
+         l e t   p a r s e d Q u e r y H i s t o r y   =   J S O N . p a r s e ( l o c a l S t o r a g e . g e t I t e m ( ' h i s t o r y ' ) ) ; 
+         c o n s t   h a s S t o r e d Q u e r y   =   p a r s e d Q u e r y H i s t o r y . i n d e x O f ( q u e r y )   ! = =   - 1 ; 
+         i f   ( h a s S t o r e d Q u e r y )   { 
+             p a r s e d Q u e r y H i s t o r y . s p l i c e ( p a r s e d Q u e r y H i s t o r y . i n d e x O f ( q u e r y ) ,   1 ) ; 
+         } 
+ 
+         p a r s e d Q u e r y H i s t o r y . p u s h ( q u e r y ) ; 
+         c o n s t   q u e r y C o u n t   =   p a r s e d Q u e r y H i s t o r y . l e n g t h ; 
+         p a r s e d Q u e r y H i s t o r y   =   p a r s e d Q u e r y H i s t o r y . s l i c e ( q u e r y C o u n t   -   5 0 ,   q u e r y C o u n t ) ; 
+ 
+         l o c a l S t o r a g e . s e t I t e m ( ' h i s t o r y ' ,   J S O N . s t r i n g i f y ( p a r s e d Q u e r y H i s t o r y ) ) ; 
+         p a g e C o n f i g . q u e r y H i s t M e t r i c s   =   p a r s e d Q u e r y H i s t o r y ; 
+         i f   ( q u e r y H i s t o r y . i s E n a b l e d ( ) )   { 
+             t h i s . u p d a t e T y p e a h e a d M e t r i c S e t ( p a g e C o n f i g . q u e r y H i s t M e t r i c s . c o n c a t ( p a g e C o n f i g . a l l M e t r i c s ) ) ; 
+         } 
+     } , 
+ 
+     t o g g l e O n :   f u n c t i o n ( t a r g e t E l )   { 
+         t h i s . u p d a t e T y p e a h e a d M e t r i c S e t ( p a g e C o n f i g . q u e r y H i s t M e t r i c s . c o n c a t ( p a g e C o n f i g . a l l M e t r i c s ) ) ; 
+ 
+         $ ( t a r g e t E l ) . c h i l d r e n ( ' i ' ) . r e m o v e C l a s s ( ' g l y p h i c o n - u n c h e c k e d ' ) . a d d C l a s s ( ' g l y p h i c o n - c h e c k ' ) ; 
+         t a r g e t E l . a d d C l a s s ( ' i s - c h e c k e d ' ) ; 
+         l o c a l S t o r a g e . s e t I t e m ( ' e n a b l e - q u e r y - h i s t o r y ' ,   t r u e ) ; 
+     } , 
+ 
+     t o g g l e O f f :   f u n c t i o n ( t a r g e t E l )   { 
+         t h i s . u p d a t e T y p e a h e a d M e t r i c S e t ( p a g e C o n f i g . a l l M e t r i c s ) ; 
+ 
+         $ ( t a r g e t E l ) . c h i l d r e n ( ' i ' ) . r e m o v e C l a s s ( ' g l y p h i c o n - c h e c k ' ) . a d d C l a s s ( ' g l y p h i c o n - u n c h e c k e d ' ) ; 
+         t a r g e t E l . r e m o v e C l a s s ( ' i s - c h e c k e d ' ) ; 
+         l o c a l S t o r a g e . s e t I t e m ( ' e n a b l e - q u e r y - h i s t o r y ' ,   f a l s e ) ; 
+     } , 
+ 
+     u p d a t e T y p e a h e a d M e t r i c S e t :   f u n c t i o n ( m e t r i c S e t )   { 
+         p a g e C o n f i g . g r a p h s . f o r E a c h ( f u n c t i o n ( g r a p h )   { 
+             i f   ( g r a p h . e x p r . d a t a ( ' t y p e a h e a d ' ) )   { 
+                 g r a p h . e x p r . d a t a ( ' t y p e a h e a d ' ) . s o u r c e   =   m e t r i c S e t ; 
+             } 
+         } ) ; 
+     } 
+ } ; 
+ 
+ / /   D e f e r s   i n v o c a t i o n   o f   f n   f o r   w a i t P e r i o d   i f   r e t u r n e d   f u n c t i o n   i s   c a l l e d   r e p e a t e d l y 
+ f u n c t i o n   d e b o u n c e ( f n ,   w a i t P e r i o d )   { 
+     v a r   t i m e o u t ; 
+     r e t u r n   f u n c t i o n ( )   { 
+         c l e a r T i m e o u t ( t i m e o u t ) ; 
+         v a r   a r g s   =   a r g u m e n t s ; 
+         v a r   s c o p e   =   t h i s ; 
+         f u n c t i o n   i n v o k e F n ( )   { 
+             r e t u r n   f n . a p p l y ( s c o p e ,   a r g s ) ; 
+         } 
+         t i m e o u t   =   s e t T i m e o u t ( i n v o k e F n ,   w a i t P e r i o d ) ; 
+     } ; 
+ } 
+ 
+ f u n c t i o n   e s c a p e H T M L ( s t r i n g )   { 
+     v a r   e n t i t y M a p   =   { 
+         " & " :   " & a m p ; " , 
+         " < " :   " & l t ; " , 
+         " > " :   " & g t ; " , 
+         ' " ' :   ' & q u o t ; ' , 
+         " ' " :   ' & # 3 9 ; ' , 
+         " / " :   ' & # x 2 F ; ' 
+     } ; 
+ 
+     r e t u r n   S t r i n g ( s t r i n g ) . r e p l a c e ( / [ & < > " ' \ / ] / g ,   f u n c t i o n   ( s )   { 
+         r e t u r n   e n t i t y M a p [ s ] ; 
+     } ) ; 
+ } 
+ 
+ f u n c t i o n   i n i t ( )   { 
+     $ . a j a x S e t u p ( { 
+         c a c h e :   f a l s e 
+     } ) ; 
+ 
+     $ . a j a x ( { 
+         u r l :   P A T H _ P R E F I X   +   " / s t a t i c / j s / g r a p h / g r a p h _ t e m p l a t e . h a n d l e b a r ? v = "   +   B U I L D _ V E R S I O N , 
+         s u c c e s s :   f u n c t i o n ( d a t a )   { 
+ 
+             g r a p h T e m p l a t e   =   d a t a ; 
+             M u s t a c h e . p a r s e ( d a t a ) ; 
+             i f   ( i s D e p r e c a t e d G r a p h U R L ( ) )   { 
+                 r e d i r e c t T o M i g r a t e d U R L ( ) ; 
+             }   e l s e   { 
+                 v a r   P a g e   =   n e w   P r o m e t h e u s . P a g e ( ) ; 
+                 P a g e . i n i t ( ) ; 
+             } 
+         } 
+     } ) ; 
+ } 
+ 
+ $ ( i n i t ) ; 
+   \       http://172.17.0.26:9090/static/js/graph/index.js?v=ecee9c8abfd118f139014cb1b174b08db3f342cf        B               á!´!ˇˇˇˇ      Prometheus   graphTemplate'   INPUT_DEBOUNCE_WAIT   SECOND)   isDeprecatedGraphURL+   redirectToMigratedURL   debounce   escapeHTML	   init   pageConfig   queryHistory	   	   ´+íHç!´!       )   isDeprecatedGraphURL   %                   ﬁ{  Ê|  ¡{  Ê|                          å!´!ˇˇˇˇ      decodedFragment          à!´!          e         ´+íHöò;¯        I   $      t      ˇˇˇˇ    É             é   H                       ö    5   5   Ÿ   >   Ê   BÊ   ö   ù   ö    5   5   : W   QÜö   ∏   
+V   ∏   
+?: Á Q   Ê   òéã  Qvã  QBò…ô… Ê   Cô†ò∏∞÷ †ò∏∞©Ä 1ÆÄ *ò∏∞·†ê °ò∏∞ÿò∞õˇˇˇÍ∞–†òÃ†ò∏∞°†† ®Ä 0ò∏∞°±    window   location	   hash   length%   decodeURIComponent	   JSON   parse   substr    ˇˇˇˇ    5ûç!´!       +   redirectToMigratedURL  }  œ~  Ë|  œ~  3         ˇˇˇˇ          queryObject   B –}  r~  »}  r~  8         ˇˇˇˇ          options    prefix   B /~  l~  '~  l~  :  )       ˇˇˇˇ        5û 5û 5ûç!´!          debounce eà  bâ  Tà  bâ  é         ˇˇˇˇ          fn    waitPeriod    timeout   B  òà  _â  êà  _â  ê       ˇˇˇˇ       	   args    scope	      invokeFn  ˝à  +â  Ïà  +â  î         ˇˇˇˇ        5û 5û 5ûç!´!          escapeHTML wâ  dä  dâ  dä  õ         ˇˇˇˇ          entityMap   B >ä  `ä  5ä  `ä  •  7       ˇˇˇˇ        5û 5ûç!´!       	   init    ™                     sä  å  fä  å                           å!´!ˇˇˇˇ               ´+íHé!´!       é!´!   cacheã!´!    ç!´!          successC ±                   ã  ˘ã  ã  ˘ã                            å!´!ˇˇˇˇ   	   data	   Page        ´+íHöò;¯   |   5                      ÷    T  õ    Qö   ∏   
+T  Á Qö   ù   :     Ê
+   ö   ù   Á  Q0   Ê   ö   5   A,  R  W   QV   ∏   
+Á  QÊ   ô††ò∏∞Œ†ò∏∞œò	∞§ò
+∏∞Õ †ò∏∞ÿ††ò∏∞◊†ò∏∞Àò∞…††ò∞    graphTemplate   Mustache   parse)   isDeprecatedGraphURL+   redirectToMigratedURL   Prometheus	   Page	   init    ˇˇˇˇ    5ûé!´!       é!´!   urlã!´!é!´!   successã!´!    öò;¯	   Q   1                        ö    ∏   
+[    B]   Á Qö    ∏   
+[   ö   =   ö   ]   Ç   ]   Á Qô†ò∏∞—†òÆÄ ´ò∞§†††ò∏∞—†ò÷†ò ®Ä Øò∞¨Ä Ω∞    $   ajaxSetup   cache	   ajax   PATH_PREFIXY   /static/js/graph/graph_template.handlebar?v=   BUILD_VERSION   url   success 5ûé!´!            ç!´!       !   Prometheus.Graphc   
+                    õ   æ  ì   æ                          å!´!ˇˇˇˇ      element   options   handleChange   handleRemove   .this       ´+íHç!´!    	   E   Prometheus.Graph/this.handleRemoveb  V  v  N  v           ˇˇˇˇ        5ûöò;¯   q   8                     πW   QV   T  6    QV   @6   QV   T 6   QV   T 6   QV   Ç    6   QV   @6   QV   Z    6   QV   ∏   
+Á  Qô¶ò∏∞Õ†ò∏∞À†ò∏∞Õ†ò∏∞Õ†ò∏∞œ®ò∏∞À†ò∏∞œ®ò∏∞Àò∞§∞    el   graphHTML   options   handleChange   handleRemove   rickshawGraph	   data   initialize 5ûé!´!       é!´!   yå!´!Ä3·é!´!   wå!´!Ä:	 é!´!   då!´!ÄQ é!´!   hå!´!  é!´!   må!´!<   é!´!   så!´!      è!´!      é!´!   1sé!´!   10sé!´!   1mé!´!   5mé!´!   15mé!´!   30mé!´!   1hé!´!   2hé!´!   6hé!´!   12hé!´!   1dé!´!   2dé!´!   1wé!´!   2wé!´!   4wé!´!   8wé!´!   1yé!´!   2y    ç!´!       K   Prometheus.Graph.prototype.initializec    (                    ;  ã  3  ã                          å!´!ˇˇˇˇ   	   self   options   graphWrapper   resizeTextarea	   date   styleStackBtn   removeBtn   .this         ´+íHé!´!       é!´!   pathPrefixã!´!é!´!   buildVersionã!´!    ç!´!    	      resizeTextareaB í    ä    C          ˇˇˇˇ        5ûç!´!    	   O   Prometheus.Graph.prototype.initialize/<b q  h  i  h  I         ˇˇˇˇ         B  &  L    L  O   /      ˇˇˇˇ        5û 5ûç!´!    	   O   Prometheus.Graph.prototype.initialize/<b Ü  ©  ~  ©  T         ˇˇˇˇ        5ûç!´!    	   O   Prometheus.Graph.prototype.initialize/<b         e   '       ˇˇˇˇ        5ûç!´!    	   O   Prometheus.Graph.prototype.initialize/<b f  …  ^  …  o   6       ˇˇˇˇ        5ûé!´!       é!´!   localeã!´!é!´!   formatã!´!é!´!!   toolbarPlacementã!´!é!´!   sideBySideã!´!é!´!   showTodayButtonã!´!é!´!   showClearã!´!é!´!   showCloseã!´!é!´!   timeZoneã!´!    ç!´!    	   O   Prometheus.Graph.prototype.initialize/<b    ,  
+  ,  å   '       ˇˇˇˇ        5ûç!´!    	   O   Prometheus.Graph.prototype.initialize/<b  U  q  M  q  ç   &       ˇˇˇˇ        5ûç!´!       i   Prometheus.Graph.prototype.initialize/self.isStackedc   è                     ê  ø  à  ø                            å!´!ˇˇˇˇ               ´+íHöò;¯                              à   5    ∏   
+:  =   Hô†ò∏∞—ò∞…†ò±    stacked   val   1    ˇˇˇˇ    5ûé!´!       é!´!   localeã!´!é!´!   formatã!´!é!´!!   toolbarPlacementã!´!é!´!   sideBySideã!´!é!´!   showTodayButtonã!´!é!´!   showClearã!´!é!´!   showCloseã!´!é!´!   timeZoneã!´!    ç!´!    	   O   Prometheus.Graph.prototype.initialize/<b    )    )  §   &       ˇˇˇˇ        5ûç!´!          styleStackBtnC  ß                    L  ≈  D  ≈                            å!´!ˇˇˇˇ   	   icon          ´+íHöò;¯	   À   T                       à   5    ∏   
+=   : W   Qà   ∏   
+:  Q   Ê	   à   5    ∏   
+=   Á QV   ∏   
+=   Á QV   ∏   
+=   Á QL   Ê   à   5    ∏   
+=   Á QV   ∏   
+=   Á QV   ∏   
+=   Á QÊ   ô†ò∏∞÷ò∞»†ò∏∞Ãò∞ †ò∏∞÷ò∞§ò∏∞–ò∞§ò∏∞–ò∞Œ††ò∏∞÷ò∞§ò∏∞–ò∞§ò∏∞–ò∞…††ò∞    stackedBtn	   find   .glyphicon   isStacked   addClass   btn-primary   glyphicon-check   removeClass'   glyphicon-unchecked    ˇˇˇˇ    5ûç!´!    	   O   Prometheus.Graph.prototype.initialize/<b  ˚  c  Û  c  µ           ˇˇˇˇ        5ûç!´!    	   O   Prometheus.Graph.prototype.initialize/<b  á          ¿           ˇˇˇˇ        5ûç!´!    	   O   Prometheus.Graph.prototype.initialize/<b  y  ï  q  ï  …   >       ˇˇˇˇ        5ûç!´!    	   O   Prometheus.Graph.prototype.initialize/<b  ÷  Ú  Œ  Ú      >       ˇˇˇˇ        5ûç!´!    	   O   Prometheus.Graph.prototype.initialize/<b  2  L  *  L  Ã   <       ˇˇˇˇ        5ûç!´!    	   O   Prometheus.Graph.prototype.initialize/<b  ã  •  É  •  Õ   <       ˇˇˇˇ        5ûç!´!    	   O   Prometheus.Graph.prototype.initialize/<b  Ë    ‡    œ   ?       ˇˇˇˇ        5ûç!´!    	   O   Prometheus.Graph.prototype.initialize/<b  G  d  ?  d  –   ?       ˇˇˇˇ        5ûç!´!    	   O   Prometheus.Graph.prototype.initialize/<b  ã    É    “   #       ˇˇˇˇ        5ûç!´!    	   O   Prometheus.Graph.prototype.initialize/<b  a  é  Y  é  ÿ          ˇˇˇˇ        5ûöò;¯u   A	  :               c    %πW  QV  â   Qà   ö    5   5   ÏÍÖ
+6   Q6   Qà   5   à   5   6   Qà   5   à   5   5   D   Ê   Q=   Ê   6   Qà   5   5   ö   H   Ê   à   5   ?6   QÊ   [    ö	   ]
+   ö   ]   W   Qö   ∏   
+V   à   5   Á Qà   ö   ù   ö   ∏   
+ö   V   : : 6   Qà   5   ∏   
+à   5   Á Qà   5   ∏   
+=   à   5   : W  Qà   V  ∏   
+=   : 6   QÇ   â   Qà   V  ∏   
+=   : 6   Qà   5   ∏   
+Ç   Á Qà   5   ∏   
+Ç   Á Qà   5   ∏   
+à   5   Á Qà   à   5   ∏   
+=    : 6!   Qà   à   5   ∏   
+="   : 6#   Qà   à   5   ∏   
+=$   : 6%   Qà   à   5   ∏   
+=&   : 6'   Qà   à   5   ∏   
+=(   : 6)   Qà   V  ∏   
+=*   : 6+   Qà   V  ∏   
+=,   : 6-   Qà   V  ∏   
+=.   : 6/   Qà   5/   ∏0   
+à   5   5   : ∏   
+=1   Á Qà   5/   ∏2   
+=3   Ç   Á Qà   5'   ∏4   
+=5   =6   Ç   Á Qà   V  ∏   
+=7   : ∏8   
+:  69   Qà   V  ∏   
+=:   : ∏8   
+:  6;   Qà   V  ∏   
+=<   : 6=   Qà   à   5=   ∏   
+=>   : 6?   Qà   à   5=   ∏   
+=@   : 6A   Qà   V  ∏   
+=B   : 6C   Qà   V  ∏   
+=D   : 6E   Qà   V  ∏   
+=F   : 6G   Qà   V  ∏   
+=H   : 6I   Qà   5I   ∏J   
+[   =K   ]L   =M   ]N   =O   ]P   C]Q   C]R   C]S   C]T   =U   ]V   Á Qà   5   5W   =   Ê    à   5I   ∏X   
+=Y   : ∏Z   
+à   5   5W   Á QÊ”   à   5I   ∏2   
+=[   Ç   Á Qà   5)   ∏   
+Ç   Á Qà   Ç	   6\   Qà   V  ∏   
+=]   : 6^   Qà   5^   ∏J   
+[
+   =K   ]L   =_   ]N   =O   ]P   C]Q   C]R   C]S   C]T   =U   ]V   Á Qà   5   5`   \   ÊÚ   öa   Aà   5   5`   XË,  R W  Qà   5^   ∏X   
+=Y   : ∏Z   
+V  Á QV   Ê˛   à   5   5b   =   Ê  à   5^   ∏X   
+=Y   : ∏Z   
+à   5   5b   Á QÊ  à   5^   ∏2   
+=[   Ç   Á QÇ   â   Qà   Á  Qà   5#   ∏   
+Ç   Á Qà   5   ∏c   
+Ç   Á Qà   5E   ∏8   
+Á  Qà   5   ∏   
+=d   : ∏   
+Ç   Á Qà   5   ∏   
+=e   : ∏   
+Ç   Á Qà   5   ∏   
+=f   : ∏   
+Ç   Á Qà   5   ∏   
+=g   : ∏   
+Ç   Á Qà   5   ∏   
+=h   : ∏   
+Ç   Á Qà   5   ∏   
+=i   : ∏   
+Ç   Á Qà   5'   ∏   
+Ç   Á QV  ∏   
+=j   : W  QV  ∏   
+Ç   Á Qà   ∏k   
+Á  Qöl   ∏m   
+=n   :  3   ÊQ  öl   ∏o   
+=n   öp   ∏q   
+Z    : Á QÊX  à   ∏r   
+Á  Qà   5   ∏s   
+:     Ê`  à   ∏t   
+Á  QÊc  ô¶ò∏∞ †ò∏∞Á®-ò∏∞⁄†ò∏∞Ù†ò∏∞’ †ò∏∞÷®5ò∏∞•ò †òœ®9ò∏∞⁄ò∞§ò∏∞‰ò∞õˇˇˇı∞…†ò∏∞€ò∞¨?ò∏∞·ò∞»†ò∏∞’ò∞…®Cò∏∞À®Hò∏∞’ò∞…†ò∏∞÷ò
+∞¨Tò∏∞÷ò
+∞¨Xò∏∞€ò
+∞¨Zò∏∞€ò!∞…†ò∏∞€ò!∞…†ò∏∞€ò∞…†ò∏∞€ò#∞…†ò∏∞€ò&∞…®`ò∏∞’ò∞…†ò∏∞’ò∞…®cò∏∞’ò∞…†ò∏∞‡ò
+∞œò∞§ò∏∞€ò
+∞¨oò∏∞‡ò∞¨uò∏∞’ò∞ ò∞…†ò∏∞’ò∞ ò∞…†ò∏∞’ò∞…†ò∏∞€ò∞…†ò∏∞€ò∞…†ò∏∞’ò∞…†ò∏∞’ò∞…†ò∏∞’ò∞…®~ò∏∞’ò∞…†ò∏∞÷†ò †ò †ò †ò¶ò¶ò¶ò¶ò ®ò∞¨Ä  âò∏∞œ †ò∏∞÷ò∞Ÿò∞…††ò∏∞€ò∞§ò∏∞÷ò∞§†ò∏∞–††††ò∏∞’ò∞…†ò∏∞÷†ò †ò †ò †ò¶ò¶ò¶ò¶ò ®Ä  îò∞¨Ä  ûò∏∞œ †ò∏∞Â†ò∏∞÷ò∞Œò∞Œ†ò∏∞œ †ò∏∞÷ò∞Ÿò∞…††ò∏∞€ò∞§††ò∏∞À®Ä  ≥ò∏∞ ††ò∏∞÷ò∞¨Ä  ¿ò∏∞÷ò∞¨Ä  «ò∏∞—ò∞§†ò∏∞÷ò∞œò∞§ò∏∞÷ò∞œò∞§†ò∏∞÷ò∞œò∞§ò∏∞÷ò∞œò∞§†ò∏∞÷ò∞œò ∞§ò∏∞÷ò∞œò ∞§†ò∏∞÷ò∞¨Ä  ◊ò∏∞–ò∞»†ò∏∞–ò
+∞¨Ä  ›ò∏∞Ãò∞§†ò∏∞—ò∞ †ò∏∞‚ò%∞õˇˇˇË∞…††ò∏∞Ãò∞§†ò∏∞—ò
+∞ †ò∏∞Ãò∞…††∞    Prometheus   Graph   numGraphs   id   options   range_input   1h   tab   undefined   PATH_PREFIX   pathPrefix   BUILD_VERSION   buildVersion   jQuery   extend   $   Mustache   render   graphTemplate   graphHTML   el   append	   find   #graph_wrapper   .query_form   queryForm'   textarea[name=expr]	   expr   keypress   click   change   handleChange/   input[name=range_input]   rangeInput   .stacked_btn   stackedBtn'   input[name=stacked]   stacked5   select[name=insert_metric]   insertMetric)   select[name=refresh]   refreshInterval   .console   consoleTab!   .graph_container   graphTab)   a[data-toggle='tab']	   tabs   eq	   show   on   shown.bs.tab	   bind   keydown   return   .error	   hide   error   .warning   warning   .graph_area   graphArea   .graph   graph   .y_axis   yAxis   .legend   legend   .spinner   spinner   .eval_stats   evalStats+   input[name=end_input]   endDate   datetimepicker   en   locale!   YYYY-MM-DD HH:mm   format   bottom!   toolbarPlacement   sideBySide   showTodayButton   showClear   showClose   UTC   timeZone   end_input	   data   DateTimePicker	   date   dp.change   isStacked1   input[name=moment_input]   moment'   YYYY-MM-DD HH:mm:ss   timestamp	   Date   moment_input   submit-   button[name=inc_range]-   button[name=dec_range])   button[name=inc_end])   button[name=dec_end]/   button[name=inc_moment]/   button[name=dec_moment]   [name=remove]   checkTimeDrift   localStorage   getItem   history   setItem	   JSON   stringify3   populateInsertableMetrics   val   submitQuery 5ûç!´!       S   Prometheus.Graph.prototype.checkTimeDriftc    È                    ¬  ®  ∫  ®                          å!´!ˇˇˇˇ   	   self   browserTime   .this         ´+íHç!´!          successC                     ü  D  ó  D                            å!´!ˇˇˇˇ   	   json   textStatus   serverTime	   diff        ´+íHöò;¯   ©   X                      T  5    =   I!   Ê   à   ∏   
+=   Á QÊ	   T  5   5   >7W   Qö   ∏   
+à   V   : W  QV  ◊6   Ê   à   ∏   
+=	   V  ∏
+   
+◊: =   Á QÊ   ô†ò∏∞Œ †ò∏∞—ò∞§ò∏∞©Ä  ˇòÆÄ  ıò∏∞‘†ò∏∞÷ò∞»††ò∏∞ †ò∏∞Ã†•Õò∞§ÆÄ  ˘ò∞…®Ä  ˇò∞    status   success   showError)   Error querying time.	   data   result	   Math   abs   showWarningâ   <div class="alert alert-warning"><strong>Warning!</strong> Detected    toFixed7   seconds time difference between your browser and the server. Prometheus relies on accurate time and time drift might cause unexpected query results.</div>    ˇˇˇˇ    5ûç!´!    	      errorB  ]  û  U  û            ˇˇˇˇ        5ûé!´!       é!´!   methodã!´!é!´!   urlã!´!é!´!   dataTypeã!´!é!´!   successã!´!é!´!   errorã!´!    öò;¯      =                      πW   QV   â   Qö    A,  R  ∏   
+:  XËâ   Qö   ∏   
+[   =   ]   ö   =   ]   =	   ]
+   Ç    ]   Ç   ]   Á Qô¶ò∏∞ †ò∏∞‘ò∞Õ†ò∏∞—†ò †ò–†ò †ò ®Ä  ò ®Ä  Ïò∞¨Ä ∞ 	   Date   getTime   $	   ajax   GET   method   PATH_PREFIX5   /api/v1/query?query=time()   url	   json   dataType   success   error 5ûç!´!       i   Prometheus.Graph.prototype.populateInsertableMetricsc                       Í  L#  ‚  L#                          å!´!ˇˇˇˇ   	   self   .this         ´+íHç!´!          successC                    ã   ‰"  É   ‰"                          å!´!ˇˇˇˇ   	   json   textStatus   i        ´+íHé!´!            é!´!       é!´!   queryã!´!é!´!   resultã!´!é!´!   mapã!´!    öò;¯       h   }      &  Ü                 .     T  5    =   I!   Ê   à   ∏   
+=   Á QÊ	   ö   T  5   D   Ê   QZ    Ê   6   Q>W   Q c   m   à   5   >75   ∏	   
+ö
+   Aö   5   V   7ö   5   V   7,  R Á QÊ   V   ÏÍW   QQ„   ÅV   ö   5   Ÿ   àˇˇˇÊ#   à   [   @]   @]   [    ]   6   Qà   ∏   
+à   Á Qô†ò∏∞Œ †ò
+∏∞—ò∞§ò
+∏∞©Ä òÆÄ ò∏∞Ë†òò∏∞&cQ}¶ò
+≠Ä †ò
+∏∞ˇô!∞õˇˇˇ¸∞…®Ä ò:∏∞Õ®Ä ®Ä òæ∞ﬁ††††ò∏∞ †ò
+¶ò
+¶ò
+–†††ò∏∞—ò∞§ò∞    status   success   showErrorA   Error loading available metrics!   pageConfig	   data   allMetrics   insertMetric   options   add   Option   length   query   result   map   fuzzyResult   initTypeahead    ˇˇˇˇ    5ûç!´!    	      errorB  ˚"  C#  Û"  C#           ˇˇˇˇ        5ûé!´!       é!´!   methodã!´!é!´!   urlã!´!é!´!   dataTypeã!´!é!´!   successã!´!é!´!   errorã!´!    öò;¯   ^   3                      πW   QV   â   Qö    ∏   
+[   =   ]   ö   =   ]   =   ]   Ç    ]	   Ç   ]
+   Á Qô¶ò∏∞ †ò∏∞—†ò †ò–†ò †ò ®Ä ò ®Ä ò∞¨Ä #∞    $	   ajax   GET   method   PATH_PREFIX;   /api/v1/label/__name__/values   url	   json   dataType   success   error 5ûç!´!       Q   Prometheus.Graph.prototype.initTypeaheadc   %                    Ç#  !(  z#  !(                         å!´!ˇˇˇˇ   	   self        è!´!          source           ´+íHç!´!   	      matcherB t$  }&  k$  }&  +        ˇˇˇˇ         B &  A&  ˙%  A&  4  0       ˇˇˇˇ        5û 5ûç!´!   	      sorterB ï&  c'  å&  c'  <         ˇˇˇˇ         B ∏&  G'  ∞&  G'  =         ˇˇˇˇ        5û 5ûé!´!       é!´!   autoSelectã!´!é!´!   sourceã!´!é!´!   itemsã!´!é!´!   matcherã!´!é!´!   sorterã!´!    öò;¯       À   ˇˇˇˇ   Ã   O                       éã   Qö    ∏   
+:  -   Ê   ö   5   ∏   
+ö   5   :    Ê   ö   5   Ê   ã   Qà   5   ∏   
+[   B]   V   ]	   XË]
+   Ç    ]   Ç   ]   Á Qà   5   ∏   
+Á  Qö    ∏   
+à   Á Q…ôò:¶ò∏∞Ãò∞Âò*∞·†ò∏∞÷†ò¶ò…†ò»†ò ®Ä <ò ®Ä 'ò∞¨Ä Fò∏∞—ò
+∞§ò∏∞—ò∞•∞    queryHistory   isEnabled   pageConfig!   queryHistMetrics   concat   allMetrics	   expr   typeahead   autoSelect   source   items   matcher   sorter   focus#   bindHistoryEvents 5ûç!´!       K   Prometheus.Graph.prototype.getOptionsb  S(  7*  K(  7*  J  0      ˇˇˇˇ          options    optionInputs   B !)  ›)  )  ›)  V  ,       ˇˇˇˇ        5û 5ûç!´!       Q   Prometheus.Graph.prototype.parseDurationb m*  ô+  e*  ô+  c  3       ˇˇˇˇ        5ûç!´!       Q   Prometheus.Graph.prototype.increaseRangeb  œ+  J-  «+  J-  o  3      ˇˇˇˇ        5ûç!´!       Q   Prometheus.Graph.prototype.decreaseRangeb  Ä-   /  x-   /  }  3      ˇˇˇˇ        5ûç!´!       K   Prometheus.Graph.prototype.getEndDateb  3/  »/  +/  »/  ã  0      ˇˇˇˇ        5ûç!´!       U   Prometheus.Graph.prototype.getOrSetEndDateb   0  a0  ¯/  a0  ì  5      ˇˇˇˇ        5ûç!´!       K   Prometheus.Graph.prototype.setEndDateb î0  „0  å0  „0  ö  0      ˇˇˇˇ        5ûç!´!       M   Prometheus.Graph.prototype.increaseEndb  1  €1  1  €1  ü  1      ˇˇˇˇ        5ûç!´!       M   Prometheus.Graph.prototype.decreaseEndb  2  ÿ2  2  ÿ2  ß  1      ˇˇˇˇ        5ûç!´!       I   Prometheus.Graph.prototype.getMomentb  
+3  ú3  3  ú3  Ø  /      ˇˇˇˇ        5ûç!´!       S   Prometheus.Graph.prototype.getOrSetMomentb  ”3  24  À3  24  ∑  4      ˇˇˇˇ        5ûç!´!       I   Prometheus.Graph.prototype.setMomentb d4  ≤4  \4  ≤4  æ  /      ˇˇˇˇ        5ûç!´!       S   Prometheus.Graph.prototype.increaseMomentb  È4  Ä5  ·4  Ä5  √  4      ˇˇˇˇ        5ûç!´!       S   Prometheus.Graph.prototype.decreaseMomentb  ∑5  S6  Ø5  S6  À  4      ˇˇˇˇ        5ûç!´!       M   Prometheus.Graph.prototype.submitQueryb  á6  ¶@  6  ¶@  ”  1      ˇˇˇˇ	       	   self    startTime    resolution    success   B Ø9  Ò9  ß9  Ò9  Ò         ˇˇˇˇ        5û   B W:  õ:  O:  õ:  ı         ˇˇˇˇ        5û   B U;  ¿<  M;  ¿<  ˛         ˇˇˇˇ        5û   B ◊<  ˛=  œ<  ˛=           ˇˇˇˇ        5û   B >  û@  >  û@           ˇˇˇˇ        5û 5ûç!´!       I   Prometheus.Graph.prototype.showErrorb ÿ@  !A  –@  !A  )  /      ˇˇˇˇ        5ûç!´!       K   Prometheus.Graph.prototype.clearErrorb  TA  ôA  LA  ôA  /  0      ˇˇˇˇ        5ûç!´!       M   Prometheus.Graph.prototype.showWarningb ÕA  B  ≈A  B  5  1      ˇˇˇˇ        5ûç!´!       O   Prometheus.Graph.prototype.clearWarningb  OB  òB  GB  òB  ;  2      ˇˇˇˇ        5ûç!´!       Q   Prometheus.Graph.prototype.updateRefreshb  ŒB  D  ∆B  D  A  3      ˇˇˇˇ       	   self   B  µC  ÔC  ≠C  ÔC  K  -       ˇˇˇˇ        5û 5ûç!´!       O   Prometheus.Graph.prototype.renderLabelsb ;D  SE  3D  SE  Q  2       ˇˇˇˇ        5ûç!´!       S   Prometheus.Graph.prototype.metricToTsNameb äE  £F  ÇE  £F  [  4       ˇˇˇˇ        5ûç!´!       K   Prometheus.Graph.prototype.parseValueb ÷F  ∏G  ŒF  ∏G  g  0       ˇˇˇˇ        5ûç!´!       Q   Prometheus.Graph.prototype.transformDatab ÓG  òL  ÊG  òL  q  3      ˇˇˇˇ       	   self    palette   B ÌH  ¨J  ÂH  ¨J  x  %       ˇˇˇˇ         B J  ÇJ  J  ÇJ  Ö  "       ˇˇˇˇ        5û 5û   B ∆J  ÖL  æJ  ÖL  é         ˇˇˇˇ        5û 5ûç!´!       M   Prometheus.Graph.prototype.updateGraphb  ÃL  £Z  ƒL  £Z  †  1      ˇˇˇˇ
+       	   self    endTime    startTime    max    min   B >O  ﬁP  6O  ﬁP  ≤         ˇˇˇˇ        5û   B  R  »S  ¬R  »S  Õ         ˇˇˇˇ          currSeriesMax   B S  §S  S  §S  œ  &       ˇˇˇˇ        5û 5û   B lT  |U  dT  |U  €         ˇˇˇˇ         B °T  tU  ôT  tU  ‹  &       ˇˇˇˇ        5û 5û   B óW  "Y  èW  "Y  ˜         ˇˇˇˇ        5û 5ûç!´!       M   Prometheus.Graph.prototype.resizeGraphb  ◊Z  ü[  œZ  ü[    1      ˇˇˇˇ        5ûç!´!       ]   Prometheus.Graph.prototype.handleGraphResponseb €[  •]  ”[  •]    9      ˇˇˇˇ        5ûç!´!       a   Prometheus.Graph.prototype.handleConsoleResponseb „]  d  €]  d  *  ;      ˇˇˇˇ        5ûç!´!       C   Prometheus.Graph.prototype.removeb  :d  üd  2d  üd  \  ,      ˇˇˇˇ        5ûç!´!       K   Prometheus.Graph.prototype.formatKMBTb “d  œi   d  œi  c  0       ˇˇˇˇ        5ûç!´!       M   Prometheus.Graph.prototype.limitSeriesb j  Vk  ˙i  Vk  é  1      ˇˇˇˇ        5ûé!´!       é!´!   allMetricsã!´!é!´!   graphsã!´!é!´!!   queryHistMetricsã!´!    ç!´!          Prometheus.Pagec   •                     l  l  ˘k  l                            å!´!ˇˇˇˇ               ´+íHöò;¯                                 ôò     ˇˇˇˇ    5ûç!´!       =   Prometheus.Page.prototype.initc   ß  )                2l  m  *l  m   
+                        å!´!ˇˇˇˇ      graphOptions   .this          ´+íHé!´!            é!´!            öò;¯	   ù   9                      πW  QV  ∏    
+:  W   QV   Ÿ   >H   Ê   V   ∏   
+[    Á QÊ	   V   ∏   
+V  5   V  Á Qö   ù   =   : ∏   
+V  5   ∏   
+V  [   : Á Qô¶ò∏∞Àò∞»†ò∏∞À †ò∏∞–ò∞…†††ò∏∞ÿò∞§ò∏∞Úò$∞õˇˇˇÏ∞§∞    parseURL   length	   push   forEach   addGraph   $   #add_graph   click	   bind   ˇˇˇˇ    5ûç!´!       E   Prometheus.Page.prototype.parseURLc   ±  -                 5m  3n  -m  3n                            å!´!ˇˇˇˇ      queryParams!   queryParamHelper          ´+íHöò;¯   à   6                       ö    5   5   =      Ê   Z    Ê   ö    5   5   ∏   
+?: ∏   
+=   : W   Qö   5   5	   A,  R  W  QV  ∏
+   
+V   : ô†ò∏∞’ †ò∏∞≠Ä πÆÄ ∂ò∏∞◊ò∞œò∞»†ò∏∞‹†ò∏∞œò∞£±    window   location   search      substring   split   &   Prometheus	   Page!   QueryParamHelper!   parseQueryParams    ˇˇˇˇ    5ûç!´!       E   Prometheus.Page.prototype.addGraphc   ª            	       cn  bo  [n  bo                          å!´!ˇˇˇˇ      options   graph   .this       ´+íHç!´!    	   I   Prometheus.Page.prototype.addGraph/<b  =o  ^o  5o  ^o  ≈         ˇˇˇˇ        5ûöò;¯   û   :         	            πW   Qö    5   Aö   ù   =   : T  V   5   ∏   
+V   : V   5   ∏   
+V   : ,  R â   Qö   5   ∏	   
+à   Á Qö   ù   ö
+   : ∏   
+Ç    Á Qô¶ò∏∞À†œò∞££‘ò∞£‘ò∞ØÄ ºò…®Ä √ò∏∞÷ò∞§†ò∏∞ﬁò
+∞§††∞    Prometheus   Graph   $!   #graph_container   updateURL	   bind   removeGraph   pageConfig   graphs	   push   window   resize 5ûç!´!       G   Prometheus.Page.prototype.updateURLc    À                   Ôo  dq  Áo  dq                           å!´!ˇˇˇˇ      queryString   .this          ´+íHç!´!    	   a   Prometheus.Page.prototype.updateURL/queryString<b &p  q  p  q  Ã  2       ˇˇˇˇ        5ûé!´!            öò;¯	   \   *                     	 πW  Qö    5   ∏   
+Ç    V  : ∏   
+=   : W   Qö   ∏   
+[   =   =   V   Á Qô¶ò∏∞÷®Ä —¨Ä Ãò&∞ ®Ä —ù∞»††ò∏∞‡ò∞§∞    pageConfig   graphs   map	   join   &   history   pushState      graph? 5ûç!´!       K   Prometheus.Page.prototype.removeGraphc   ÷                     óq  Ùq  èq  Ùq                          å!´!ˇˇˇˇ      graph        ´+íHç!´!    	   q   Prometheus.Page.prototype.removeGraph/pageConfig.graphs<b ÿq  q  –q  q  ◊  7       ˇˇˇˇ        5ûöò;¯   %                          ö    ö    5   ∏   
+Ç    : 6   Qô†ò∏∞€ò&∞…†∞    pageConfig   graphs   filter 5ûç!´!       A   Prometheus.Page.QueryParamHelperb  "r  'r  r  'r  ⁄  +       ˇˇˇˇ        5ûç!´!       w   Prometheus.Page.QueryParamHelper.prototype.parseQueryParamsb pr  s  hr  s  ‹  F      ˇˇˇˇ        5ûå!´!   ^g\d+\..+=.+$ ç!´!       }   Prometheus.Page.QueryParamHelper.prototype.filterInvalidParamsb †s  9t  òs  9t  „  I       ˇˇˇˇ         B ‘s  5t  Ãs  5t  ‰  $       ˇˇˇˇ        5û 5ûç!´!       ë   Prometheus.Page.QueryParamHelper.prototype.fetchOptionsFromOrderedParamsb èt  §w  át  §w  È  S      ˇˇˇˇ       #   prefixOfThisIndex   B [u  ¢u  Su  ¢u  Ô  >       ˇˇˇˇ        5û   B ov  ºv  gv  ºv  ˘  6       ˇˇˇˇ        5û 5ûç!´!       ã   Prometheus.Page.QueryParamHelper.prototype.parseQueryParamsOfOneGraphb ˜w  ôy  Ôw  ôy    P       ˇˇˇˇ          options   B 9x  Çy  1x  Çy           ˇˇˇˇ        5û 5ûç!´!       w   Prometheus.Page.QueryParamHelper.prototype.queryParamPrefixb ‚y  	z  ⁄y  	z    F       ˇˇˇˇ        5ûç!´!       }   Prometheus.Page.QueryParamHelper.prototype.generateQueryObjectb Uz  6{  Mz  6{    I      ˇˇˇˇ          graphOptions    prefix    queryObject   B ﬁz  {  ÷z  {    ,       ˇˇˇˇ        5û 5ûç!´!          isEnabledC  F                    *  v  "  v                            å!´!ˇˇˇˇ               ´+íHöò;¯   %                           ö    ∏   
+ö   ∏   
+=   : : ô†ò∏∞›ò∞õˇˇˇÌ∞£ò± 	   JSON   parse   localStorage   getItem)   enable-query-history    ˇˇˇˇ    5ûç!´!       #   bindHistoryEventsC  J                   ñ  RÅ  é  RÅ                          å!´!ˇˇˇˇ      graph   .this        è!´!          targetEl	   icon          ´+íHç!´!   	   '   bindHistoryEvents/<b  ÄÄ  LÅ  xÄ  LÅ  S  !       ˇˇˇˇ        5ûöò;¯      °   ˇˇˇˇ
+   ≠   E                     πW   Q«   ö    ù    =   : ç   Qö    ù    à   : ∏   
+=   : ç   Qà   ∏   
+=   Á Qö   ∏   
+:     Ê   V   ∏   
+à   Á QÊ   à   ∏	   
+=   Ç    Á Q»ôû%•ò∏∞ÿ†ò∏∞ﬁò∞…†ò∏∞—ò	∞§†ò∏∞Ãò∞ †ò∏∞–ò∞…†††ò∏∞÷ò	∞≠Ä Zò∞    $#   div.query-history   children   i   off   click   queryHistory   isEnabled   toggleOn   on 5ûç!´!          handleHistoryB nÅ  ΩÑ  fÅ  ΩÑ  \        ˇˇˇˇ        5ûç!´!          toggleOnB ‘Ñ  ˛Ö  ÃÑ  ˛Ö  t        ˇˇˇˇ        5ûç!´!          toggleOffB Ü   á  Ü   á  |        ˇˇˇˇ        5ûç!´!       1   updateTypeaheadMetricSetB Gá  ˚á  ?á  ˚á  Ñ  $       ˇˇˇˇ          metricSet   B {á  ıá  sá  ıá  Ö  &       ˇˇˇˇ        5û 5ûé!´!       é!´!   isEnabledã!´!é!´!#   bindHistoryEventsã!´!é!´!   handleHistoryã!´!é!´!   toggleOnã!´!é!´!   toggleOffã!´!é!´!1   updateTypeaheadMetricSetã!´!    öò;¯K   à  ˛  <              ı     ß Å    Å   Å   Å   Ä   Ä   Ç    Ç   Ç   Ç   Ç   ÷    ö    D   Ê   Q[   Ê   õ    Q÷   XÙõ   Q÷   XËõ   Qö    Ç   6   Qö    5   P   6   Qö    5   P   6   Qö    5   >6	   Qö    5   5
+   Ç	   6   Qö    5   5
+   Ç
+   6   Qö    5   5
+   Ç   6   Qö    5   5
+   Ç   6   Qö    5   5
+   Ç   6   Qö    5   5
+   Ç   6   Qö    5   5
+   Ç   6   Qö    5   5
+   Ç   6   Qö    5   5
+   Ç   6   Qö    5   5
+   Ç   6   Qö    5   5
+   Ç   6   Qö    5   5
+   Ç   6   Qö    5   5
+   Ç   6   Qö    5   5
+   Ç   6   Qö    5   5
+   Ç   6   Qö    5   5
+   Ç   6   Qö    5   5
+   Ç   6   Qö    5   5
+   Ç   6   Qö    5   5
+   Ç   6   Qö    5   5
+   Ç   6   Qö    5   5
+   Ç   6   Qö    5   5
+   Ç   6    Qö    5   5
+   Ç   6!   Qö    5   5
+   Ç    6"   Qö    5   5
+   Ç!   6#   Qö    5   5
+   Ç"   6$   Qö    5   5
+   Ç#   6%   Qö    5   5
+   Ç$   6&   Qö    5   5
+   Ç%   6'   Qö    5   5
+   Ç&   6(   Qö    5   5
+   Ç'   6)   Qö    5   5
+   Ç(   6*   Qö    5   5
+   Ç)   6+   Qö    5   5
+   Ç*   6,   Qö    5   5
+   Ç+   6-   Q[,   Z    ].   Z    ]/   ö0   ∏1   
+ö2   ∏3   
+=4   : : D   Ê¨   QZ    Ê≠   ]5   °   Qö    Ç-   66   Qö    56   5
+   Ç.   67   Qö    56   5
+   Ç/   68   Qö    56   5
+   Ç0   69   Qö    56   5
+   Ç1   6:   Qö    56   5
+   Ç2   6;   Qö    56   Ç3   6<   Qö    56   5<   5
+   Ç4   6=   Qö    56   5<   †5   6>   Qö    56   5<   5
+   Ç6   6?   Qö    56   5<   5
+   Ç7   6@   Qö    56   5<   5
+   Ç8   6A   Qö    56   5<   5
+   Ç9   6B   Qö    56   5<   5
+   Ç:   6C   Q[A   Ç;   ]D   Ç<   ]E   Ç=   ]F   Ç>   ]G   Ç?   ]H   Ç@   ]I   °   QöJ   ùJ   ö7   Á Qôˇö∏∞‡†®ù∏∞…†ù∏∞…®
+∏∞–®∏∞’®!∏∞’®&∏∞—®(∏∞⁄®Ä  È∏∞⁄®Ä ∏∞⁄®Ä %∏∞⁄®Ä J∏∞⁄®Ä c∏∞⁄®Ä o∏∞⁄®Ä }∏∞⁄®Ä ã∏∞⁄®Ä ì∏∞⁄®Ä ö∏∞⁄®Ä ü∏∞⁄®Ä ß∏∞⁄®Ä Ø∏∞⁄®Ä ∑∏∞⁄®Ä æ∏∞⁄®Ä √∏∞⁄®Ä À∏∞⁄®Ä ”∏∞⁄®Ä )∏∞⁄®Ä /∏∞⁄®Ä 5∏∞⁄®Ä ;∏∞⁄®Ä A∏∞⁄®Ä Q∏∞⁄®Ä [∏∞⁄®Ä g∏∞⁄®Ä q∏∞⁄®Ä †∏∞⁄®Ä ∏∞⁄®Ä ∏∞⁄®Ä *∏∞⁄®Ä \∏∞⁄®Ä c∏∞⁄®Ä é∏∞⁄®Ä üò∏∞•ò †ò †ò›ò*∞õˇˇˇÌ∞„†††∏∞–††∏∞⁄®Ä ±∏∞⁄®Ä ª∏∞⁄®Ä À∏∞⁄®Ä ÷∏∞⁄††††∏∞’††∏∞ﬂ®Ä ·∏∞⁄††∏∞ﬂ®Ä È∏∞ﬂ®Ä ∏∞ﬂ®Ä ∏∞ﬂ††††∏∞ﬂ®Ä Eò∏∞•ò ††††ò ®Ä \ò ®Ä tò ®Ä |ò ®Ä Ñò–®Ä ø∏∞”†∞    Prometheus   graphTemplate'   INPUT_DEBOUNCE_WAIT   SECOND   pageConfig   queryHistory   Graph   timeFactors   stepValues   numGraphs   prototype   initialize   checkTimeDrift3   populateInsertableMetrics   initTypeahead   getOptions   parseDuration   increaseRange   decreaseRange   getEndDate   getOrSetEndDate   setEndDate   increaseEnd   decreaseEnd   getMoment   getOrSetMoment   setMoment   increaseMoment   decreaseMoment   submitQuery   showError   clearError   showWarning   clearWarning   updateRefresh   renderLabels   metricToTsName   parseValue   transformData   updateGraph   resizeGraph'   handleGraphResponse+   handleConsoleResponse   remove   formatKMBT   limitSeries   allMetrics   graphs	   JSON   parse   localStorage   getItem   history!   queryHistMetrics	   Page	   init   parseURL   addGraph   updateURL   removeGraph!   QueryParamHelper!   parseQueryParams!   queryParamFormat'   filterInvalidParams;   fetchOptionsFromOrderedParams5   parseQueryParamsOfOneGraph!   queryParamPrefix'   generateQueryObject   isEnabled#   bindHistoryEvents   handleHistory   toggleOn   toggleOff1   updateTypeaheadMetricSet   $“Ú±|Û      ^ø¢Û^ø°AÆ◊ã^»⁄]   \    :http://172.17.0.26:9090/static/js/graph/index.js?v=ecee9c8abfd118f139014cb1b174b08db3f342cf necko:classified 1 strongly-framed 1 request-method GET response-head HTTP/1.1 200 OK
+Accept-Ranges: bytes
+Content-Length: 35853
+Content-Type: application/javascript
+Last-Modified: Thu, 01 Jan 1970 00:00:01 GMT
+Date: Sat, 16 May 2020 08:10:05 GMT
+ original-response-headers Accept-Ranges: bytes
+Content-Length: 35853
+Content-Type: application/javascript
+Last-Modified: Thu, 01 Jan 1970 00:00:01 GMT
+Date: Sat, 16 May 2020 08:10:05 GMT
+ ctid 2 uncompressed-len 0 net-response-time-onstart 159 net-response-time-onstop 159 alt-data 1;35853,javascript/moz-bytecode-20200321005938 alt-data-from-child 1  π

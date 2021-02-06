@@ -1,0 +1,4 @@
+2021-01-30 16:54:55,304 DEBUG    root            Loaded Command Group: ['gcloud', 'compute']
+2021-01-30 16:54:55,308 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'networks']
+2021-01-30 16:54:55,325 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'networks', 'describe']
+2021-01-30 16:54:55,330 ERROR    root            (gcloud.compute.networks.describe) argument NAME: Must be specified.

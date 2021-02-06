@@ -1,0 +1,44 @@
+2021-01-17 04:04:40,386 DEBUG    root            Loaded Command Group: ['gcloud', 'info']
+2021-01-17 04:04:40,395 DEBUG    root            Running [gcloud.info] with arguments: []
+2021-01-17 04:04:40,477 INFO     root            Explicit Display.
+2021-01-17 04:04:40,479 INFO     ___FILE_ONLY___ Google Cloud SDK [323.0.0]
+
+Platform: [Linux, x86_64] uname_result(system='Linux', node='localhost.localdomain', release='3.10.0-1062.18.1.el7.x86_64', version='#1 SMP Tue Mar 17 23:49:17 UTC 2020', machine='x86_64', processor='x86_64')
+Locale: ('en_US', 'UTF-8')
+Python Version: [3.6.8 (default, Apr  2 2020, 13:34:55)  [GCC 4.8.5 20150623 (Red Hat 4.8.5-39)]]
+Python Location: [/usr/bin/python3]
+Site Packages: [Disabled]
+
+Installation Root: [/usr/lib64/google-cloud-sdk]
+Installed Components:
+  alpha: [2021.01.08]
+  beta: [2021.01.08]
+  bq: [2.0.64]
+  core: [2021.01.08]
+  gsutil: [4.57]
+System PATH: [/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/var/lib/snapd/snap/bin:/home/shakeer/.local/bin:/home/shakeer/bin]
+Python PATH: [/usr/lib64/google-cloud-sdk/lib/third_party:/usr/lib64/google-cloud-sdk/lib:/usr/lib64/python36.zip:/usr/lib64/python3.6:/usr/lib64/python3.6:/usr/lib64/python3.6/lib-dynload]
+Cloud SDK on PATH: [False]
+Kubectl on PATH: [/usr/bin/kubectl]
+
+Installation Properties: [/usr/lib64/google-cloud-sdk/properties]
+User Config Directory: [/home/shakeer/.config/gcloud]
+Active Configuration Name: [default]
+Active Configuration Path: [/home/shakeer/.config/gcloud/configurations/config_default]
+
+Account: [None]
+Project: [None]
+
+Current Properties:
+  [core]
+    disable_usage_reporting: [True]
+
+Logs Directory: [/home/shakeer/.config/gcloud/logs]
+Last Log File: [/home/shakeer/.config/gcloud/logs/2021.01.17/04.04.01.954480.log]
+
+git: [git version 1.8.3.1]
+ssh: [OpenSSH_7.4p1, OpenSSL 1.0.2k-fips  26 Jan 2017]
+
+
+
+2021-01-17 04:04:40,485 DEBUG    root            SDK update checks are disabled.

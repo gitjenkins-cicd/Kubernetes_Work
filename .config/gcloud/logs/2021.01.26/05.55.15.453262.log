@@ -1,0 +1,9 @@
+2021-01-26 05:55:15,481 DEBUG    root            Loaded Command Group: ['gcloud', 'compute']
+2021-01-26 05:55:15,488 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'project_info']
+2021-01-26 05:55:15,495 ERROR    root            (gcloud.compute.project-info) Command name argument expected.
+2021-01-26 05:55:15,507 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'project-info', 'set_usage_bucket']
+2021-01-26 05:55:15,514 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'project-info', 'describe']
+2021-01-26 05:55:15,519 DEBUG    root            No implementation for release track [GA] for element: [/usr/lib64/google-cloud-sdk/lib/surface/compute/project_info/set_default_service_account]
+2021-01-26 05:55:15,521 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'project-info', 'add_metadata']
+2021-01-26 05:55:15,525 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'project-info', 'update']
+2021-01-26 05:55:15,528 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'project-info', 'remove_metadata']

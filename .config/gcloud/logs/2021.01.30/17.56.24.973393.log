@@ -1,0 +1,63 @@
+2021-01-30 17:56:25,002 DEBUG    root            Loaded Command Group: ['gcloud', 'compute']
+2021-01-30 17:56:25,007 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'networks']
+2021-01-30 17:56:25,022 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'networks', 'delete']
+2021-01-30 17:56:25,027 DEBUG    root            Running [gcloud.compute.networks.delete] with arguments: [NAME:1: "['vpc-2']"]
+2021-01-30 17:56:29,993 DEBUG    urllib3.connectionpool Starting new HTTPS connection (1): compute.googleapis.com:443
+2021-01-30 17:56:31,627 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/v1 HTTP/1.1" 200 None
+2021-01-30 17:56:31,631 DEBUG    root            Operations to inspect: [<Operation
+ id: 7312092089888256160
+ insertTime: '2021-01-30T17:56:31.241-08:00'
+ kind: 'compute#operation'
+ name: 'operation-1612058190662-5ba288bcfcd2c-fb87bd0a-dd7ebb39'
+ operationType: 'delete'
+ progress: 0
+ selfLink: 'https://www.googleapis.com/compute/v1/projects/shakeergcp/global/operations/operation-1612058190662-5ba288bcfcd2c-fb87bd0a-dd7ebb39'
+ startTime: '2021-01-30T17:56:31.249-08:00'
+ status: StatusValueValuesEnum(RUNNING, 2)
+ targetId: 3591955030577233704
+ targetLink: 'https://www.googleapis.com/compute/v1/projects/shakeergcp/global/networks/vpc-2'
+ user: 'shakeer.uid@gmail.com'
+ warnings: []>]
+2021-01-30 17:56:41,015 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/v1 HTTP/1.1" 200 None
+2021-01-30 17:56:41,027 DEBUG    root            Operations to inspect: [<Operation
+ endTime: '2021-01-30T17:56:40.655-08:00'
+ error: <ErrorValue
+ errors: [<ErrorsValueListEntry
+ code: 'RESOURCE_IN_USE_BY_ANOTHER_RESOURCE'
+ message: "The network resource 'projects/shakeergcp/global/networks/vpc-2' is already being used by 'projects/shakeergcp/global/firewalls/vpc-2fw-allow-ssh'">]>
+ httpErrorMessage: 'BAD REQUEST'
+ httpErrorStatusCode: 400
+ id: 7312092089888256160
+ insertTime: '2021-01-30T17:56:31.241-08:00'
+ kind: 'compute#operation'
+ name: 'operation-1612058190662-5ba288bcfcd2c-fb87bd0a-dd7ebb39'
+ operationType: 'delete'
+ progress: 100
+ selfLink: 'https://www.googleapis.com/compute/v1/projects/shakeergcp/global/operations/operation-1612058190662-5ba288bcfcd2c-fb87bd0a-dd7ebb39'
+ startTime: '2021-01-30T17:56:31.249-08:00'
+ status: StatusValueValuesEnum(DONE, 0)
+ targetId: 3591955030577233704
+ targetLink: 'https://www.googleapis.com/compute/v1/projects/shakeergcp/global/networks/vpc-2'
+ user: 'shakeer.uid@gmail.com'
+ warnings: []>]
+2021-01-30 17:56:41,028 DEBUG    root            (gcloud.compute.networks.delete) Could not fetch resource:
+ - The network resource 'projects/shakeergcp/global/networks/vpc-2' is already being used by 'projects/shakeergcp/global/firewalls/vpc-2fw-allow-ssh'
+Traceback (most recent call last):
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/calliope/cli.py", line 982, in Execute
+    resources = calliope_command.Run(cli=self, args=args)
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/calliope/backend.py", line 809, in Run
+    resources = command_instance.Run(args)
+  File "/usr/lib64/google-cloud-sdk/lib/surface/compute/networks/delete.py", line 73, in Run
+    return client.MakeRequests(requests)
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/api_lib/compute/client_adapter.py", line 105, in MakeRequests
+    errors, error_message='Could not fetch resource:')
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/api_lib/compute/utils.py", line 124, in RaiseToolException
+    RaiseException(problems, calliope_exceptions.ToolException, error_message)
+  File "/usr/lib64/google-cloud-sdk/lib/googlecloudsdk/api_lib/compute/utils.py", line 136, in RaiseException
+    errors))
+googlecloudsdk.calliope.exceptions.ToolException: Could not fetch resource:
+ - The network resource 'projects/shakeergcp/global/networks/vpc-2' is already being used by 'projects/shakeergcp/global/firewalls/vpc-2fw-allow-ssh'
+
+2021-01-30 17:56:41,030 ERROR    root            (gcloud.compute.networks.delete) Could not fetch resource:
+ - The network resource 'projects/shakeergcp/global/networks/vpc-2' is already being used by 'projects/shakeergcp/global/firewalls/vpc-2fw-allow-ssh'
+

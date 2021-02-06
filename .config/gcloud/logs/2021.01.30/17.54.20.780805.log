@@ -1,0 +1,45 @@
+2021-01-30 17:54:20,807 DEBUG    root            Loaded Command Group: ['gcloud', 'compute']
+2021-01-30 17:54:20,812 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'networks']
+2021-01-30 17:54:20,814 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'networks', 'subnets']
+2021-01-30 17:54:20,828 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'networks', 'subnets', 'delete']
+2021-01-30 17:54:20,833 DEBUG    root            Running [gcloud.compute.networks.subnets.delete] with arguments: [NAME:1: "['vpc-2-europe-west-2-1']"]
+2021-01-30 17:54:21,127 DEBUG    urllib3.connectionpool Starting new HTTPS connection (1): compute.googleapis.com:443
+2021-01-30 17:54:27,885 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/v1 HTTP/1.1" 200 None
+2021-01-30 17:55:02,287 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/v1 HTTP/1.1" 200 None
+2021-01-30 17:55:02,311 DEBUG    root            Operations to inspect: [<Operation
+ id: 3180986029682963226
+ insertTime: '2021-01-30T17:55:01.981-08:00'
+ kind: 'compute#operation'
+ name: 'operation-1612058101117-5ba28867972df-065725fb-8b9ce0ba'
+ operationType: 'delete'
+ progress: 0
+ region: 'https://www.googleapis.com/compute/v1/projects/shakeergcp/regions/europe-west2'
+ selfLink: 'https://www.googleapis.com/compute/v1/projects/shakeergcp/regions/europe-west2/operations/operation-1612058101117-5ba28867972df-065725fb-8b9ce0ba'
+ startTime: '2021-01-30T17:55:02.002-08:00'
+ status: StatusValueValuesEnum(RUNNING, 2)
+ targetId: 5691123612211985829
+ targetLink: 'https://www.googleapis.com/compute/v1/projects/shakeergcp/regions/europe-west2/subnetworks/vpc-2-europe-west-2-1'
+ user: 'shakeer.uid@gmail.com'
+ warnings: []>]
+2021-01-30 17:55:11,401 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/v1 HTTP/1.1" 200 None
+2021-01-30 17:55:11,412 DEBUG    root            Operations to inspect: [<Operation
+ endTime: '2021-01-30T17:55:10.955-08:00'
+ id: 3180986029682963226
+ insertTime: '2021-01-30T17:55:01.981-08:00'
+ kind: 'compute#operation'
+ name: 'operation-1612058101117-5ba28867972df-065725fb-8b9ce0ba'
+ operationType: 'delete'
+ progress: 100
+ region: 'https://www.googleapis.com/compute/v1/projects/shakeergcp/regions/europe-west2'
+ selfLink: 'https://www.googleapis.com/compute/v1/projects/shakeergcp/regions/europe-west2/operations/operation-1612058101117-5ba28867972df-065725fb-8b9ce0ba'
+ startTime: '2021-01-30T17:55:02.002-08:00'
+ status: StatusValueValuesEnum(DONE, 0)
+ targetId: 5691123612211985829
+ targetLink: 'https://www.googleapis.com/compute/v1/projects/shakeergcp/regions/europe-west2/subnetworks/vpc-2-europe-west-2-1'
+ user: 'shakeer.uid@gmail.com'
+ warnings: []>]
+2021-01-30 17:55:11,413 INFO     ___FILE_ONLY___ Deleted [https://www.googleapis.com/compute/v1/projects/shakeergcp/regions/europe-west2/subnetworks/vpc-2-europe-west-2-1].
+
+2021-01-30 17:55:11,415 INFO     root            Display format: "none"
+2021-01-30 17:55:11,430 INFO     root            cache collection=compute.subnetworks api_version=beta params=['project', 'region', 'subnetwork']
+2021-01-30 17:55:11,472 DEBUG    root            SDK update checks are disabled.

@@ -1,0 +1,8 @@
+2021-01-17 04:02:38,448 DEBUG    root            Loaded Command Group: ['gcloud', 'config']
+2021-01-17 04:02:38,461 ERROR    root            (gcloud.config) Command name argument expected.
+2021-01-17 04:02:38,478 DEBUG    root            Loaded Command Group: ['gcloud', 'config', 'set']
+2021-01-17 04:02:38,490 DEBUG    root            Loaded Command Group: ['gcloud', 'config', 'list']
+2021-01-17 04:02:38,499 DEBUG    root            Loaded Command Group: ['gcloud', 'config', 'config_helper']
+2021-01-17 04:02:38,509 DEBUG    root            Loaded Command Group: ['gcloud', 'config', 'get_value']
+2021-01-17 04:02:38,514 DEBUG    root            Loaded Command Group: ['gcloud', 'config', 'configurations']
+2021-01-17 04:02:38,523 DEBUG    root            Loaded Command Group: ['gcloud', 'config', 'unset']

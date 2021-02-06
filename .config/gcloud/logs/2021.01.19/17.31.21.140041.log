@@ -1,0 +1,4 @@
+2021-01-19 17:31:21,171 DEBUG    root            Loaded Command Group: ['gcloud', 'compute']
+2021-01-19 17:31:21,175 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'regions']
+2021-01-19 17:31:21,193 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'regions', 'describe']
+2021-01-19 17:31:21,198 ERROR    root            (gcloud.compute.regions.describe) argument NAME: Must be specified.

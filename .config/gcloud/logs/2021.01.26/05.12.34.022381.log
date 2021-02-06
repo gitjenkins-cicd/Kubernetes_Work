@@ -1,0 +1,24 @@
+2021-01-26 05:12:34,103 DEBUG    root            Loaded Command Group: ['gcloud', 'beta', 'compute']
+2021-01-26 05:12:34,119 DEBUG    root            Loaded Command Group: ['gcloud', 'beta', 'compute', 'instances']
+2021-01-26 05:12:34,161 DEBUG    root            Loaded Command Group: ['gcloud', 'beta', 'compute', 'instances', 'update']
+2021-01-26 05:12:34,178 DEBUG    root            Loaded Command Group: ['gcloud', 'compute']
+2021-01-26 05:12:34,190 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'instances']
+2021-01-26 05:12:34,200 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'instances', 'update']
+2021-01-26 05:12:34,212 DEBUG    root            Loaded Command Group: ['gcloud', 'alpha', 'compute']
+2021-01-26 05:12:34,224 DEBUG    root            Loaded Command Group: ['gcloud', 'alpha', 'compute', 'instances']
+2021-01-26 05:12:34,235 DEBUG    root            Loaded Command Group: ['gcloud', 'alpha', 'compute', 'instances', 'update']
+2021-01-26 05:12:34,316 ERROR    root            (gcloud.beta.compute.instances.update) unrecognized arguments:
+  --machine-type=e2-micro
+  --subnet=default (did you mean '--quiet'?)
+  --network-tier=PREMIUM
+  --maintenance-policy=MIGRATE
+  --service-account=demosvc@shakeergcp.iam.gserviceaccount.com (did you mean '--impersonate-service-account'?)
+  --scopes=https://www.googleapis.com/auth/cloud-platform
+  --image=centos-7-v20210122
+  --image-project=centos-cloud (did you mean '--project'?)
+  --boot-disk-size=20GB
+  --boot-disk-type=pd-standard
+  --boot-disk-device-name=instance-1 (did you mean '--enable-display-device'?)
+  --reservation-affinity=any
+  To search the help text of gcloud commands, run:
+  gcloud help -- SEARCH_TERMS

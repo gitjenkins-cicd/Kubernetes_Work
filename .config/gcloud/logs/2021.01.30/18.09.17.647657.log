@@ -1,0 +1,15 @@
+2021-01-30 18:09:17,677 DEBUG    root            Loaded Command Group: ['gcloud', 'compute']
+2021-01-30 18:09:17,681 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'routers']
+2021-01-30 18:09:17,699 DEBUG    root            Loaded Command Group: ['gcloud', 'compute', 'routers', 'list']
+2021-01-30 18:09:17,705 DEBUG    root            Running [gcloud.compute.routers.list] with arguments: []
+2021-01-30 18:09:18,023 INFO     root            Display format: "    table(
+      name,
+      region.basename(),
+      network.basename()
+    )"
+2021-01-30 18:09:18,032 DEBUG    urllib3.connectionpool Starting new HTTPS connection (1): compute.googleapis.com:443
+2021-01-30 18:09:22,466 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/v1 HTTP/1.1" 200 None
+2021-01-30 18:09:22,492 INFO     root            cache collection=compute.routers api_version=v1 params=['project', 'region', 'router']
+2021-01-30 18:09:22,530 INFO     ___FILE_ONLY___ Listed 0 items.
+
+2021-01-30 18:09:22,531 DEBUG    root            SDK update checks are disabled.

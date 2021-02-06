@@ -1,0 +1,3 @@
+var1: uptime
+var2: df -h
+var3: cd /tmp/;tar -zcvf log log.tar.gz

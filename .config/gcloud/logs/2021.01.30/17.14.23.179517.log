@@ -1,0 +1,84 @@
+2021-01-30 17:14:23,208 DEBUG    root            Loaded Command Group: ['gcloud', 'beta', 'compute']
+2021-01-30 17:14:23,214 DEBUG    root            Loaded Command Group: ['gcloud', 'beta', 'compute', 'instances']
+2021-01-30 17:14:23,233 DEBUG    root            Loaded Command Group: ['gcloud', 'beta', 'compute', 'instances', 'create']
+2021-01-30 17:14:23,621 DEBUG    root            Running [gcloud.beta.compute.instances.create] with arguments: [--boot-disk-device-name: "shakeerinstance1", --boot-disk-size: "21474836480", --boot-disk-type: "pd-standard", --image: "centos-7-v20210122", --image-project: "centos-cloud", --machine-type: "e2-micro", --maintenance-policy: "MIGRATE", --network-tier: "PREMIUM", --no-shielded-secure-boot: "False", --project: "shakeergcp", --reservation-affinity: "any", --scopes: "['https://www.googleapis.com/auth/devstorage.read_only', 'https://www.googleapis.com/auth/logging.write', 'https://www.googleapis.com/auth/monitoring.write', 'https://www.googleapis.com/auth/servicecontrol', 'https://www.googleapis.com/auth/service.management.readonly', 'https://www.googleapis.com/auth/trace.append']", --service-account: "36045258912-compute@developer.gserviceaccount.com", --shielded-integrity-monitoring: "True", --shielded-vtpm: "True", --subnet: "vpc-2-europe-west-2-1", --zone: "europe-west2-c", INSTANCE_NAMES:1: "['shakeerinstance1']"]
+2021-01-30 17:14:23,682 DEBUG    urllib3.connectionpool Starting new HTTPS connection (1): compute.googleapis.com:443
+2021-01-30 17:14:25,239 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/beta HTTP/1.1" 200 None
+2021-01-30 17:14:25,242 WARNING  root            You have selected a disk size of under [200GB]. This may result in poor I/O performance. For more information, see: https://developers.google.com/compute/docs/disks#performance.
+2021-01-30 17:14:28,738 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/beta HTTP/1.1" 200 None
+2021-01-30 17:14:28,741 DEBUG    root            Operations to inspect: [<Operation
+ id: 2341504366390524571
+ insertTime: '2021-01-30T17:14:28.296-08:00'
+ kind: 'compute#operation'
+ name: 'operation-1612055665439-5ba27f54bf2c0-fda240c0-4705c594'
+ operationType: 'insert'
+ progress: 0
+ selfLink: 'https://www.googleapis.com/compute/beta/projects/shakeergcp/zones/europe-west2-c/operations/operation-1612055665439-5ba27f54bf2c0-fda240c0-4705c594'
+ startTime: '2021-01-30T17:14:28.298-08:00'
+ status: StatusValueValuesEnum(RUNNING, 2)
+ targetId: 6582287372891437726
+ targetLink: 'https://www.googleapis.com/compute/beta/projects/shakeergcp/zones/europe-west2-c/instances/shakeerinstance1'
+ user: 'shakeer.uid@gmail.com'
+ warnings: []
+ zone: 'https://www.googleapis.com/compute/beta/projects/shakeergcp/zones/europe-west2-c'>]
+2021-01-30 17:14:37,691 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/beta HTTP/1.1" 200 None
+2021-01-30 17:14:37,694 DEBUG    root            Operations to inspect: [<Operation
+ endTime: '2021-01-30T17:14:37.126-08:00'
+ id: 2341504366390524571
+ insertTime: '2021-01-30T17:14:28.296-08:00'
+ kind: 'compute#operation'
+ name: 'operation-1612055665439-5ba27f54bf2c0-fda240c0-4705c594'
+ operationType: 'insert'
+ progress: 100
+ selfLink: 'https://www.googleapis.com/compute/beta/projects/shakeergcp/zones/europe-west2-c/operations/operation-1612055665439-5ba27f54bf2c0-fda240c0-4705c594'
+ startTime: '2021-01-30T17:14:28.298-08:00'
+ status: StatusValueValuesEnum(DONE, 0)
+ targetId: 6582287372891437726
+ targetLink: 'https://www.googleapis.com/compute/beta/projects/shakeergcp/zones/europe-west2-c/instances/shakeerinstance1'
+ user: 'shakeer.uid@gmail.com'
+ warnings: []
+ zone: 'https://www.googleapis.com/compute/beta/projects/shakeergcp/zones/europe-west2-c'>]
+2021-01-30 17:14:37,694 INFO     ___FILE_ONLY___ Created [https://www.googleapis.com/compute/beta/projects/shakeergcp/zones/europe-west2-c/instances/shakeerinstance1].
+
+2021-01-30 17:14:38,492 DEBUG    urllib3.connectionpool https://compute.googleapis.com:443 "POST /batch/compute/beta HTTP/1.1" 200 None
+2021-01-30 17:14:38,503 INFO     root            Display format: "
+          table(
+            name,
+            zone.basename(),
+            machineType.machine_type().basename(),
+            scheduling.preemptible.yesno(yes=true, no=''),
+            networkInterfaces[].networkIP.notnull().list():label=INTERNAL_IP,
+            networkInterfaces[].accessConfigs[0].natIP.notnull().list()            :label=EXTERNAL_IP,
+            status
+          )
+        "
+2021-01-30 17:14:38,751 INFO     root            cache collection=compute.instances api_version=v1 params=['project', 'zone', 'instance']
+2021-01-30 17:14:38,796 INFO     ___FILE_ONLY___ NAME
+2021-01-30 17:14:38,796 INFO     ___FILE_ONLY___               
+2021-01-30 17:14:38,796 INFO     ___FILE_ONLY___ ZONE
+2021-01-30 17:14:38,797 INFO     ___FILE_ONLY___             
+2021-01-30 17:14:38,797 INFO     ___FILE_ONLY___ MACHINE_TYPE
+2021-01-30 17:14:38,797 INFO     ___FILE_ONLY___   
+2021-01-30 17:14:38,797 INFO     ___FILE_ONLY___ PREEMPTIBLE
+2021-01-30 17:14:38,797 INFO     ___FILE_ONLY___   
+2021-01-30 17:14:38,797 INFO     ___FILE_ONLY___ INTERNAL_IP
+2021-01-30 17:14:38,797 INFO     ___FILE_ONLY___   
+2021-01-30 17:14:38,798 INFO     ___FILE_ONLY___ EXTERNAL_IP
+2021-01-30 17:14:38,798 INFO     ___FILE_ONLY___    
+2021-01-30 17:14:38,798 INFO     ___FILE_ONLY___ STATUS
+2021-01-30 17:14:38,798 INFO     ___FILE_ONLY___ 
+
+2021-01-30 17:14:38,798 INFO     ___FILE_ONLY___ shakeerinstance1
+2021-01-30 17:14:38,798 INFO     ___FILE_ONLY___   
+2021-01-30 17:14:38,799 INFO     ___FILE_ONLY___ europe-west2-c
+2021-01-30 17:14:38,799 INFO     ___FILE_ONLY___   
+2021-01-30 17:14:38,799 INFO     ___FILE_ONLY___ e2-micro
+2021-01-30 17:14:38,799 INFO     ___FILE_ONLY___                    
+2021-01-30 17:14:38,799 INFO     ___FILE_ONLY___ 10.10.1.2
+2021-01-30 17:14:38,800 INFO     ___FILE_ONLY___     
+2021-01-30 17:14:38,800 INFO     ___FILE_ONLY___ 35.246.24.85
+2021-01-30 17:14:38,800 INFO     ___FILE_ONLY___   
+2021-01-30 17:14:38,800 INFO     ___FILE_ONLY___ RUNNING
+2021-01-30 17:14:38,800 INFO     ___FILE_ONLY___ 
+
+2021-01-30 17:14:38,801 DEBUG    root            SDK update checks are disabled.

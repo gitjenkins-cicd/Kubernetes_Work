@@ -1,0 +1,14 @@
+# Mountings of HSM Certificates in POD Yaml:
+ volumeMounts:
+          - name: config-volume
+            mountPath: /home/shakeer/pics
+          - name: cert-volume
+            mountPath: /usr/share/nginx/html
+
+ volumes:
+        - name: config-volume
+          configMap:
+            name: csapi
+        - name: cert-volume
+          hostPath:
+            path: /usr/share/nginx/html
